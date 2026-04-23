@@ -23,6 +23,7 @@ class Sim
 		}
 
 		byte[] bytes = new byte[1024];
+		const byte movMask = 0b1000_1000;
 
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
@@ -36,6 +37,11 @@ class Sim
 				if (numCurrentBytesRead == 0)
 				{
 					break;
+				}
+
+				if ((bytes[0] & movMask) == movMask)
+				{
+					Console.WriteLine("mov");
 				}
 
 				numBytesRead += numCurrentBytesRead;
