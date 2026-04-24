@@ -9,9 +9,19 @@ public enum OperationType
 	None
 };
 
+public enum ModeType
+{
+	MemoryNoDisplacement,
+	Memory8BitDisplacement,
+	Memory16BitDisplacement,
+	Register
+};
+
 class Instruction
 {
 	public OperationType type = OperationType.None;
+	// MOD field
+	public ModeType modeType = ModeType.MemoryNoDisplacement;
 
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
