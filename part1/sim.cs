@@ -22,12 +22,12 @@ class Sim
 			return;
 		}
 
-		byte[] bytes = new byte[1024];
+		byte[] bytes = new byte[6];
 		const byte movMask = 0b1000_1000;
 
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
-			int numBytesToRead = (int)filestream.Length;
+			int numBytesToRead = 1;
 			int numBytesRead = 0;
 
 			while (numBytesToRead > 0)
@@ -39,16 +39,20 @@ class Sim
 					break;
 				}
 
-				if ((bytes[0] & movMask) == movMask)
-				{
-					Console.WriteLine("mov");
-				}
-
 				numBytesRead += numCurrentBytesRead;
 				numBytesToRead -= numCurrentBytesRead;
-			}
 
-			Console.WriteLine(numBytesRead);
+				if ((bytes[0] & movMask) == movMask)
+				{
+					numBytesToRead += 1;
+					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
+
+					// test output
+					Console.WriteLine("mov");
+					Console.WriteLine(bytes[0].ToString("x"));
+					Console.WriteLine(bytes[1].ToString("x"));
+				}
+			}
 		}
     }
 }
