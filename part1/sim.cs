@@ -4,23 +4,35 @@ using System.Text;
 
 class Sim
 {
-	static void Main(string[] args)
-    {
+	static void ExitProgramWithError(int exitCode, string errorMessage)
+	{
+		Console.Error.WriteLine(errorMessage);
+		System.Environment.Exit(exitCode);
+	}
+
+	static void CheckArguments(string[] args, out string inputFilename)
+	{
+		const int argumentsErrorExitCode = 1;
+
 		if (args.Length != 1)
 		{
-			Console.WriteLine("Please provide exactly one argument!");
-
-			return;
+			ExitProgramWithError(argumentsErrorExitCode,
+								 "Please provide exactly one argument!");
 		}
 
-		string inputFilename = args[0];
+		inputFilename = args[0];
 
 		if (!File.Exists(inputFilename))
 		{
-			Console.WriteLine($"Filename {inputFilename} does not exist!");
-
-			return;
+			ExitProgramWithError(argumentsErrorExitCode,
+								 $"Filename '{inputFilename}' does not exist!");
 		}
+	}
+
+	static void Main(string[] args)
+    {
+		string inputFilename;
+		CheckArguments(args, out inputFilename);
 
 		byte[] bytes = new byte[6];
 		const byte movMask = 0b1000_1000;
