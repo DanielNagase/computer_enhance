@@ -55,6 +55,32 @@ class InstructionBuilder
 			instruction.type = OperationType.Mov;
 		}
 	}
+
+	public void ParseSecondByte(byte secondByte, ref Instruction instruction)
+	{
+		if (instruction == null)
+		{
+			return;
+		}
+
+		byte modValue = (byte)(secondByte & modMask);
+
+		switch(modValue)
+		{
+			case 0b0000_0000:
+				instruction.modeType = ModeType.MemoryNoDisplacement;
+				break;
+			case 0b0100_0000:
+				instruction.modeType = ModeType.Memory8BitDisplacement;
+				break;
+			case 0b1000_0000:
+				instruction.modeType = ModeType.Memory16BitDisplacement;
+				break;
+			case 0b1100_0000:
+				instruction.modeType = ModeType.Register;
+				break;
+		}
+	}
 }
 
 class Program
@@ -159,6 +185,11 @@ class Sim
 				{
 					numBytesToRead += 1;
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
+					if (bytesRead == 1)
+					{
+						builder.ParseSecondByte(bytes[1], ref instruction);
+					}
+
 					program.AddInstruction(instruction);
 				}
 
