@@ -2,6 +2,22 @@ using System;
 using System.IO;
 using System.Text;
 
+public enum OperationType
+{
+	Mov = 0,
+	None
+};
+
+class Instruction
+{
+	public OperationType type = OperationType.None;
+
+	// D field (1 = REG is destination, 0 = REG is source)
+	public bool bUseRegFieldAsDestination = false;
+	// W field (1 = word, 0 = byte)
+	public bool bIsWordOperation = false;
+}
+
 class Sim
 {
 	static void ExitProgramWithError(int exitCode, string errorMessage)
