@@ -142,9 +142,9 @@ class Sim
 
 				if (instruction.type == OperationType.Mov)
 				{
-					program.AddInstruction(instruction);
 					numBytesToRead += 1;
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
+					program.AddInstruction(instruction);
 				}
 
 				ClearByteArray(ref bytes);
