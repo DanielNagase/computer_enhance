@@ -103,6 +103,14 @@ class Sim
 		}
 	}
 
+	static void ClearByteArray(ref byte[] byteArray)
+	{
+		for (int i = 0; i < byteArray.Length; i++)
+		{
+			byteArray[i] = 0;
+		}
+	}
+
 	static void Main(string[] args)
     {
 		string inputFilename;
@@ -138,6 +146,10 @@ class Sim
 					numBytesToRead += 1;
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
 				}
+
+				ClearByteArray(ref bytes);
+				numBytesToRead = 1;
+				numBytesRead = 0;
 			}
 		}
 
