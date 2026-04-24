@@ -18,6 +18,29 @@ class Instruction
 	public bool bIsWordOperation = false;
 }
 
+class InstructionBuilder
+{
+	const byte movMask = 0b1000_1000;
+	const byte DFieldMask = 0b0000_0010;
+	const byte WFieldMask = 0b0000_0001;
+
+	public void Build(byte firstByte, ref Instruction instruction)
+	{
+		if (instruction == null)
+		{
+			return;
+		}
+
+		instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
+		instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+
+		if ((firstByte & movMask) == movMask)
+		{
+			instruction.type = OperationType.Mov;
+		}
+	}
+}
+
 class Sim
 {
 	static void ExitProgramWithError(int exitCode, string errorMessage)
@@ -51,7 +74,8 @@ class Sim
 		CheckArguments(args, out inputFilename);
 
 		byte[] bytes = new byte[6];
-		const byte movMask = 0b1000_1000;
+
+		InstructionBuilder builder = new InstructionBuilder();
 
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
@@ -69,8 +93,10 @@ class Sim
 
 				numBytesRead += numCurrentBytesRead;
 				numBytesToRead -= numCurrentBytesRead;
+				Instruction instruction = new Instruction();
+				builder.Build(bytes[0], ref instruction);
 
-				if ((bytes[0] & movMask) == movMask)
+				if (instruction.type == OperationType.Mov)
 				{
 					numBytesToRead += 1;
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
