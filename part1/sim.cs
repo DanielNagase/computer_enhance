@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 public enum OperationType
 {
@@ -41,6 +42,40 @@ class InstructionBuilder
 	}
 }
 
+class Program
+{
+	List<Instruction> instructions;
+
+	public Program()
+	{
+		instructions = new List<Instruction>(10);
+	}
+
+	public void AddInstruction(Instruction instruction)
+	{
+		instructions?.Add(instruction);
+	}
+
+	public void Print()
+	{
+		Console.WriteLine("bits 16");
+
+		foreach (Instruction instruction in instructions)
+		{
+			PrintInstruction(instruction);
+		}
+	}
+
+	void PrintInstruction(Instruction instruction)
+	{
+		if (instruction.type == OperationType.Mov)
+		{
+			// TODO: properly print operands
+			Console.WriteLine("mov x, x");
+		}
+	}
+}
+
 class Sim
 {
 	static void ExitProgramWithError(int exitCode, string errorMessage)
@@ -76,6 +111,7 @@ class Sim
 		byte[] bytes = new byte[6];
 
 		InstructionBuilder builder = new InstructionBuilder();
+		Program program = new Program();
 
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
@@ -98,15 +134,13 @@ class Sim
 
 				if (instruction.type == OperationType.Mov)
 				{
+					program.AddInstruction(instruction);
 					numBytesToRead += 1;
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
-
-					// test output
-					Console.WriteLine("mov");
-					Console.WriteLine(bytes[0].ToString("x"));
-					Console.WriteLine(bytes[1].ToString("x"));
 				}
 			}
 		}
+
+		program.Print();
     }
 }
