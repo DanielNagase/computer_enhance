@@ -31,9 +31,14 @@ class Instruction
 
 class InstructionBuilder
 {
-	const byte movMask = 0b1000_1000;
+	// first byte
+	const byte movMask    = 0b1000_1000;
 	const byte DFieldMask = 0b0000_0010;
 	const byte WFieldMask = 0b0000_0001;
+	// second byte
+	const byte modMask = 0b1100_0000;
+	const byte regMask = 0b0011_1000;
+	const byte rmMask  = 0b0000_0111;
 
 	public void Build(byte firstByte, ref Instruction instruction)
 	{
