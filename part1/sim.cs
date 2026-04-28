@@ -128,6 +128,13 @@ class InstructionBuilder
 		}
 
 		ParseModValue(secondByte, ref instruction);
+		// The reg value is bits four through six (from right to
+		// left), so after extracting it we shift right by three so
+		// the extracted value occupies bits one through three.
+		byte regValue = (byte)((secondByte & regMask) >> 3);
+		byte rmValue = (byte)(secondByte & rmMask);
+		RegisterType regField = ParseRegValue(regValue, ref instruction);
+		RegisterType rmField = ParseRegValue(rmValue, ref instruction);
 	}
 
 	void ParseModValue(byte secondByte, ref Instruction instruction)
@@ -154,6 +161,88 @@ class InstructionBuilder
 				instruction.modeType = ModeType.Register;
 				break;
 		}
+	}
+
+	// Parse the least three significant bits as a registry value.
+	// The REG and R/M fields use the same three-bit field encoding.
+	// The first parameter (regValue) is a three-bit sequence from
+	// either of those fields, shifted so that sequence occupies the
+	// three least significant bits.
+	RegisterType ParseRegValue(byte regValue, ref Instruction instruction)
+	{
+		RegisterType register = RegisterType.None;
+
+		if (instruction == null)
+		{
+			return register;
+		}
+
+		if (instruction.bIsWordOperation)
+		{
+			switch(regValue)
+			{
+				case 0b0000_0000:
+					register = RegisterType.AX;
+					break;
+				case 0b0000_0001:
+					register = RegisterType.CX;
+					break;
+				case 0b0000_0010:
+					register = RegisterType.DX;
+					break;
+				case 0b0000_0011:
+					register = RegisterType.BX;
+					break;
+				case 0b0000_0100:
+					register = RegisterType.SP;
+					break;
+				case 0b0000_0101:
+					register = RegisterType.BP;
+					break;
+				case 0b0000_0110:
+					register = RegisterType.SI;
+					break;
+				case 0b0000_0111:
+					register = RegisterType.DI;
+					break;
+				default:
+					break;
+			}
+		}
+		else
+		{
+			switch(regValue)
+			{
+				case 0b0000_0000:
+					register = RegisterType.AL;
+					break;
+				case 0b0000_0001:
+					register = RegisterType.CL;
+					break;
+				case 0b0000_0010:
+					register = RegisterType.DL;
+					break;
+				case 0b0000_0011:
+					register = RegisterType.BL;
+					break;
+				case 0b0000_0100:
+					register = RegisterType.AH;
+					break;
+				case 0b0000_0101:
+					register = RegisterType.CH;
+					break;
+				case 0b0000_0110:
+					register = RegisterType.DH;
+					break;
+				case 0b0000_0111:
+					register = RegisterType.BH;
+					break;
+				default:
+					break;
+			}
+		}
+
+		return register;
 	}
 }
 
