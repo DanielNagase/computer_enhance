@@ -17,11 +17,21 @@ public enum ModeType
 	Register
 };
 
+public enum RegisterType
+{
+	AL, CL, DL, BL, AH, CH, DH, BH,
+	AX, CX, DX, BX, SP, BP, SI, DI, None
+};
+
 class Instruction
 {
 	public OperationType type = OperationType.None;
 	// MOD field
 	public ModeType modeType = ModeType.MemoryNoDisplacement;
+
+	// depending on the instruction, one or both may not be used
+	RegisterType destinationRegister = RegisterType.None;
+	RegisterType sourceRegister = RegisterType.None;
 
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
