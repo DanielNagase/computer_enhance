@@ -117,6 +117,16 @@ class InstructionBuilder
 			return;
 		}
 
+		ParseModValue(secondByte, ref instruction);
+	}
+
+	void ParseModValue(byte secondByte, ref Instruction instruction)
+	{
+		if (instruction == null)
+		{
+			return;
+		}
+
 		byte modValue = (byte)(secondByte & modMask);
 
 		switch(modValue)
