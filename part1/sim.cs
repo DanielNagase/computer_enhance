@@ -40,6 +40,60 @@ class InstructionBuilder
 	const byte regMask = 0b0011_1000;
 	const byte rmMask  = 0b0000_0111;
 
+	byte[] bytes = new byte[6];
+	int numBytesToRead = 1;
+	int numBytesRead = 0;
+
+	public void ReadFile(string inputFilename, ref Program program)
+	{
+		if (program == null)
+		{
+			return;
+		}
+
+		using (FileStream filestream = File.OpenRead(inputFilename))
+		{
+			while (numBytesToRead > 0)
+			{
+				int numCurrentBytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
+
+				if (numCurrentBytesRead == 0)
+				{
+					break;
+				}
+
+				numBytesRead += numCurrentBytesRead;
+				numBytesToRead -= numCurrentBytesRead;
+				Instruction instruction = new Instruction();
+				Build(bytes[0], ref instruction);
+
+				if (instruction.type == OperationType.Mov)
+				{
+					numBytesToRead += 1;
+					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
+					if (bytesRead == 1)
+					{
+						ParseSecondByte(bytes[1], ref instruction);
+					}
+
+					program.AddInstruction(instruction);
+				}
+
+				ClearBytes();
+				numBytesToRead = 1;
+				numBytesRead = 0;
+			}
+		}
+	}
+
+	void ClearBytes()
+	{
+		for (int i = 0; i < bytes.Length; i++)
+		{
+			bytes[i] = 0;
+		}
+	}
+
 	public void Build(byte firstByte, ref Instruction instruction)
 	{
 		if (instruction == null)
@@ -144,60 +198,14 @@ class Sim
 		}
 	}
 
-	static void ClearByteArray(ref byte[] byteArray)
-	{
-		for (int i = 0; i < byteArray.Length; i++)
-		{
-			byteArray[i] = 0;
-		}
-	}
-
 	static void Main(string[] args)
     {
 		string inputFilename;
 		CheckArguments(args, out inputFilename);
 
-		byte[] bytes = new byte[6];
-
 		InstructionBuilder builder = new InstructionBuilder();
 		Program program = new Program();
-
-		using (FileStream filestream = File.OpenRead(inputFilename))
-		{
-			int numBytesToRead = 1;
-			int numBytesRead = 0;
-
-			while (numBytesToRead > 0)
-			{
-				int numCurrentBytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
-
-				if (numCurrentBytesRead == 0)
-				{
-					break;
-				}
-
-				numBytesRead += numCurrentBytesRead;
-				numBytesToRead -= numCurrentBytesRead;
-				Instruction instruction = new Instruction();
-				builder.Build(bytes[0], ref instruction);
-
-				if (instruction.type == OperationType.Mov)
-				{
-					numBytesToRead += 1;
-					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
-					if (bytesRead == 1)
-					{
-						builder.ParseSecondByte(bytes[1], ref instruction);
-					}
-
-					program.AddInstruction(instruction);
-				}
-
-				ClearByteArray(ref bytes);
-				numBytesToRead = 1;
-				numBytesRead = 0;
-			}
-		}
+		builder.ReadFile(inputFilename, ref program);
 
 		program.Print();
     }
