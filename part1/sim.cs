@@ -17,6 +17,8 @@ public enum ModeType
 	Register
 };
 
+// Note: These will get converted to strings in
+// ConvertRegisterToString, so keep them as two-letter codes.
 public enum RegisterType
 {
 	AL, CL, DL, BL, AH, CH, DH, BH,
@@ -288,13 +290,30 @@ class Program
 		}
 	}
 
+	static string ConvertRegisterToString(RegisterType register)
+	{
+		return Enum.GetName(typeof(RegisterType), register).ToLower();
+	}
+
 	void PrintInstruction(Instruction instruction)
 	{
+		string output = "";
+
 		if (instruction.type == OperationType.Mov)
 		{
-			// TODO: properly print operands
-			Console.WriteLine("mov x, x");
+			string source = "";
+			string destination = "";
+
+			if (instruction.modeType == ModeType.Register)
+			{
+				destination = ConvertRegisterToString(instruction.destinationRegister);
+				source = ConvertRegisterToString(instruction.sourceRegister);
+			}
+
+			output = $"mov {destination}, {source}";
 		}
+
+		Console.WriteLine(output);
 	}
 }
 
