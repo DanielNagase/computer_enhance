@@ -30,8 +30,8 @@ class Instruction
 	public ModeType modeType = ModeType.MemoryNoDisplacement;
 
 	// depending on the instruction, one or both may not be used
-	RegisterType destinationRegister = RegisterType.None;
-	RegisterType sourceRegister = RegisterType.None;
+	public RegisterType destinationRegister = RegisterType.None;
+	public RegisterType sourceRegister = RegisterType.None;
 
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
@@ -135,7 +135,24 @@ class InstructionBuilder
 		byte regValue = (byte)((secondByte & regMask) >> 3);
 		byte rmValue = (byte)(secondByte & rmMask);
 		RegisterType regField = ParseRegValue(regValue, ref instruction);
-		RegisterType rmField = ParseRegValue(rmValue, ref instruction);
+		RegisterType rmField = RegisterType.None;
+
+		if (instruction.modeType == ModeType.Register)
+		{
+			rmField = ParseRegValue(rmValue, ref instruction);
+
+			if (instruction.bUseRegFieldAsDestination)
+			{
+				instruction.destinationRegister = regField;
+				instruction.sourceRegister = rmField;
+			}
+			else
+			{
+				instruction.sourceRegister = regField;
+				instruction.destinationRegister = rmField;
+			}
+		}
+		// TODO: handle other ModeType values
 	}
 
 	void ParseModValue(byte secondByte, ref Instruction instruction)
