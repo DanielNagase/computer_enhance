@@ -83,7 +83,7 @@ class InstructionBuilder
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
 					if (bytesRead == 1)
 					{
-						ParseSecondByte(bytes[1], ref instruction);
+						ParseSecondByteOfMov(bytes[1], ref instruction);
 					}
 
 					program.AddInstruction(instruction);
@@ -120,7 +120,7 @@ class InstructionBuilder
 		}
 	}
 
-	public void ParseSecondByte(byte secondByte, ref Instruction instruction)
+	public void ParseSecondByteOfMov(byte secondByte, ref Instruction instruction)
 	{
 		if (instruction == null)
 		{
@@ -128,9 +128,10 @@ class InstructionBuilder
 		}
 
 		ParseModValue(secondByte, ref instruction);
-		// The reg value is bits four through six (from right to
-		// left), so after extracting it we shift right by three so
-		// the extracted value occupies bits one through three.
+		// Within the second byte, the reg value is bits three through
+		// five. After extracting the value, we shift it right by
+		// three bits so it occupies the three least significant bits
+		// of a byte.
 		byte regValue = (byte)((secondByte & regMask) >> 3);
 		byte rmValue = (byte)(secondByte & rmMask);
 		RegisterType regField = ParseRegValue(regValue, ref instruction);
