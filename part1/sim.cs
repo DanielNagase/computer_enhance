@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public enum OperationType
 {
 	MovRegMemToFromRegMask = 0,
+	MovImmediateToReg,
 	None
 };
 
@@ -86,6 +87,10 @@ class InstructionBuilder
 
 					program.AddInstruction(instruction);
 				}
+				else if (instruction.type == OperationType.MovImmediateToReg)
+				{
+					// TODO: implement me
+				}
 
 				ClearBytes();
 				numBytesToRead = 1;
@@ -110,6 +115,7 @@ class InstructionBuilder
 		}
 
 		const byte movRegMemToFromRegMask = 0b1000_1000;
+		const byte movImmediateToRegMask = 0b1011_0000;
 		byte WFieldMask = 0b0000_0001;
 
 		if ((firstByte & movRegMemToFromRegMask) == movRegMemToFromRegMask)
@@ -119,6 +125,11 @@ class InstructionBuilder
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
 
 			instruction.type = OperationType.MovRegMemToFromRegMask;
+		}
+		else if ((firstByte & movImmediateToRegMask) == movImmediateToRegMask)
+		{
+			WFieldMask = 0b0000_1000;
+			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
 		}
 	}
 
