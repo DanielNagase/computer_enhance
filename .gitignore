@@ -90,3 +90,6 @@ crashlytics-build.properties
 /Tutorial Defaults/
 InitCodeMarker
 ProjectSettings/Packages/com.unity.learn.iet-framework/Settings.json
+
+# other
+**/*.exe
