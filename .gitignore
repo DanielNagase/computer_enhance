@@ -93,3 +93,4 @@ ProjectSettings/Packages/com.unity.learn.iet-framework/Settings.json
 
 # other
 **/*.exe
+part1/output/**
