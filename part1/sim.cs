@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public enum OperationType
 {
-	Mov = 0,
+	MovRegMemToFromRegMask = 0,
 	None
 };
 
@@ -75,13 +75,13 @@ class InstructionBuilder
 				Instruction instruction = new Instruction();
 				DecodeInstructionFromFirstByte(bytes[0], ref instruction);
 
-				if (instruction.type == OperationType.Mov)
+				if (instruction.type == OperationType.MovRegMemToFromRegMask)
 				{
 					numBytesToRead += 1;
 					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
 					if (bytesRead == 1)
 					{
-						ParseSecondByteOfMov(bytes[1], ref instruction);
+						ParseSecondByteOfMovRegMemToFromRegMask(bytes[1], ref instruction);
 					}
 
 					program.AddInstruction(instruction);
@@ -118,11 +118,11 @@ class InstructionBuilder
 			instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
 
-			instruction.type = OperationType.Mov;
+			instruction.type = OperationType.MovRegMemToFromRegMask;
 		}
 	}
 
-	public void ParseSecondByteOfMov(byte secondByte, ref Instruction instruction)
+	public void ParseSecondByteOfMovRegMemToFromRegMask(byte secondByte, ref Instruction instruction)
 	{
 		if (instruction == null)
 		{
@@ -299,7 +299,7 @@ class Program
 	{
 		string output = "";
 
-		if (instruction.type == OperationType.Mov)
+		if (instruction.type == OperationType.MovRegMemToFromRegMask)
 		{
 			string source = "";
 			string destination = "";
