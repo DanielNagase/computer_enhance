@@ -43,8 +43,6 @@ class Instruction
 
 class InstructionBuilder
 {
-	// first byte
-	const byte movRegMemToFromRegMask = 0b1000_1000;
 	// second byte
 	const byte modMask = 0b1100_0000;
 	const byte regMask = 0b0011_1000;
@@ -75,7 +73,7 @@ class InstructionBuilder
 				numBytesRead += numCurrentBytesRead;
 				numBytesToRead -= numCurrentBytesRead;
 				Instruction instruction = new Instruction();
-				Build(bytes[0], ref instruction);
+				DecodeInstructionFromFirstByte(bytes[0], ref instruction);
 
 				if (instruction.type == OperationType.Mov)
 				{
@@ -104,13 +102,14 @@ class InstructionBuilder
 		}
 	}
 
-	public void Build(byte firstByte, ref Instruction instruction)
+	public void DecodeInstructionFromFirstByte(byte firstByte, ref Instruction instruction)
 	{
 		if (instruction == null)
 		{
 			return;
 		}
 
+		const byte movRegMemToFromRegMask = 0b1000_1000;
 		byte WFieldMask = 0b0000_0001;
 
 		if ((firstByte & movRegMemToFromRegMask) == movRegMemToFromRegMask)
