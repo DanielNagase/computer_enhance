@@ -45,8 +45,6 @@ class InstructionBuilder
 {
 	// first byte
 	const byte movRegMemToFromRegMask = 0b1000_1000;
-	const byte DFieldMask =         0b0000_0010;
-	const byte WFieldMask =         0b0000_0001;
 	// second byte
 	const byte modMask = 0b1100_0000;
 	const byte regMask = 0b0011_1000;
@@ -113,11 +111,14 @@ class InstructionBuilder
 			return;
 		}
 
-		instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
-		instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+		byte WFieldMask = 0b0000_0001;
 
 		if ((firstByte & movRegMemToFromRegMask) == movRegMemToFromRegMask)
 		{
+			const byte DFieldMask = 0b0000_0010;
+			instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
+			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+
 			instruction.type = OperationType.Mov;
 		}
 	}
