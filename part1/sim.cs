@@ -26,6 +26,11 @@ public enum RegisterType
 	AX, CX, DX, BX, SP, BP, SI, DI, None
 };
 
+public enum EffectiveAddressType
+{
+	BX_plus_SI, BX_plus_DI, BP_plus_SI, BP_plus_DI, SI, DI, DirectAddress, BP, BX, None
+};
+
 class Instruction
 {
 	public OperationType type = OperationType.None;
@@ -35,6 +40,11 @@ class Instruction
 	// depending on the instruction, one or both may not be used
 	public RegisterType destinationRegister = RegisterType.None;
 	public RegisterType sourceRegister = RegisterType.None;
+
+	// calculated from R/M field
+	public EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
+	// 8-bit or 16-bit displacement value. may not be used
+	public int displacement = 0;
 
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
