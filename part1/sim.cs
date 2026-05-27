@@ -158,11 +158,14 @@ class InstructionBuilder
 		byte regValue = (byte)((secondByte & regMask) >> 3);
 		byte rmValue = (byte)(secondByte & rmMask);
 		RegisterType regField = ParseRegValue(regValue, ref instruction);
-		RegisterType rmField = RegisterType.None;
+		bool bIsMemoryModeEnabled =
+			instruction.modeType == ModeType.MemoryNoDisplacement ||
+			instruction.modeType == ModeType.Memory8BitDisplacement ||
+			instruction.modeType == ModeType.Memory16BitDisplacement;
 
 		if (instruction.modeType == ModeType.Register)
 		{
-			rmField = ParseRegValue(rmValue, ref instruction);
+			RegisterType rmField = ParseRegValue(rmValue, ref instruction);
 
 			if (instruction.bUseRegFieldAsDestination)
 			{
@@ -175,7 +178,10 @@ class InstructionBuilder
 				instruction.destinationRegister = rmField;
 			}
 		}
-		// TODO: handle other ModeType values
+		else if (bIsMemoryModeEnabled)
+		{
+			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
+		}
 	}
 
 	void ParseModValue(byte secondByte, ref Instruction instruction)
@@ -284,6 +290,57 @@ class InstructionBuilder
 		}
 
 		return register;
+	}
+
+	// Parse memValue into an effective address calculation. The
+	// memValue parameter is a three-bit sequence that occupies the
+	// three least significant bits.
+	EffectiveAddressType ParseMemValue(byte memValue, ModeType modeType)
+	{
+		EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
+
+		if (modeType == ModeType.Register)
+		{
+			return EffectiveAddressType.None;
+		}
+
+		switch(memValue)
+		{
+			case 0b0000_0000:
+				effectiveAddress = EffectiveAddressType.BX_plus_SI;
+				break;
+			case 0b0000_0001:
+				effectiveAddress = EffectiveAddressType.BX_plus_DI;
+				break;
+			case 0b0000_0010:
+				effectiveAddress = EffectiveAddressType.BP_plus_SI;
+				break;
+			case 0b0000_0011:
+				effectiveAddress = EffectiveAddressType.BP_plus_DI;
+				break;
+			case 0b0000_0100:
+				effectiveAddress = EffectiveAddressType.SI;
+				break;
+			case 0b0000_0101:
+				effectiveAddress = EffectiveAddressType.DI;
+				break;
+			case 0b0000_0110:
+				effectiveAddress = EffectiveAddressType.BP;
+				break;
+			case 0b0000_0111:
+				effectiveAddress = EffectiveAddressType.BX;
+				break;
+			default:
+				break;
+		}
+
+		if ((effectiveAddress == EffectiveAddressType.BP) &&
+			(modeType == ModeType.MemoryNoDisplacement))
+		{
+			effectiveAddress = EffectiveAddressType.DirectAddress;
+		}
+
+		return effectiveAddress;
 	}
 }
 
