@@ -438,6 +438,60 @@ class Program
 		}
 	}
 
+	static string ConvertEffectiveAddressToString(EffectiveAddressType effectiveAddress, short displacement)
+	{
+		if (effectiveAddress == EffectiveAddressType.None)
+		{
+			return "";
+		}
+
+		string addressString= "";
+
+		switch(effectiveAddress)
+		{
+			case EffectiveAddressType.BX_plus_SI:
+				addressString = "bx + si";
+				break;
+			case EffectiveAddressType.BX_plus_DI:
+				addressString = "bx + di";
+				break;
+			case EffectiveAddressType.BP_plus_SI:
+				addressString = "bp + si";
+				break;
+			case EffectiveAddressType.BP_plus_DI:
+				addressString = "bp + di";
+				break;
+			case EffectiveAddressType.SI:
+				addressString = "si";
+				break;
+			case EffectiveAddressType.DI:
+				addressString = "di";
+				break;
+			case EffectiveAddressType.DirectAddress:
+				// TODO: handle this?
+				break;
+			case EffectiveAddressType.BP:
+				addressString = "bp";
+				break;
+			case EffectiveAddressType.BX:
+				addressString = "bx";
+				break;
+			default:
+				break;
+		}
+
+		string displacementString = "";
+
+		if (displacement != 0)
+		{
+			displacementString = " + " + displacement;
+		}
+
+		string output = $"[{addressString}{displacementString}]";
+
+		return output;
+	}
+
 	static string ConvertRegisterToString(RegisterType register)
 	{
 		return Enum.GetName(typeof(RegisterType), register).ToLower();
@@ -477,13 +531,17 @@ class Program
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
+				string address = ConvertEffectiveAddressToString(instruction.effectiveAddress, instruction.displacement);
+
 				if (instruction.bUseRegFieldAsDestination)
 				{
 					destination = ConvertRegisterToString(instruction.destinationRegister);
+					source = address;
 				}
 				else
 				{
 					source = ConvertRegisterToString(instruction.sourceRegister);
+					destination = address;
 				}
 			}
 		}
