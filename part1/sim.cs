@@ -127,7 +127,7 @@ class InstructionBuilder
 						if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
 						{
 							ReadOnlySpan<byte> dispBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
-							instruction.displacement = CalculateDisplacement(dispBytes);
+							instruction.displacement = ParseByteValue(dispBytes);
 							numBytesRead += additionalBytesRead;
 						}
 					}
@@ -154,31 +154,36 @@ class InstructionBuilder
 		}
 	}
 
-	static short CalculateDisplacement(ReadOnlySpan<byte> displacementBytes)
+	// Read an 8-bit value from one byte or a 16-bit value from two
+	// bytes. Some of the mov variants use this type of byte sequence
+	// to store values like displacement values (DISP-LO and DISP-HI)
+	// or immediate constants.
+	static short ParseByteValue(ReadOnlySpan<byte> bytes)
 	{
-		short displacement = 0;
+		short numberValue = 0;
 
-		if (displacementBytes.Length == 1)
+		if (bytes.Length == 1)
 		{
-			displacement = (short)displacementBytes[0];
+			numberValue = (short)bytes[0];
 		}
-		else if (displacementBytes.Length == 2)
+		else if (bytes.Length == 2)
 		{
-			// On the 8086, the order of displacement is DISP-LO to DISP-HI,
-			// in other words, little-endian.
+			// On the 8086, the order of displacement is DISP-LO to
+			// DISP-HI, and similarly DATA-LO to DATA-HI for immediate
+			// constants. In other words, it's little-endian.
 			if (!BitConverter.IsLittleEndian)
 			{
-				Span<byte> reversedBytes = new Span<byte>(displacementBytes.ToArray());
+				Span<byte> reversedBytes = new Span<byte>(bytes.ToArray());
 				reversedBytes.Reverse();
-				displacement = BitConverter.ToInt16(reversedBytes);
+				numberValue = BitConverter.ToInt16(reversedBytes);
 			}
 			else
 			{
-				displacement = BitConverter.ToInt16(displacementBytes);
+				numberValue = BitConverter.ToInt16(bytes);
 			}
 		}
 
-		return displacement;
+		return numberValue;
 	}
 
 	void ClearBytes()
