@@ -88,11 +88,37 @@ class InstructionBuilder
 
 				if (instruction.type == OperationType.MovRegMemToFromRegMask)
 				{
-					numBytesToRead += 1;
-					int bytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
-					if (bytesRead == 1)
+					int additionalBytesToRead = 1;
+					int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
+
+					if (additionalBytesRead == 1)
 					{
+						numBytesRead += additionalBytesRead;
 						ParseSecondByteOfMovRegMemToFromRegMask(bytes[1], ref instruction);
+					}
+
+					additionalBytesToRead = 0;
+
+					if (instruction.modeType == ModeType.Memory8BitDisplacement)
+					{
+						additionalBytesToRead = 1;
+					}
+					else if (instruction.modeType == ModeType.Memory16BitDisplacement ||
+							 instruction.effectiveAddress == EffectiveAddressType.DirectAddress)
+					{
+						additionalBytesToRead = 2;
+					}
+
+					if (additionalBytesToRead > 0)
+					{
+						additionalBytesRead = 0;
+						additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
+
+						if (additionalBytesRead > 0)
+						{
+							numBytesRead += additionalBytesRead;
+							// TODO: do something with additional bytes we read (the DISP-LO and DISP-HI values)
+						}
 					}
 
 					program.AddInstruction(instruction);
