@@ -44,7 +44,7 @@ class Instruction
 	// calculated from R/M field
 	public EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
 	// 8-bit or 16-bit displacement value. may not be used
-	public int displacement = 0;
+	public short displacement = 0;
 
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
@@ -114,10 +114,13 @@ class InstructionBuilder
 						additionalBytesRead = 0;
 						additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
 
-						if (additionalBytesRead > 0)
+						if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
 						{
+							byte[] dispBytes = new byte[2];
+							dispBytes[0] = bytes[numBytesRead];
+							dispBytes[1] = bytes[numBytesRead+1];
+							instruction.displacement = CalculateDisplacement(dispBytes, additionalBytesRead);
 							numBytesRead += additionalBytesRead;
-							// TODO: do something with additional bytes we read (the DISP-LO and DISP-HI values)
 						}
 					}
 
@@ -133,6 +136,34 @@ class InstructionBuilder
 				numBytesRead = 0;
 			}
 		}
+	}
+
+	static short CalculateDisplacement(byte[] bytes, int size)
+	{
+		short displacement = 0;
+
+		if (size == 1)
+		{
+			displacement = (short)BitConverter.ToChar(bytes);
+		}
+		else if (size == 2)
+		{
+			// On the 8086, the order of displacement is DISP-LO to DISP-HI,
+			// in other words, little-endian.
+			if (!BitConverter.IsLittleEndian)
+			{
+				byte[] reversedBytes = new byte[2];
+				reversedBytes[0] = bytes[1];
+				reversedBytes[1] = bytes[0];
+				displacement = BitConverter.ToInt16(reversedBytes);
+			}
+			else
+			{
+				displacement = BitConverter.ToInt16(bytes);
+			}
+		}
+
+		return displacement;
 	}
 
 	void ClearBytes()
