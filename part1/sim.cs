@@ -203,11 +203,13 @@ class InstructionBuilder
 			return;
 		}
 
-		const byte movRegMemToFromRegMask = 0b1000_1000;
-		const byte movImmediateToRegMask = 0b1011_0000;
+		const byte movRegMemToFromRegMask = 0b1111_1100;
+		const byte movRegMemToFromRegValue = 0b1000_1000;
+		const byte movImmediateToRegMask = 0b1111_0000;
+		const byte movImmediateToRegValue = 0b1011_0000;
 		byte WFieldMask = 0b0000_0001;
 
-		if ((firstByte & movRegMemToFromRegMask) == movRegMemToFromRegMask)
+		if ((byte)(firstByte & movRegMemToFromRegMask) == movRegMemToFromRegValue)
 		{
 			const byte DFieldMask = 0b0000_0010;
 			instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
@@ -215,7 +217,7 @@ class InstructionBuilder
 
 			instruction.type = OperationType.MovRegMemToFromRegMask;
 		}
-		else if ((firstByte & movImmediateToRegMask) == movImmediateToRegMask)
+		else if ((byte)(firstByte & movImmediateToRegMask) == movImmediateToRegValue)
 		{
 			WFieldMask = 0b0000_1000;
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
