@@ -430,24 +430,41 @@ class Program
 		return Enum.GetName(typeof(RegisterType), register).ToLower();
 	}
 
-	void PrintInstruction(Instruction instruction)
+	static string ConvertOperationTypeToString(OperationType operation)
 	{
 		string output = "";
 
+		switch(operation)
+		{
+			case OperationType.MovRegMemToFromRegMask:
+			case OperationType.MovImmediateToReg:
+				output = "mov";
+				break;
+			default:
+				break;
+		}
+
+		return output;
+	}
+
+	void PrintInstruction(Instruction instruction)
+	{
+		string output = "";
+		string operation = ConvertOperationTypeToString(instruction.type);
+		string source = "";
+		string destination = "";
+
 		if (instruction.type == OperationType.MovRegMemToFromRegMask)
 		{
-			string source = "";
-			string destination = "";
 
 			if (instruction.modeType == ModeType.Register)
 			{
 				destination = ConvertRegisterToString(instruction.destinationRegister);
 				source = ConvertRegisterToString(instruction.sourceRegister);
 			}
-
-			output = $"mov {destination}, {source}";
 		}
 
+		output = $"{operation} {destination}, {source}";
 		Console.WriteLine(output);
 	}
 }
