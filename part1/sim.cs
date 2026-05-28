@@ -475,6 +475,17 @@ class Program
 				destination = ConvertRegisterToString(instruction.destinationRegister);
 				source = ConvertRegisterToString(instruction.sourceRegister);
 			}
+			else if (instruction.IsMemoryModeEnabled())
+			{
+				if (instruction.bUseRegFieldAsDestination)
+				{
+					destination = ConvertRegisterToString(instruction.destinationRegister);
+				}
+				else
+				{
+					source = ConvertRegisterToString(instruction.sourceRegister);
+				}
+			}
 		}
 
 		output = $"{operation} {destination}, {source}";
