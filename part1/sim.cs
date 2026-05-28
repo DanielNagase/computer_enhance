@@ -133,7 +133,15 @@ class InstructionBuilder
 				}
 				else if (instruction.type == OperationType.MovImmediateToReg)
 				{
-					// TODO: implement me
+					int additionalBytesToRead = instruction.bIsWordOperation ? 2 : 1;
+					int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
+
+					if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
+					{
+						ReadOnlySpan<byte> immediateValueBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
+						numBytesRead += additionalBytesRead;
+						// TODO: parse immediate value
+					}
 				}
 
 				ClearBytes();
