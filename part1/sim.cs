@@ -123,10 +123,8 @@ class InstructionBuilder
 
 						if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
 						{
-							byte[] dispBytes = new byte[2];
-							dispBytes[0] = bytes[numBytesRead];
-							dispBytes[1] = bytes[numBytesRead+1];
-							instruction.displacement = CalculateDisplacement(dispBytes, additionalBytesRead);
+							ReadOnlySpan<byte> dispBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
+							instruction.displacement = CalculateDisplacement(dispBytes);
 							numBytesRead += additionalBytesRead;
 						}
 					}
@@ -145,28 +143,27 @@ class InstructionBuilder
 		}
 	}
 
-	static short CalculateDisplacement(byte[] bytes, int size)
+	static short CalculateDisplacement(ReadOnlySpan<byte> displacementBytes)
 	{
 		short displacement = 0;
 
-		if (size == 1)
+		if (displacementBytes.Length == 1)
 		{
-			displacement = (short)BitConverter.ToChar(bytes);
+			displacement = (short)displacementBytes[0];
 		}
-		else if (size == 2)
+		else if (displacementBytes.Length == 2)
 		{
 			// On the 8086, the order of displacement is DISP-LO to DISP-HI,
 			// in other words, little-endian.
 			if (!BitConverter.IsLittleEndian)
 			{
-				byte[] reversedBytes = new byte[2];
-				reversedBytes[0] = bytes[1];
-				reversedBytes[1] = bytes[0];
+				Span<byte> reversedBytes = new Span<byte>(displacementBytes.ToArray());
+				reversedBytes.Reverse();
 				displacement = BitConverter.ToInt16(reversedBytes);
 			}
 			else
 			{
-				displacement = BitConverter.ToInt16(bytes);
+				displacement = BitConverter.ToInt16(displacementBytes);
 			}
 		}
 
