@@ -37,6 +37,13 @@ class Instruction
 	// MOD field
 	public ModeType modeType = ModeType.MemoryNoDisplacement;
 
+	public bool IsMemoryModeEnabled()
+	{
+		return modeType == ModeType.MemoryNoDisplacement ||
+			modeType == ModeType.Memory8BitDisplacement ||
+			modeType == ModeType.Memory16BitDisplacement;
+	}
+
 	// depending on the instruction, one or both may not be used
 	public RegisterType destinationRegister = RegisterType.None;
 	public RegisterType sourceRegister = RegisterType.None;
@@ -215,10 +222,7 @@ class InstructionBuilder
 		byte regValue = (byte)((secondByte & regMask) >> 3);
 		byte rmValue = (byte)(secondByte & rmMask);
 		RegisterType regField = ParseRegValue(regValue, ref instruction);
-		bool bIsMemoryModeEnabled =
-			instruction.modeType == ModeType.MemoryNoDisplacement ||
-			instruction.modeType == ModeType.Memory8BitDisplacement ||
-			instruction.modeType == ModeType.Memory16BitDisplacement;
+		bool bIsMemoryModeEnabled = instruction.IsMemoryModeEnabled();
 
 		if (instruction.modeType == ModeType.Register)
 		{
