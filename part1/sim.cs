@@ -241,6 +241,15 @@ class InstructionBuilder
 		}
 		else if (bIsMemoryModeEnabled)
 		{
+			if (instruction.bUseRegFieldAsDestination)
+			{
+				instruction.destinationRegister = regField;
+			}
+			else
+			{
+				instruction.sourceRegister = regField;
+			}
+
 			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
 		}
 	}
