@@ -544,7 +544,6 @@ class Program
 
 		if (instruction.type == OperationType.MovRegMemToFromRegMask)
 		{
-
 			if (instruction.modeType == ModeType.Register)
 			{
 				destination = ConvertRegisterToString(instruction.destinationRegister);
@@ -565,6 +564,11 @@ class Program
 					destination = address;
 				}
 			}
+		}
+		else if (instruction.type == OperationType.MovImmediateToReg)
+		{
+			destination = ConvertRegisterToString(instruction.destinationRegister);
+			source = $"{instruction.immediateValue}";
 		}
 
 		output = $"{operation} {destination}, {source}";
