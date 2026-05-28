@@ -143,8 +143,10 @@ class InstructionBuilder
 					{
 						ReadOnlySpan<byte> immediateValueBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
 						numBytesRead += additionalBytesRead;
-						// TODO: parse immediate value
+						instruction.immediateValue = ParseByteValue(immediateValueBytes);
 					}
+
+					program.AddInstruction(instruction);
 				}
 
 				ClearBytes();
