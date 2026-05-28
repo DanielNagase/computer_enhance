@@ -219,6 +219,12 @@ class InstructionBuilder
 		{
 			WFieldMask = 0b0000_1000;
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+			instruction.type = OperationType.MovImmediateToReg;
+
+			const byte regFieldMask = 0b0000_0111;
+			byte regValue = (byte)(firstByte & regFieldMask);
+			RegisterType regField = ParseRegValue(regValue, ref instruction);
+			instruction.destinationRegister = regField;
 		}
 	}
 
