@@ -53,6 +53,9 @@ class Instruction
 	// 8-bit or 16-bit displacement value. may not be used
 	public short displacement = 0;
 
+	// 8-bit or 16-bit immediate value. may not be used
+	public short immediateValue = 0;
+
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
 	// W field (1 = word, 0 = byte)
