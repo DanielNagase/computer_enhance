@@ -11,3 +11,7 @@ mono ./sim.exe listing_0038_many_register_mov > output/listing_0038_many_registe
 nasm output/listing_0038_many_register_mov.asm
 diff -q output/listing_0038_many_register_mov listing_0038_many_register_mov
 
+mono ./sim.exe listing_0039_more_movs > output/listing_0039_more_movs.asm
+nasm output/listing_0039_more_movs.asm
+diff -q output/listing_0039_more_movs listing_0039_more_movs
+
