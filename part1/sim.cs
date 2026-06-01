@@ -95,7 +95,7 @@ class InstructionBuilder
 				numBytesRead += numCurrentBytesRead;
 				numBytesToRead -= numCurrentBytesRead;
 				Instruction instruction = new Instruction();
-				DecodeInstructionFromFirstByte(bytes[0], ref instruction);
+				DecodeFirstByteOfInstruction(bytes[0], ref instruction);
 
 				if (instruction.type == OperationType.MovRegMemToFromRegMask)
 				{
@@ -105,7 +105,7 @@ class InstructionBuilder
 					if (additionalBytesRead == 1)
 					{
 						numBytesRead += additionalBytesRead;
-						ParseSecondByteOfMovRegMemToFromRegMask(bytes[1], ref instruction);
+						DecodeSecondByteOfInstruction(bytes[1], ref instruction);
 					}
 
 					additionalBytesToRead = 0;
@@ -210,7 +210,7 @@ class InstructionBuilder
 		}
 	}
 
-	public void DecodeInstructionFromFirstByte(byte firstByte, ref Instruction instruction)
+	public void DecodeFirstByteOfInstruction(byte firstByte, ref Instruction instruction)
 	{
 		if (instruction == null)
 		{
@@ -244,7 +244,7 @@ class InstructionBuilder
 		}
 	}
 
-	public void ParseSecondByteOfMovRegMemToFromRegMask(byte secondByte, ref Instruction instruction)
+	public void DecodeSecondByteOfInstruction(byte secondByte, ref Instruction instruction)
 	{
 		if (instruction == null)
 		{
