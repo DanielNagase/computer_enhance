@@ -108,25 +108,7 @@ class InstructionBuilder
 						DecodeSecondByteOfInstruction(bytes[1], ref instruction);
 					}
 
-					additionalBytesToRead = 0;
-
-					if (instruction.modeType == ModeType.Memory8BitDisplacement)
-					{
-						additionalBytesToRead = 1;
-					}
-					else if (instruction.modeType == ModeType.Memory16BitDisplacement ||
-							 instruction.effectiveAddress == EffectiveAddressType.DirectAddress)
-					{
-						additionalBytesToRead = 2;
-					}
-
-					if (additionalBytesToRead > 0)
-					{
-						ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
-									  out short byteValue);
-						instruction.displacement = byteValue;
-					}
-
+					ReadDisplacementValue(filestream, ref numBytesRead, ref instruction);
 					program.AddInstruction(instruction);
 				}
 				else if (instruction.type == OperationType.MovImmediateToReg)
@@ -139,6 +121,28 @@ class InstructionBuilder
 				numBytesToRead = 1;
 				numBytesRead = 0;
 			}
+		}
+	}
+
+	private void ReadDisplacementValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
+	{
+		int additionalBytesToRead = 0;
+
+		if (instruction.modeType == ModeType.Memory8BitDisplacement)
+		{
+			additionalBytesToRead = 1;
+		}
+		else if (instruction.modeType == ModeType.Memory16BitDisplacement ||
+				 instruction.effectiveAddress == EffectiveAddressType.DirectAddress)
+		{
+			additionalBytesToRead = 2;
+		}
+
+		if (additionalBytesToRead > 0)
+		{
+			ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
+						  out short byteValue);
+			instruction.displacement = byteValue;
 		}
 	}
 
