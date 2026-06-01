@@ -131,10 +131,7 @@ class InstructionBuilder
 				}
 				else if (instruction.type == OperationType.MovImmediateToReg)
 				{
-					int additionalBytesToRead = instruction.bIsWordOperation ? 2 : 1;
-					ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
-								  out short byteValue);
-					instruction.immediateValue = byteValue;
+					ReadImmediateValue(filestream, ref numBytesRead, ref instruction);
 					program.AddInstruction(instruction);
 				}
 
@@ -143,6 +140,14 @@ class InstructionBuilder
 				numBytesRead = 0;
 			}
 		}
+	}
+
+	private void ReadImmediateValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
+	{
+		int additionalBytesToRead = instruction.bIsWordOperation ? 2 : 1;
+		ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
+					  out short byteValue);
+		instruction.immediateValue = byteValue;
 	}
 
 	private void ReadByteValue(FileStream filestream, int additionalBytesToRead,
