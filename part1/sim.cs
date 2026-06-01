@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public enum OperationType
 {
 	MovRegMemToFromRegMask = 0,
+	MovImmediateToRegMem,
 	MovImmediateToReg,
 	None
 };
