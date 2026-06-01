@@ -45,6 +45,11 @@ class Instruction
 			modeType == ModeType.Memory16BitDisplacement;
 	}
 
+	public bool IsSixByteInstruction()
+	{
+		return type == OperationType.MovImmediateToRegMem;
+	}
+
 	// depending on the instruction, one or both may not be used
 	public RegisterType destinationRegister = RegisterType.None;
 	public RegisterType sourceRegister = RegisterType.None;
@@ -224,6 +229,8 @@ class InstructionBuilder
 
 		const byte movRegMemToFromRegMask = 0b1111_1100;
 		const byte movRegMemToFromRegValue = 0b1000_1000;
+		const byte movImmediateToRegMemMask = 0b1111_1110;
+		const byte movImmediateToRegMemValue = 0b1100_0110;
 		const byte movImmediateToRegMask = 0b1111_0000;
 		const byte movImmediateToRegValue = 0b1011_0000;
 		byte WFieldMask = 0b0000_0001;
@@ -233,8 +240,12 @@ class InstructionBuilder
 			const byte DFieldMask = 0b0000_0010;
 			instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
-
 			instruction.type = OperationType.MovRegMemToFromRegMask;
+		}
+		else if ((byte)(firstByte & movImmediateToRegMemMask) == movImmediateToRegMemValue)
+		{
+			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+			instruction.type = OperationType.MovImmediateToRegMem;
 		}
 		else if ((byte)(firstByte & movImmediateToRegMask) == movImmediateToRegValue)
 		{
@@ -283,13 +294,20 @@ class InstructionBuilder
 		}
 		else if (bIsMemoryModeEnabled)
 		{
-			if (instruction.bUseRegFieldAsDestination)
+			if (!instruction.IsSixByteInstruction())
 			{
-				instruction.destinationRegister = regField;
+				if (instruction.bUseRegFieldAsDestination)
+				{
+					instruction.destinationRegister = regField;
+				}
+				else
+				{
+					instruction.sourceRegister = regField;
+				}
 			}
 			else
 			{
-				instruction.sourceRegister = regField;
+				// regField is not used in this case, so don't do anything with it
 			}
 
 			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
