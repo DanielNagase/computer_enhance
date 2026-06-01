@@ -70,8 +70,6 @@ class InstructionBuilder
 	const byte rmMask  = 0b0000_0111;
 
 	byte[] bytes = new byte[6];
-	int numBytesToRead = 1;
-	int numBytesRead = 0;
 
 	public void ReadFile(string inputFilename, ref Program program)
 	{
@@ -82,6 +80,9 @@ class InstructionBuilder
 
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
+			int numBytesToRead = 1;
+			int numBytesRead = 0;
+
 			while (numBytesToRead > 0)
 			{
 				int numCurrentBytesRead = filestream.Read(bytes, numBytesRead, numBytesToRead);
