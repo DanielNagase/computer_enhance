@@ -137,15 +137,9 @@ class InstructionBuilder
 				else if (instruction.type == OperationType.MovImmediateToReg)
 				{
 					int additionalBytesToRead = instruction.bIsWordOperation ? 2 : 1;
-					int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
-
-					if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
-					{
-						ReadOnlySpan<byte> immediateValueBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
-						numBytesRead += additionalBytesRead;
-						instruction.immediateValue = ParseByteValue(immediateValueBytes);
-					}
-
+					ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
+								  out short byteValue);
+					instruction.immediateValue = byteValue;
 					program.AddInstruction(instruction);
 				}
 
@@ -153,6 +147,26 @@ class InstructionBuilder
 				numBytesToRead = 1;
 				numBytesRead = 0;
 			}
+		}
+	}
+
+	private void ReadByteValue(FileStream filestream, int additionalBytesToRead,
+							   ref int numBytesRead, out short byteValue)
+	{
+		byteValue = 0;
+
+		if (filestream == null || !filestream.CanRead)
+		{
+			return;
+		}
+
+		int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
+
+		if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
+		{
+			ReadOnlySpan<byte> valueBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
+			numBytesRead += additionalBytesRead;
+			byteValue = ParseByteValue(valueBytes);
 		}
 	}
 
