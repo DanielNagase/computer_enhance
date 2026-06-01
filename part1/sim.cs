@@ -121,15 +121,9 @@ class InstructionBuilder
 
 					if (additionalBytesToRead > 0)
 					{
-						additionalBytesRead = 0;
-						additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
-
-						if ((additionalBytesRead > 0) && (additionalBytesRead == additionalBytesToRead))
-						{
-							ReadOnlySpan<byte> dispBytes = new ReadOnlySpan<byte>(bytes, numBytesRead, additionalBytesRead);
-							instruction.displacement = ParseByteValue(dispBytes);
-							numBytesRead += additionalBytesRead;
-						}
+						ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
+									  out short byteValue);
+						instruction.displacement = byteValue;
 					}
 
 					program.AddInstruction(instruction);
