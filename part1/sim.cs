@@ -70,11 +70,6 @@ class Instruction
 
 class InstructionBuilder
 {
-	// second byte
-	const byte modMask = 0b1100_0000;
-	const byte regMask = 0b0011_1000;
-	const byte rmMask  = 0b0000_0111;
-
 	byte[] bytes = new byte[6];
 
 	public void ReadFile(string inputFilename, ref Program program)
@@ -267,9 +262,13 @@ class InstructionBuilder
 		// five. After extracting the value, we shift it right by
 		// three bits so it occupies the three least significant bits
 		// of a byte.
+		const byte regMask = 0b0011_1000;
 		byte regValue = (byte)((secondByte & regMask) >> 3);
-		byte rmValue = (byte)(secondByte & rmMask);
 		RegisterType regField = ParseRegValue(regValue, ref instruction);
+
+		const byte rmMask  = 0b0000_0111;
+		byte rmValue = (byte)(secondByte & rmMask);
+
 		bool bIsMemoryModeEnabled = instruction.IsMemoryModeEnabled();
 
 		if (instruction.modeType == ModeType.Register)
@@ -316,6 +315,7 @@ class InstructionBuilder
 			return;
 		}
 
+		const byte modMask = 0b1100_0000;
 		byte modValue = (byte)(secondByte & modMask);
 
 		switch(modValue)
