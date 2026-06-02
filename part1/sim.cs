@@ -162,7 +162,7 @@ class InstructionBuilder
 
 	private void ReadImmediateValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
 	{
-		int additionalBytesToRead = instruction.bIsWordOperation ? 2 : 1;
+		int additionalBytesToRead = instruction.NumberOfImmediateBytes();
 		ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
 					  out short byteValue);
 		instruction.immediateValue = byteValue;
