@@ -548,7 +548,7 @@ class Program
 				addressString = "di";
 				break;
 			case EffectiveAddressType.DirectAddress:
-				// TODO: handle this?
+				// handled below
 				break;
 			case EffectiveAddressType.BP:
 				addressString = "bp";
@@ -564,7 +564,14 @@ class Program
 
 		if (displacement != 0)
 		{
-			displacementString = " + " + displacement;
+			string separator = " + ";
+
+			if (effectiveAddress == EffectiveAddressType.DirectAddress)
+			{
+				separator = "";
+			}
+
+			displacementString = separator + displacement;
 		}
 
 		string output = $"[{addressString}{displacementString}]";
@@ -585,6 +592,7 @@ class Program
 		{
 			case OperationType.MovRegMemToFromRegMask:
 			case OperationType.MovImmediateToReg:
+			case OperationType.MovImmediateToRegMem:
 				output = "mov";
 				break;
 			default:
@@ -622,6 +630,21 @@ class Program
 					source = ConvertRegisterToString(instruction.sourceRegister);
 					destination = address;
 				}
+			}
+		}
+		else if (instruction.type == OperationType.MovImmediateToRegMem)
+		{
+			source = $"{instruction.immediateValue}";
+
+			if (instruction.modeType == ModeType.Register)
+			{
+				destination = ConvertRegisterToString(instruction.destinationRegister);
+			}
+			else if (instruction.IsMemoryModeEnabled())
+			{
+				destination =
+					ConvertEffectiveAddressToString(instruction.effectiveAddress,
+													instruction.displacement);
 			}
 		}
 		else if (instruction.type == OperationType.MovImmediateToReg)
