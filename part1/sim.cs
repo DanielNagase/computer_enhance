@@ -45,9 +45,27 @@ class Instruction
 			modeType == ModeType.Memory16BitDisplacement;
 	}
 
-	public bool IsSixByteInstruction()
+	public int NumberOfImmediateBytes()
 	{
-		return type == OperationType.MovImmediateToRegMem;
+		int numberOfBytes = 0;
+
+		switch(type)
+		{
+			case OperationType.MovImmediateToRegMem:
+			case OperationType.MovImmediateToReg:
+				numberOfBytes = bIsWordOperation ? 2 : 1;
+				break;
+			default:
+				numberOfBytes = 0;
+				break;
+		}
+
+		return numberOfBytes;
+	}
+
+	public bool CanUseRegField()
+	{
+		return NumberOfImmediateBytes() == 0;
 	}
 
 	// depending on the instruction, one or both may not be used
@@ -288,7 +306,7 @@ class InstructionBuilder
 		}
 		else if (bIsMemoryModeEnabled)
 		{
-			if (!instruction.IsSixByteInstruction())
+			if (instruction.CanUseRegField())
 			{
 				if (instruction.bUseRegFieldAsDestination)
 				{
