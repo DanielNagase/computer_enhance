@@ -518,6 +518,11 @@ class Program
 		}
 	}
 
+	static string CreateByteOrWordPrefix(bool bIsWord)
+	{
+		return bIsWord ? "word " : "byte ";
+	}
+
 	static string ConvertEffectiveAddressToString(EffectiveAddressType effectiveAddress, short displacement)
 	{
 		if (effectiveAddress == EffectiveAddressType.None)
@@ -642,7 +647,9 @@ class Program
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
-				destination =
+				// TODO: see if we need the prefix for other cases
+				destination = CreateByteOrWordPrefix(instruction.bIsWordOperation);
+				destination +=
 					ConvertEffectiveAddressToString(instruction.effectiveAddress,
 													instruction.displacement);
 			}
