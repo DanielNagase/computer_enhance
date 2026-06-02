@@ -107,13 +107,8 @@ class InstructionBuilder
 				{
 					int additionalBytesToRead = 1;
 					int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
-
-					if (additionalBytesRead == 1)
-					{
-						numBytesRead += additionalBytesRead;
-						DecodeSecondByteOfInstruction(bytes[1], ref instruction);
-					}
-
+					numBytesRead += additionalBytesRead;
+					DecodeSecondByteOfInstruction(bytes[1], ref instruction);
 					ReadDisplacementValue(filestream, ref numBytesRead, ref instruction);
 					program.AddInstruction(instruction);
 				}
