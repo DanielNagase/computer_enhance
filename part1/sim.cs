@@ -8,6 +8,15 @@ public enum OperationType
 	MovRegMemToFromRegMask = 0,
 	MovImmediateToRegMem,
 	MovImmediateToReg,
+	AddRegMemWithRegToEither,
+	AddImmediateToRegMem,
+	AddImmediateToAccumulator,
+	SubRegMemAndRegToEither,
+	SubImmediateFromRegMem,
+	SubImmediateFromAccumulator,
+	CmpRegMemAndReg,
+	CmpImmediateWithRegMem,
+	CmpImmediateWithAccumulator,
 	None
 };
 
