@@ -106,6 +106,34 @@ class Instruction
 	public bool bIsWordOperation = false;
 }
 
+class OpcodeLibrary
+{
+	class OpcodeDefinition
+	{
+		byte mask = 0;
+		byte sequence = 0;
+		OperationType type = OperationType.None;
+		FormatType format = FormatType.None;
+
+		public OperationType Type { get => type; }
+		public FormatType Format { get => format; }
+
+		public OpcodeDefinition(byte inMask, byte inSequence,
+								OperationType inType, FormatType inFormat)
+		{
+			mask = inMask;
+			sequence = inSequence;
+			type = inType;
+			format = inFormat;
+		}
+
+		public bool Matches(byte inputByte)
+		{
+			return (byte)(inputByte & mask) == sequence;
+		}
+	}
+}
+
 class InstructionBuilder
 {
 	byte[] bytes = new byte[6];
