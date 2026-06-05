@@ -205,8 +205,8 @@ class InstructionBuilder
 				Instruction instruction = new Instruction();
 				DecodeFirstByteOfInstruction(bytes[0], ref instruction);
 
-				if (instruction.type == OperationType.MovRegMemToFromRegMask ||
-					instruction.type == OperationType.MovImmediateToRegMem)
+				if (instruction.format == FormatType.TwoBytesWithDisplacement ||
+					instruction.format == FormatType.TwoBytesWithDisplacementAndImmediate)
 				{
 					int additionalBytesToRead = 1;
 					int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
@@ -221,7 +221,7 @@ class InstructionBuilder
 
 					program.AddInstruction(instruction);
 				}
-				else if (instruction.type == OperationType.MovImmediateToReg)
+				else if (instruction.format == FormatType.OneByteWithImmediate)
 				{
 					ReadImmediateValue(filestream, ref numBytesRead, ref instruction);
 					program.AddInstruction(instruction);
