@@ -702,7 +702,7 @@ class Program
 		string source = "";
 		string destination = "";
 
-		if (instruction.type == OperationType.MovRegMemToFromRegMask)
+		if (instruction.format == FormatType.TwoBytesWithDisplacement)
 		{
 			if (instruction.modeType == ModeType.Register)
 			{
