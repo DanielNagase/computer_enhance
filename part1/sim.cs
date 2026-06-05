@@ -139,7 +139,9 @@ class OpcodeLibrary
 		new OpcodeDefinition(0b1111_1110, 0b1100_0110, OperationType.MovImmediateToRegMem,
 							 FormatType.TwoBytesWithDisplacementAndImmediate),
 		new OpcodeDefinition(0b1111_0000, 0b1011_0000, OperationType.MovImmediateToReg,
-							 FormatType.OneByteWithImmediate)
+							 FormatType.OneByteWithImmediate),
+		new OpcodeDefinition(0b1111_1100, 0b0000_0000, OperationType.AddRegMemWithRegToEither,
+							 FormatType.TwoBytesWithDisplacement),
 	};
 
 	void SetInstructionFromDefinition(ref Instruction instruction, OpcodeDefinition definition)
