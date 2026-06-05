@@ -683,6 +683,11 @@ class Program
 			case OperationType.MovImmediateToRegMem:
 				output = "mov";
 				break;
+			case OperationType.AddRegMemWithRegToEither:
+			case OperationType.AddImmediateToRegMem:
+			case OperationType.AddImmediateToAccumulator:
+				output = "add";
+				break;
 			default:
 				break;
 		}
