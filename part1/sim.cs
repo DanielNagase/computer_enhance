@@ -3,6 +3,15 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
+public enum FormatType
+{
+	None = 0,
+	TwoBytesWithDisplacement,
+	TwoBytesWithDisplacementAndImmediate,
+	OneByteWithImmediate,
+	OneByteWithIncrementToIP
+};
+
 public enum OperationType
 {
 	MovRegMemToFromRegMask = 0,
@@ -43,6 +52,8 @@ public enum EffectiveAddressType
 
 class Instruction
 {
+	public FormatType format = FormatType.None;
+
 	public OperationType type = OperationType.None;
 	// MOD field
 	public ModeType modeType = ModeType.MemoryNoDisplacement;
