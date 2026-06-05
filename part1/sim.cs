@@ -132,6 +132,46 @@ class OpcodeLibrary
 			return (byte)(inputByte & mask) == sequence;
 		}
 	}
+
+	OpcodeDefinition[] definitionList = new OpcodeDefinition[] {
+		new OpcodeDefinition(0b1111_1100, 0b1000_1000, OperationType.MovRegMemToFromRegMask,
+							 FormatType.TwoBytesWithDisplacement),
+		new OpcodeDefinition(0b1111_1110, 0b1100_0110, OperationType.MovImmediateToRegMem,
+							 FormatType.TwoBytesWithDisplacementAndImmediate),
+		new OpcodeDefinition(0b1111_0000, 0b1011_0000, OperationType.MovImmediateToReg,
+							 FormatType.OneByteWithImmediate)
+	};
+
+	void SetInstructionFromDefinition(ref Instruction instruction, OpcodeDefinition definition)
+	{
+		instruction.type = definition.Type;
+		instruction.format = definition.Format;
+	}
+
+	public void LookupTypeAndFormat(byte firstByte, ref Instruction instruction)
+	{
+		bool bDidLookup = false;
+
+		for (int i = 0; i < definitionList.Length; i++)
+		{
+			OpcodeDefinition definition = definitionList[i];
+
+			if (definition == null || !definition.Matches(firstByte))
+			{
+				continue;
+			}
+
+			SetInstructionFromDefinition(ref instruction, definition);
+			bDidLookup = true;
+
+			break;
+		}
+
+		if (!bDidLookup)
+		{
+			throw new Exception("Couldn't look up instruction type!");
+		}
+	}
 }
 
 class InstructionBuilder
