@@ -177,6 +177,7 @@ class OpcodeLibrary
 class InstructionBuilder
 {
 	byte[] bytes = new byte[6];
+	OpcodeLibrary library = new OpcodeLibrary();
 
 	public void ReadFile(string inputFilename, ref Program program)
 	{
@@ -330,31 +331,23 @@ class InstructionBuilder
 			return;
 		}
 
-		const byte movRegMemToFromRegMask = 0b1111_1100;
-		const byte movRegMemToFromRegValue = 0b1000_1000;
-		const byte movImmediateToRegMemMask = 0b1111_1110;
-		const byte movImmediateToRegMemValue = 0b1100_0110;
-		const byte movImmediateToRegMask = 0b1111_0000;
-		const byte movImmediateToRegValue = 0b1011_0000;
+		library.LookupTypeAndFormat(firstByte, ref instruction);
 		byte WFieldMask = 0b0000_0001;
 
-		if ((byte)(firstByte & movRegMemToFromRegMask) == movRegMemToFromRegValue)
+		if (instruction.format == FormatType.TwoBytesWithDisplacement)
 		{
 			const byte DFieldMask = 0b0000_0010;
 			instruction.bUseRegFieldAsDestination = (firstByte & DFieldMask) != 0;
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
-			instruction.type = OperationType.MovRegMemToFromRegMask;
 		}
-		else if ((byte)(firstByte & movImmediateToRegMemMask) == movImmediateToRegMemValue)
+		else if (instruction.format == FormatType.TwoBytesWithDisplacementAndImmediate)
 		{
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
-			instruction.type = OperationType.MovImmediateToRegMem;
 		}
-		else if ((byte)(firstByte & movImmediateToRegMask) == movImmediateToRegValue)
+		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
 			WFieldMask = 0b0000_1000;
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
-			instruction.type = OperationType.MovImmediateToReg;
 
 			const byte regFieldMask = 0b0000_0111;
 			byte regValue = (byte)(firstByte & regFieldMask);
