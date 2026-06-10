@@ -387,13 +387,20 @@ class InstructionBuilder
 		}
 		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
-			WFieldMask = 0b0000_1000;
-			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+			if (instruction.type == OperationType.MovImmediateToReg)
+			{
+				WFieldMask = 0b0000_1000;
+				instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
 
-			const byte regFieldMask = 0b0000_0111;
-			byte regValue = (byte)(firstByte & regFieldMask);
-			RegisterType regField = ParseRegValue(regValue, ref instruction);
-			instruction.destinationRegister = regField;
+				const byte regFieldMask = 0b0000_0111;
+				byte regValue = (byte)(firstByte & regFieldMask);
+				RegisterType regField = ParseRegValue(regValue, ref instruction);
+				instruction.destinationRegister = regField;
+			}
+			else
+			{
+				instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+			}
 		}
 	}
 
