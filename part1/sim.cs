@@ -84,6 +84,15 @@ class Instruction
 		return numberOfBytes;
 	}
 
+	public bool ShouldParseOpcodeExtension()
+	{
+		// TODO: while this format is the only one that we need to
+		// handle for the homework, we may need to revise it in the
+		// future
+		return format == FormatType.TwoBytesWithDisplacementAndImmediate &&
+			type == OperationType.IncompleteNeedsOpcodeExtension;
+	}
+
 	public bool CanUseRegField()
 	{
 		return NumberOfImmediateBytes() == 0;
@@ -387,6 +396,11 @@ class InstructionBuilder
 		byte regValue = (byte)((secondByte & regMask) >> 3);
 		RegisterType regField = ParseRegValue(regValue, ref instruction);
 
+		if (instruction.ShouldParseOpcodeExtension())
+		{
+			instruction.type = ParseOpcodeExtension(regValue);
+		}
+
 		const byte rmMask  = 0b0000_0111;
 		byte rmValue = (byte)(secondByte & rmMask);
 
@@ -454,6 +468,30 @@ class InstructionBuilder
 				instruction.modeType = ModeType.Register;
 				break;
 		}
+	}
+
+	// Parse the least three significant bits as an opcode extension
+	// value.
+	OperationType ParseOpcodeExtension(byte opcodeExtension)
+	{
+		OperationType operationType = OperationType.None;
+
+		switch(opcodeExtension)
+		{
+			case 0b0000_0000:
+				operationType = OperationType.AddImmediateToRegMem;
+				break;
+			case 0b0000_0101:
+				operationType = OperationType.SubImmediateFromRegMem;
+				break;
+			case 0b0000_0111:
+				operationType = OperationType.CmpImmediateWithRegMem;
+				break;
+			default:
+				break;
+		}
+
+		return operationType;
 	}
 
 	// Parse the least three significant bits as a registry value.
