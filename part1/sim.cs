@@ -800,7 +800,7 @@ class Program
 				}
 			}
 		}
-		else if (instruction.type == OperationType.MovImmediateToRegMem)
+		else if (instruction.format == FormatType.TwoBytesWithDisplacementAndImmediate)
 		{
 			source = $"{instruction.immediateValue}";
 
@@ -817,7 +817,7 @@ class Program
 													instruction.displacement);
 			}
 		}
-		else if (instruction.type == OperationType.MovImmediateToReg)
+		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
 			destination = ConvertRegisterToString(instruction.destinationRegister);
 			source = $"{instruction.immediateValue}";
