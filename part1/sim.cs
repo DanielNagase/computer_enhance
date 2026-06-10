@@ -104,6 +104,10 @@ class Instruction
 	public bool bUseRegFieldAsDestination = false;
 	// W field (1 = word, 0 = byte)
 	public bool bIsWordOperation = false;
+
+	// S field (0 = no sign extension, 1 = sign extend 8-bit immediate
+	// value to 16 bits if W field is 1)
+	public bool bUseSignExtensionForImmediate = false;
 }
 
 class OpcodeLibrary
