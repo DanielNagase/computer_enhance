@@ -164,6 +164,8 @@ class OpcodeLibrary
 		// extension in the second byte.
 		new OpcodeDefinition(0b1111_1100, 0b1000_0000, OperationType.IncompleteNeedsOpcodeExtension,
 							 FormatType.TwoBytesWithDisplacementAndImmediate),
+		new OpcodeDefinition(0b1111_1110, 0b0000_0100, OperationType.AddImmediateToAccumulator,
+							 FormatType.OneByteWithImmediate),
 	};
 
 	void SetInstructionFromDefinition(ref Instruction instruction, OpcodeDefinition definition)
