@@ -69,12 +69,21 @@ class Instruction
 	public int NumberOfImmediateBytes()
 	{
 		int numberOfBytes = 0;
+		int numberOfBytesBasedOnWord = bIsWordOperation ? 2 : 1;
 
 		switch(type)
 		{
 			case OperationType.MovImmediateToRegMem:
 			case OperationType.MovImmediateToReg:
-				numberOfBytes = bIsWordOperation ? 2 : 1;
+			case OperationType.AddImmediateToAccumulator:
+			case OperationType.SubImmediateFromAccumulator:
+			case OperationType.CmpImmediateWithAccumulator:
+				numberOfBytes = numberOfBytesBasedOnWord;
+				break;
+			case OperationType.AddImmediateToRegMem:
+			case OperationType.SubImmediateFromRegMem:
+			case OperationType.CmpImmediateWithRegMem:
+				numberOfBytes = bUseSignExtensionForImmediate ? 1 : numberOfBytesBasedOnWord;
 				break;
 			default:
 				numberOfBytes = 0;
@@ -369,6 +378,12 @@ class InstructionBuilder
 		else if (instruction.format == FormatType.TwoBytesWithDisplacementAndImmediate)
 		{
 			instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+
+			if (instruction.ShouldParseOpcodeExtension())
+			{
+				const byte SFieldMask = 0b0000_0010;
+				instruction.bUseSignExtensionForImmediate = (firstByte & SFieldMask) != 0;
+			}
 		}
 		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
