@@ -26,6 +26,7 @@ public enum OperationType
 	CmpRegMemAndReg,
 	CmpImmediateWithRegMem,
 	CmpImmediateWithAccumulator,
+	IncompleteNeedsOpcodeExtension,
 	None
 };
 
@@ -146,6 +147,14 @@ class OpcodeLibrary
 							 FormatType.OneByteWithImmediate),
 		new OpcodeDefinition(0b1111_1100, 0b0000_0000, OperationType.AddRegMemWithRegToEither,
 							 FormatType.TwoBytesWithDisplacement),
+		// The same byte sequence (the second parameter) is shared
+		// among several operations such as add, sub, and cmp, so we
+		// can't determine the operation type from just the first
+		// byte.  Instead, we set the operation type to a placeholder
+		// value and then set it correctly after we decode the opcode
+		// extension in the second byte.
+		new OpcodeDefinition(0b1111_1100, 0b1000_0000, OperationType.IncompleteNeedsOpcodeExtension,
+							 FormatType.TwoBytesWithDisplacementAndImmediate),
 	};
 
 	void SetInstructionFromDefinition(ref Instruction instruction, OpcodeDefinition definition)
