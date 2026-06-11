@@ -174,6 +174,8 @@ class OpcodeLibrary
 							 FormatType.TwoBytesWithDisplacement),
 		new OpcodeDefinition(0b1111_1100, 0b0010_1000, OperationType.SubRegMemAndRegToEither,
 							 FormatType.TwoBytesWithDisplacement),
+		new OpcodeDefinition(0b1111_1100, 0b0011_1000, OperationType.CmpRegMemAndReg,
+							 FormatType.TwoBytesWithDisplacement),
 		// The same byte sequence (the second parameter) is shared
 		// among several operations such as add, sub, and cmp, so we
 		// can't determine the operation type from just the first
@@ -185,6 +187,8 @@ class OpcodeLibrary
 		new OpcodeDefinition(0b1111_1110, 0b0000_0100, OperationType.AddImmediateToAccumulator,
 							 FormatType.OneByteWithImmediate),
 		new OpcodeDefinition(0b1111_1110, 0b0010_1100, OperationType.SubImmediateFromAccumulator,
+							 FormatType.OneByteWithImmediate),
+		new OpcodeDefinition(0b1111_1110, 0b0011_1100, OperationType.CmpImmediateWithAccumulator,
 							 FormatType.OneByteWithImmediate),
 	};
 
