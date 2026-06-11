@@ -790,6 +790,11 @@ class Program
 			case OperationType.SubImmediateFromAccumulator:
 				output = "sub";
 				break;
+			case OperationType.CmpRegMemAndReg:
+			case OperationType.CmpImmediateWithRegMem:
+			case OperationType.CmpImmediateWithAccumulator:
+				output = "cmp";
+				break;
 			default:
 				break;
 		}
