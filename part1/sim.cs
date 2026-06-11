@@ -66,6 +66,13 @@ class Instruction
 			modeType == ModeType.Memory16BitDisplacement;
 	}
 
+	public bool UsesAccumulator()
+	{
+		return type == OperationType.AddImmediateToAccumulator ||
+			type == OperationType.SubImmediateFromAccumulator ||
+			type == OperationType.CmpImmediateWithAccumulator;
+	}
+
 	public int NumberOfImmediateBytes()
 	{
 		int numberOfBytes = 0;
@@ -400,6 +407,13 @@ class InstructionBuilder
 			else
 			{
 				instruction.bIsWordOperation = (firstByte & WFieldMask) != 0;
+
+				if (instruction.UsesAccumulator())
+				{
+					RegisterType accumulator =
+						instruction.bIsWordOperation ? RegisterType.AX : RegisterType.AL;
+					instruction.destinationRegister = accumulator;
+				}
 			}
 		}
 	}
