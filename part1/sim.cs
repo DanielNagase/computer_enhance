@@ -781,6 +781,11 @@ class Program
 			case OperationType.AddImmediateToAccumulator:
 				output = "add";
 				break;
+			case OperationType.SubRegMemAndRegToEither:
+			case OperationType.SubImmediateFromRegMem:
+			case OperationType.SubImmediateFromAccumulator:
+				output = "sub";
+				break;
 			default:
 				break;
 		}
