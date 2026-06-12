@@ -850,6 +850,27 @@ class Program
 		return output;
 	}
 
+	static string ConvertIPIncrementToString(sbyte increment)
+	{
+		string incrementString = "";
+		int effectiveValue = increment + 2; // instruction size is 2
+
+		if (effectiveValue > 0)
+		{
+			incrementString = $"+{effectiveValue}+0";
+		}
+		else if (effectiveValue == 0)
+		{
+			incrementString = $"+0";
+		}
+		else
+		{
+			incrementString = $"{effectiveValue}+0";
+		}
+
+		return incrementString;
+	}
+
 	static string ConvertRegisterToString(RegisterType register)
 	{
 		return Enum.GetName(typeof(RegisterType), register).ToLower();
@@ -1002,6 +1023,13 @@ class Program
 		}
 
 		output = $"{operation} {destination}, {source}";
+
+		if (instruction.format == FormatType.OneByteWithIncrementToIP)
+		{
+			destination = ConvertIPIncrementToString(instruction.incrementValue);
+			output = $"{operation} ${destination} ; {instruction.incrementValue}";
+		}
+
 		Console.WriteLine(output);
 	}
 }
