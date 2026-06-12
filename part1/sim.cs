@@ -236,6 +236,12 @@ class OpcodeLibrary
 							 FormatType.OneByteWithIncrementToIP),
 		new OpcodeDefinition(allEightBitsMask, 0b0111_0011, OperationType.JumpOnNotBelow_AboveOrEqual,
 							 FormatType.OneByteWithIncrementToIP),
+		new OpcodeDefinition(allEightBitsMask, 0b0111_0111, OperationType.JumpOnNotBelowOrEqual_Above,
+							 FormatType.OneByteWithIncrementToIP),
+		new OpcodeDefinition(allEightBitsMask, 0b0111_1011, OperationType.JumpOnNotPar_ParOdd,
+							 FormatType.OneByteWithIncrementToIP),
+		new OpcodeDefinition(allEightBitsMask, 0b0111_0001, OperationType.JumpOnNotOverflow,
+							 FormatType.OneByteWithIncrementToIP),
 	};
 
 	void SetInstructionFromDefinition(ref Instruction instruction, OpcodeDefinition definition)
