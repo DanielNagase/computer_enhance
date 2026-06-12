@@ -27,6 +27,21 @@ public enum OperationType
 	CmpImmediateWithRegMem,
 	CmpImmediateWithAccumulator,
 	IncompleteNeedsOpcodeExtension,
+	JumpOnEqual_Zero,
+	JumpOnLess_NotGreaterOrEqual,
+	JumpOnLessOrEqual_NotGreater,
+	JumpOnBelow_NotAboveOrEqual,
+	JumpOnBelowOrEqual_NotAbove,
+	JumpOnParity_ParityEven,
+	JumpOnOverflow,
+	JumpOnSign,
+	JumpOnNotEqual_NotZero,
+	JumpOnNotLess_GreaterOrEqual,
+	JumpOnNotLessOrEqual_Greater,
+	JumpOnNotBelow_AboveOrEqual,
+	JumpOnNotBelowOrEqual_Above,
+	JumpOnNotPar_ParOdd,
+	JumpOnNotOverflow,
 	None
 };
 
