@@ -126,6 +126,9 @@ class Instruction
 	// 8-bit or 16-bit immediate value. may not be used
 	public short immediateValue = 0;
 
+	// 8-bit increment value. may not be used
+	public short incrementValue = 0;
+
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
 	// W field (1 = word, 0 = byte)
@@ -279,6 +282,11 @@ class InstructionBuilder
 					ReadImmediateValue(filestream, ref numBytesRead, ref instruction);
 					program.AddInstruction(instruction);
 				}
+				else if (instruction.format == FormatType.OneByteWithIncrementToIP)
+				{
+					ReadIncrementValue(filestream, ref numBytesRead, ref instruction);
+					program.AddInstruction(instruction);
+				}
 
 				ClearBytes();
 				numBytesToRead = 1;
@@ -307,6 +315,14 @@ class InstructionBuilder
 						  out short byteValue);
 			instruction.displacement = byteValue;
 		}
+	}
+
+	void ReadIncrementValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
+	{
+		int additionalBytesToRead = 1;
+		ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
+					  out short byteValue);
+		instruction.incrementValue = byteValue;
 	}
 
 	private void ReadImmediateValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
@@ -426,6 +442,10 @@ class InstructionBuilder
 					instruction.destinationRegister = accumulator;
 				}
 			}
+		}
+		else if (instruction.format == FormatType.OneByteWithIncrementToIP)
+		{
+			// no actual work to do
 		}
 	}
 
