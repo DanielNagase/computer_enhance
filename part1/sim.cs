@@ -183,6 +183,7 @@ class OpcodeLibrary
 
 	const byte firstSixBitsMask = 0b1111_1100;
 	const byte firstSevenBitsMask = 0b1111_1110;
+	const byte allEightBitsMask = 0b1111_1111;
 
 	OpcodeDefinition[] definitionList = new OpcodeDefinition[] {
 		new OpcodeDefinition(firstSixBitsMask, 0b1000_1000, OperationType.MovRegMemToFromRegMask,
@@ -211,6 +212,12 @@ class OpcodeLibrary
 							 FormatType.OneByteWithImmediate),
 		new OpcodeDefinition(firstSevenBitsMask, 0b0011_1100, OperationType.CmpImmediateWithAccumulator,
 							 FormatType.OneByteWithImmediate),
+		new OpcodeDefinition(allEightBitsMask, 0b0111_0100, OperationType.JumpOnEqual_Zero,
+							 FormatType.OneByteWithIncrementToIP),
+		new OpcodeDefinition(allEightBitsMask, 0b0111_1100, OperationType.JumpOnLess_NotGreaterOrEqual,
+							 FormatType.OneByteWithIncrementToIP),
+		new OpcodeDefinition(allEightBitsMask, 0b0111_1110, OperationType.JumpOnLessOrEqual_NotGreater,
+							 FormatType.OneByteWithIncrementToIP),
 	};
 
 	void SetInstructionFromDefinition(ref Instruction instruction, OpcodeDefinition definition)
