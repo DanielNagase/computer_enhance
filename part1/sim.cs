@@ -147,7 +147,7 @@ class Instruction
 	public short immediateValue = 0;
 
 	// 8-bit increment value. may not be used
-	public short incrementValue = 0;
+	public sbyte incrementValue = 0;
 
 	// D field (1 = REG is destination, 0 = REG is source)
 	public bool bUseRegFieldAsDestination = false;
@@ -383,7 +383,9 @@ class InstructionBuilder
 		int additionalBytesToRead = 1;
 		ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
 					  out short byteValue);
-		instruction.incrementValue = byteValue;
+		// While we read the value into a short, the increment value
+		// is a signed 8-bit integer, so we must cast it to an SByte
+		instruction.incrementValue = (sbyte)byteValue;
 	}
 
 	private void ReadImmediateValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
