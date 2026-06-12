@@ -163,18 +163,21 @@ class OpcodeLibrary
 		}
 	}
 
+	const byte firstSixBitsMask = 0b1111_1100;
+	const byte firstSevenBitsMask = 0b1111_1110;
+
 	OpcodeDefinition[] definitionList = new OpcodeDefinition[] {
-		new OpcodeDefinition(0b1111_1100, 0b1000_1000, OperationType.MovRegMemToFromRegMask,
+		new OpcodeDefinition(firstSixBitsMask, 0b1000_1000, OperationType.MovRegMemToFromRegMask,
 							 FormatType.TwoBytesWithDisplacement),
-		new OpcodeDefinition(0b1111_1110, 0b1100_0110, OperationType.MovImmediateToRegMem,
+		new OpcodeDefinition(firstSevenBitsMask, 0b1100_0110, OperationType.MovImmediateToRegMem,
 							 FormatType.TwoBytesWithDisplacementAndImmediate),
 		new OpcodeDefinition(0b1111_0000, 0b1011_0000, OperationType.MovImmediateToReg,
 							 FormatType.OneByteWithImmediate),
-		new OpcodeDefinition(0b1111_1100, 0b0000_0000, OperationType.AddRegMemWithRegToEither,
+		new OpcodeDefinition(firstSixBitsMask, 0b0000_0000, OperationType.AddRegMemWithRegToEither,
 							 FormatType.TwoBytesWithDisplacement),
-		new OpcodeDefinition(0b1111_1100, 0b0010_1000, OperationType.SubRegMemAndRegToEither,
+		new OpcodeDefinition(firstSixBitsMask, 0b0010_1000, OperationType.SubRegMemAndRegToEither,
 							 FormatType.TwoBytesWithDisplacement),
-		new OpcodeDefinition(0b1111_1100, 0b0011_1000, OperationType.CmpRegMemAndReg,
+		new OpcodeDefinition(firstSixBitsMask, 0b0011_1000, OperationType.CmpRegMemAndReg,
 							 FormatType.TwoBytesWithDisplacement),
 		// The same byte sequence (the second parameter) is shared
 		// among several operations such as add, sub, and cmp, so we
@@ -182,13 +185,13 @@ class OpcodeLibrary
 		// byte.  Instead, we set the operation type to a placeholder
 		// value and then set it correctly after we decode the opcode
 		// extension in the second byte.
-		new OpcodeDefinition(0b1111_1100, 0b1000_0000, OperationType.IncompleteNeedsOpcodeExtension,
+		new OpcodeDefinition(firstSixBitsMask, 0b1000_0000, OperationType.IncompleteNeedsOpcodeExtension,
 							 FormatType.TwoBytesWithDisplacementAndImmediate),
-		new OpcodeDefinition(0b1111_1110, 0b0000_0100, OperationType.AddImmediateToAccumulator,
+		new OpcodeDefinition(firstSevenBitsMask, 0b0000_0100, OperationType.AddImmediateToAccumulator,
 							 FormatType.OneByteWithImmediate),
-		new OpcodeDefinition(0b1111_1110, 0b0010_1100, OperationType.SubImmediateFromAccumulator,
+		new OpcodeDefinition(firstSevenBitsMask, 0b0010_1100, OperationType.SubImmediateFromAccumulator,
 							 FormatType.OneByteWithImmediate),
-		new OpcodeDefinition(0b1111_1110, 0b0011_1100, OperationType.CmpImmediateWithAccumulator,
+		new OpcodeDefinition(firstSevenBitsMask, 0b0011_1100, OperationType.CmpImmediateWithAccumulator,
 							 FormatType.OneByteWithImmediate),
 	};
 
