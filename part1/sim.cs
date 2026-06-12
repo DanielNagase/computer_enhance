@@ -879,6 +879,33 @@ class Program
 			case OperationType.CmpImmediateWithAccumulator:
 				output = "cmp";
 				break;
+			case OperationType.JumpOnEqual_Zero:
+				output = "je";
+				break;
+			case OperationType.JumpOnLess_NotGreaterOrEqual:
+				output = "jl";
+				break;
+			case OperationType.JumpOnLessOrEqual_NotGreater:
+				output = "jle";
+				break;
+			case OperationType.JumpOnBelow_NotAboveOrEqual:
+				output = "jb";
+				break;
+			case OperationType.JumpOnBelowOrEqual_NotAbove:
+				output = "jbe";
+				break;
+			case OperationType.JumpOnParity_ParityEven:
+				output = "jp";
+				break;
+			case OperationType.JumpOnOverflow:
+				output = "jo";
+				break;
+			case OperationType.JumpOnSign:
+				output = "js";
+				break;
+			case OperationType.JumpOnNotEqual_NotZero:
+				output = "jne";
+				break;
 			default:
 				break;
 		}
