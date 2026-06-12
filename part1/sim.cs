@@ -42,6 +42,11 @@ public enum OperationType
 	JumpOnNotBelowOrEqual_Above,
 	JumpOnNotPar_ParOdd,
 	JumpOnNotOverflow,
+	JumpOnNotSign,
+	LoopCxTimes,
+	LoopWhileZero_Equal,
+	LoopWhileNotZero_Equal,
+	JumpOnCxZero,
 	None
 };
 
