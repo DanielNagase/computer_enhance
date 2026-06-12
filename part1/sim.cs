@@ -906,6 +906,39 @@ class Program
 			case OperationType.JumpOnNotEqual_NotZero:
 				output = "jne";
 				break;
+			case OperationType.JumpOnNotLess_GreaterOrEqual:
+				output = "jnl";
+				break;
+			case OperationType.JumpOnNotLessOrEqual_Greater:
+				output = "jnle";
+				break;
+			case OperationType.JumpOnNotBelow_AboveOrEqual:
+				output = "jnb";
+				break;
+			case OperationType.JumpOnNotBelowOrEqual_Above:
+				output = "jnbe";
+				break;
+			case OperationType.JumpOnNotPar_ParOdd:
+				output = "jnp";
+				break;
+			case OperationType.JumpOnNotOverflow:
+				output = "jno";
+				break;
+			case OperationType.JumpOnNotSign:
+				output = "jns";
+				break;
+			case OperationType.LoopCxTimes:
+				output = "loop";
+				break;
+			case OperationType.LoopWhileZero_Equal:
+				output = "loopz";
+				break;
+			case OperationType.LoopWhileNotZero_Equal:
+				output = "loopnz";
+				break;
+			case OperationType.JumpOnCxZero:
+				output = "jcxz";
+				break;
 			default:
 				break;
 		}
