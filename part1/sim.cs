@@ -774,8 +774,9 @@ class Program
 		instructions?.Add(instruction);
 	}
 
-	public void Print()
+	public void Print(string inputFilename)
 	{
+		Console.WriteLine($"; {inputFilename} disassembly:");
 		Console.WriteLine("bits 16");
 
 		foreach (Instruction instruction in instructions)
@@ -1100,6 +1101,9 @@ class Sim
 		Program program = new Program();
 		builder.ReadFile(inputFilename, ref program);
 
-		program.Print();
+		if (operationMode == OperationMode.Decode)
+		{
+			program.Print(inputFilename);
+		}
     }
 }
