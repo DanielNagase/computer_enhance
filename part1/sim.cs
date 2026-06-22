@@ -1048,17 +1048,35 @@ class Sim
 		System.Environment.Exit(exitCode);
 	}
 
-	static void CheckArguments(string[] args, out string inputFilename)
+	static void CheckArguments(string[] args, out string inputFilename,
+							   out OperationMode operationMode)
 	{
 		const int argumentsErrorExitCode = 1;
 
-		if (args.Length != 1)
+		if (args.Length < 1)
 		{
 			ExitProgramWithError(argumentsErrorExitCode,
-								 "Please provide exactly one argument!");
+								 "Missing filename argument!");
 		}
 
 		inputFilename = args[0];
+		operationMode = OperationMode.Decode;
+
+		const string executeModeString = "-exec";
+
+		if (args[0] == executeModeString)
+		{
+			if (args.Length == 2)
+			{
+				inputFilename = args[1];
+				operationMode = OperationMode.Execute;
+			}
+			else if (args.Length == 1)
+			{
+				ExitProgramWithError(argumentsErrorExitCode,
+									 "Missing filename argument!");
+			}
+		}
 
 		if (!File.Exists(inputFilename))
 		{
@@ -1070,7 +1088,8 @@ class Sim
 	static void Main(string[] args)
     {
 		string inputFilename;
-		CheckArguments(args, out inputFilename);
+		OperationMode operationMode = OperationMode.Decode;
+		CheckArguments(args, out inputFilename, out operationMode);
 
 		InstructionBuilder builder = new InstructionBuilder();
 		Program program = new Program();
