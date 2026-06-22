@@ -1036,6 +1036,12 @@ class Program
 
 class Sim
 {
+	enum OperationMode
+	{
+		Decode = 0,
+		Execute
+	};
+
 	static void ExitProgramWithError(int exitCode, string errorMessage)
 	{
 		Console.Error.WriteLine(errorMessage);
