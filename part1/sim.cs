@@ -971,6 +971,11 @@ class Program
 
 	void PrintInstruction(Instruction instruction)
 	{
+		Console.WriteLine(ConvertInstructionToString(instruction));
+	}
+
+	string ConvertInstructionToString(Instruction instruction)
+	{
 		string output = "";
 		string operation = ConvertOperationTypeToString(instruction.type);
 		string source = "";
@@ -1030,7 +1035,7 @@ class Program
 			output = $"{operation} ${destination} ; {instruction.incrementValue}";
 		}
 
-		Console.WriteLine(output);
+		return output;
 	}
 }
 
