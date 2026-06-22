@@ -785,6 +785,16 @@ class Program
 		}
 	}
 
+	public void Execute(string inputFilename)
+	{
+		Console.WriteLine($"--- {inputFilename} execution ---");
+
+		foreach (Instruction instruction in instructions)
+		{
+			// TODO: implement me
+		}
+	}
+
 	static string CreateByteOrWordPrefix(bool bIsWord)
 	{
 		return bIsWord ? "word " : "byte ";
@@ -1104,6 +1114,10 @@ class Sim
 		if (operationMode == OperationMode.Decode)
 		{
 			program.Print(inputFilename);
+		}
+		else if (operationMode == OperationMode.Execute)
+		{
+			program.Execute(inputFilename);
 		}
     }
 }
