@@ -832,7 +832,16 @@ class Simulator
 	{
 		InitializeRegisters();
 		Console.WriteLine($"--- {program.Filename} execution ---");
-		// TODO: implement me
+
+		List<Instruction> instructions = program.Instructions;
+
+		foreach (Instruction instruction in instructions)
+		{
+			string instructionString =
+				InstructionFormatter.ConvertInstructionToString(instruction);
+			Console.WriteLine(instructionString);
+			// TODO: add comment showing operation change
+		}
 	}
 
 	public void PrintState()
@@ -1162,6 +1171,8 @@ class Application
 		}
 		else if (operationMode == OperationMode.Execute)
 		{
+			Simulator simulator = new Simulator();
+			simulator.Execute(program);
 		}
     }
 }
