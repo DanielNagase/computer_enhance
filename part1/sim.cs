@@ -296,7 +296,7 @@ class InstructionBuilder
 	byte[] bytes = new byte[6];
 	OpcodeLibrary library = new OpcodeLibrary();
 
-	public void ReadFile(string inputFilename, ref Program program)
+	public void ReadFile(string inputFilename, Program program)
 	{
 		if (program == null)
 		{
@@ -1107,7 +1107,7 @@ class Application
 
 		InstructionBuilder builder = new InstructionBuilder();
 		Program program = new Program();
-		builder.ReadFile(inputFilename, ref program);
+		builder.ReadFile(inputFilename, program);
 
 		if (operationMode == OperationMode.Decode)
 		{
