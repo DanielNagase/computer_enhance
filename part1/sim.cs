@@ -62,7 +62,7 @@ public enum ModeType
 // ConvertRegisterToString, so keep them as two-letter codes.
 public enum RegisterType
 {
-	AL, CL, DL, BL, AH, CH, DH, BH,
+	AL = 0, CL, DL, BL, AH, CH, DH, BH,
 	AX, CX, DX, BX, SP, BP, SI, DI, None
 };
 
