@@ -1050,7 +1050,7 @@ class Program
 	}
 }
 
-class Sim
+class Application
 {
 	enum OperationMode
 	{
