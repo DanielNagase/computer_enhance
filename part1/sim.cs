@@ -846,8 +846,19 @@ class Simulator
 
 	public void PrintState()
 	{
+		Console.WriteLine("");
 		Console.WriteLine("Final registers:");
-		// TODO: implement me
+		string registerName = "";
+		int index = 0, registerValue = 0;
+
+		for (int i = 0; i < registerCount; i++)
+		{
+			index = (int)RegisterType.AX + i;
+			registerValue = registers[i];
+			registerName = InstructionFormatter.ConvertRegisterToString((RegisterType)index);
+			string formatString = $"  {registerName}: 0x{registerValue:x4} ({registerValue})";
+			Console.WriteLine(formatString);
+		}
 	}
 }
 
@@ -1173,6 +1184,7 @@ class Application
 		{
 			Simulator simulator = new Simulator();
 			simulator.Execute(program);
+			simulator.PrintState();
 		}
     }
 }
