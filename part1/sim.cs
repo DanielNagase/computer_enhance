@@ -303,6 +303,8 @@ class InstructionBuilder
 			return;
 		}
 
+		program.Filename = inputFilename;
+
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
 			int numBytesToRead = 1;
@@ -775,13 +777,15 @@ class Program
 	}
 
 	public List<Instruction> Instructions { get => instructions; }
+
+	public string Filename { get; set; }
 }
 
 class Decoder
 {
-	public void Print(string inputFilename, Program program)
+	public void Print(Program program)
 	{
-		Console.WriteLine($"; {inputFilename} disassembly:");
+		Console.WriteLine($"; {program.Filename} disassembly:");
 		Console.WriteLine("bits 16");
 		List<Instruction> instructions = program.Instructions;
 
@@ -1108,7 +1112,7 @@ class Application
 		if (operationMode == OperationMode.Decode)
 		{
 			Decoder decoder = new Decoder();
-			decoder.Print(inputFilename, program);
+			decoder.Print(program);
 		}
 		else if (operationMode == OperationMode.Execute)
 		{
