@@ -980,12 +980,12 @@ class Program
 		return output;
 	}
 
-	void PrintInstruction(Instruction instruction)
+	static void PrintInstruction(Instruction instruction)
 	{
 		Console.WriteLine(ConvertInstructionToString(instruction));
 	}
 
-	string ConvertInstructionToString(Instruction instruction)
+	static string ConvertInstructionToString(Instruction instruction)
 	{
 		string output = "";
 		string operation = ConvertOperationTypeToString(instruction.type);
