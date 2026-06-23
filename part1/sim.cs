@@ -796,6 +796,52 @@ class Decoder
 	}
 }
 
+class Simulator
+{
+	const int registerCount = 8;
+	short[] registers = new short[registerCount];
+
+	int GetIndex(RegisterType register)
+	{
+		// TODO: handle values below AX (low / high)
+		int index = (int)register - (int)RegisterType.AX;
+		index = Math.Clamp(index, 0, registerCount);
+
+		return index;
+	}
+
+	short GetRegisterValue(RegisterType register)
+	{
+		return registers[GetIndex(register)];
+	}
+
+	void SetRegisterValue(RegisterType register, short newValue)
+	{
+		registers[GetIndex(register)] = newValue;
+	}
+
+	void InitializeRegisters()
+	{
+		for (int i = 0; i < registerCount; i++)
+		{
+			registers[i] = 0;
+		}
+	}
+
+	public void Execute(Program program)
+	{
+		InitializeRegisters();
+		Console.WriteLine($"--- {program.Filename} execution ---");
+		// TODO: implement me
+	}
+
+	public void PrintState()
+	{
+		Console.WriteLine("Final registers:");
+		// TODO: implement me
+	}
+}
+
 class InstructionFormatter
 {
 	static string CreateByteOrWordPrefix(bool bIsWord)
