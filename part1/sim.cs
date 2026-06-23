@@ -774,27 +774,26 @@ class Program
 		instructions?.Add(instruction);
 	}
 
-	public void Print(string inputFilename)
+	public List<Instruction> Instructions { get => instructions; }
+}
+
+class Decoder
+{
+	public void Print(string inputFilename, Program program)
 	{
 		Console.WriteLine($"; {inputFilename} disassembly:");
 		Console.WriteLine("bits 16");
+		List<Instruction> instructions = program.Instructions;
 
 		foreach (Instruction instruction in instructions)
 		{
-			PrintInstruction(instruction);
+			Console.WriteLine(InstructionFormatter.ConvertInstructionToString(instruction));
 		}
 	}
+}
 
-	public void Execute(string inputFilename)
-	{
-		Console.WriteLine($"--- {inputFilename} execution ---");
-
-		foreach (Instruction instruction in instructions)
-		{
-			// TODO: implement me
-		}
-	}
-
+class InstructionFormatter
+{
 	static string CreateByteOrWordPrefix(bool bIsWord)
 	{
 		return bIsWord ? "word " : "byte ";
@@ -980,12 +979,7 @@ class Program
 		return output;
 	}
 
-	static void PrintInstruction(Instruction instruction)
-	{
-		Console.WriteLine(ConvertInstructionToString(instruction));
-	}
-
-	static string ConvertInstructionToString(Instruction instruction)
+	public static string ConvertInstructionToString(Instruction instruction)
 	{
 		string output = "";
 		string operation = ConvertOperationTypeToString(instruction.type);
@@ -1113,11 +1107,11 @@ class Application
 
 		if (operationMode == OperationMode.Decode)
 		{
-			program.Print(inputFilename);
+			Decoder decoder = new Decoder();
+			decoder.Print(inputFilename, program);
 		}
 		else if (operationMode == OperationMode.Execute)
 		{
-			program.Execute(inputFilename);
 		}
     }
 }
