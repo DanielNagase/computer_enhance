@@ -931,7 +931,7 @@ class InstructionFormatter
 		return incrementString;
 	}
 
-	static string ConvertRegisterToString(RegisterType register)
+	public static string ConvertRegisterToString(RegisterType register)
 	{
 		return Enum.GetName(typeof(RegisterType), register).ToLower();
 	}
