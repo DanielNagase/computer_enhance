@@ -801,6 +801,15 @@ class Simulator
 	const int registerCount = 8;
 	short[] registers = new short[registerCount];
 
+	class RegisterUpdate
+	{
+		public RegisterType register = RegisterType.None;
+		public int previousValue = 0;
+		public int newValue = 0;
+	}
+
+	RegisterUpdate lastUpdate = new RegisterUpdate();
+
 	int GetIndex(RegisterType register)
 	{
 		// TODO: handle values below AX (low / high)
@@ -817,7 +826,15 @@ class Simulator
 
 	void SetRegisterValue(RegisterType register, short newValue)
 	{
+		RecordUpdate(register, newValue);
 		registers[GetIndex(register)] = newValue;
+	}
+
+	void RecordUpdate(RegisterType register, short newValue)
+	{
+		lastUpdate.register = register;
+		lastUpdate.previousValue = GetRegisterValue(register);
+		lastUpdate.newValue = newValue;
 	}
 
 	void InitializeRegisters()
@@ -859,6 +876,12 @@ class Simulator
 			string formatString = $"  {registerName}: 0x{registerValue:x4} ({registerValue})";
 			Console.WriteLine(formatString);
 		}
+	}
+
+	string GetLastUpdateString()
+	{
+		string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
+		return $"{destination}:0x{lastUpdate.previousValue:x4}->0x{lastUpdate.newValue:x4}";
 	}
 }
 
