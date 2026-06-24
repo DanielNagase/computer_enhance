@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-public enum FormatType
+enum FormatType
 {
 	None = 0,
 	TwoBytesWithDisplacement,
@@ -12,7 +12,7 @@ public enum FormatType
 	OneByteWithIncrementToIP
 };
 
-public enum OperationType
+enum OperationType
 {
 	MovRegMemToFromRegMask = 0,
 	MovImmediateToRegMem,
@@ -50,7 +50,7 @@ public enum OperationType
 	None
 };
 
-public enum ModeType
+enum ModeType
 {
 	MemoryNoDisplacement,
 	Memory8BitDisplacement,
@@ -60,13 +60,13 @@ public enum ModeType
 
 // Note: These will get converted to strings in
 // ConvertRegisterToString, so keep them as two-letter codes.
-public enum RegisterType
+enum RegisterType
 {
 	AL = 0, BL, CL, DL, AH, BH, CH, DH,
 	AX, BX, CX, DX, SP, BP, SI, DI, None
 };
 
-public enum EffectiveAddressType
+enum EffectiveAddressType
 {
 	BX_plus_SI, BX_plus_DI, BP_plus_SI, BP_plus_DI, SI, DI, DirectAddress, BP, BX, None
 };
