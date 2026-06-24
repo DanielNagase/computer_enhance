@@ -71,6 +71,51 @@ enum EffectiveAddressType
 	BX_plus_SI, BX_plus_DI, BP_plus_SI, BP_plus_DI, SI, DI, DirectAddress, BP, BX, None
 };
 
+struct EffectiveAddressTerm
+{
+	public RegisterType Register;
+	public uint Scale;
+
+	public EffectiveAddressTerm(RegisterType inRegister, uint inScale)
+	{
+		Register = inRegister;
+		Scale = inScale;
+	}
+}
+
+struct EffectiveAddressExpression
+{
+	public EffectiveAddressTerm TermOne;
+	public EffectiveAddressTerm TermTwo;
+	public uint ExplicitSegment;
+	public short Displacement;
+	public uint Flags;
+
+	public EffectiveAddressExpression(RegisterType termOne, RegisterType termTwo,
+									  EffectiveAddressType inBase, short inDisplacement)
+	{
+		TermOne = new EffectiveAddressTerm(termOne, 1);
+		TermTwo = new EffectiveAddressTerm(termTwo, 1);
+		ExplicitSegment = 0;
+		Displacement = inDisplacement;
+		Flags = 0;
+	}
+}
+
+struct RegisterAccess
+{
+	public RegisterType Index;
+	public byte Offset;
+	public byte Count;
+
+	public RegisterAccess(RegisterType index, byte offset, byte count)
+	{
+		Index = index;
+		Offset = offset;
+		Count = count;
+	}
+}
+
 class Instruction
 {
 	public FormatType format = FormatType.None;
