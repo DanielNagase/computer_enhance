@@ -850,6 +850,19 @@ class Simulator
 		{
 			SetRegisterValue(instruction.destinationRegister, sourceValue);
 		}
+		else if (instruction.type == OperationType.MovRegMemToFromRegMask)
+		{
+			// note: only reg to reg moves are handled right now
+			if (instruction.modeType == ModeType.Register)
+			{
+				if (instruction.sourceRegister != RegisterType.None)
+				{
+					sourceValue = GetRegisterValue(instruction.sourceRegister);
+				}
+
+				SetRegisterValue(instruction.destinationRegister, sourceValue);
+			}
+		}
 	}
 
 	void InitializeRegisters()
