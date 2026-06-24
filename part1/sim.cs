@@ -116,6 +116,37 @@ struct RegisterAccess
 	}
 }
 
+enum OperandType
+{
+	None,
+	Register,
+	Memory,
+	Immediate
+}
+
+class InstructionOperand
+{
+	public OperandType Type = OperandType.None;
+
+	// Ideally these would be combined into a union,
+	// but this isn't supported in C# yet.
+	public EffectiveAddressExpression Address = new EffectiveAddressExpression();
+	public RegisterAccess Register = new RegisterAccess();
+	public short Immediate = 0;
+
+	public void SetAsRegister(RegisterType index)
+	{
+		Type = OperandType.Register;
+		Register.Index = index;
+	}
+
+	public void SetAsImmediate(short immediate)
+	{
+		Type = OperandType.Immediate;
+		Immediate = immediate;
+	}
+}
+
 class Instruction
 {
 	public FormatType format = FormatType.None;
@@ -178,6 +209,9 @@ class Instruction
 	{
 		return NumberOfImmediateBytes() == 0;
 	}
+
+	public InstructionOperand operandOne = new InstructionOperand();
+	public InstructionOperand operandTwo = new InstructionOperand();
 
 	// depending on the instruction, one or both may not be used
 	public RegisterType destinationRegister = RegisterType.None;
