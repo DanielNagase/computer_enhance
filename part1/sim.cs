@@ -837,6 +837,21 @@ class Simulator
 		lastUpdate.newValue = newValue;
 	}
 
+	void PerformInstruction(Instruction instruction)
+	{
+		short sourceValue = 0;
+
+		if (instruction.format == FormatType.OneByteWithImmediate)
+		{
+			sourceValue = instruction.immediateValue;
+		}
+
+		if (instruction.type == OperationType.MovImmediateToReg)
+		{
+			SetRegisterValue(instruction.destinationRegister, sourceValue);
+		}
+	}
+
 	void InitializeRegisters()
 	{
 		for (int i = 0; i < registerCount; i++)
@@ -854,10 +869,10 @@ class Simulator
 
 		foreach (Instruction instruction in instructions)
 		{
+			PerformInstruction(instruction);
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction);
-			Console.WriteLine(instructionString);
-			// TODO: add comment showing operation change
+			Console.WriteLine(instructionString + " ; " + GetLastUpdateString());
 		}
 	}
 
