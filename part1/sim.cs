@@ -941,19 +941,20 @@ class Simulator
 
 		if (instruction.type == OperationType.MovImmediateToReg)
 		{
-			SetRegisterValue(instruction.destinationRegister, sourceValue);
+			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 		}
 		else if (instruction.type == OperationType.MovRegMemToFromRegMask)
 		{
 			// note: only reg to reg moves are handled right now
 			if (instruction.modeType == ModeType.Register)
 			{
-				if (instruction.sourceRegister != RegisterType.None)
+				if (instruction.operandTwo.Type == OperandType.Register &&
+					instruction.operandTwo.Register.Index != RegisterType.None)
 				{
-					sourceValue = GetRegisterValue(instruction.sourceRegister);
+					sourceValue = GetRegisterValue(instruction.operandTwo.Register.Index);
 				}
 
-				SetRegisterValue(instruction.destinationRegister, sourceValue);
+				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 			}
 		}
 	}
