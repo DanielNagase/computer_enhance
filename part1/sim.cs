@@ -574,6 +574,8 @@ class InstructionBuilder
 				byte regValue = (byte)(firstByte & regFieldMask);
 				RegisterType regField = ParseRegValue(regValue, ref instruction);
 				instruction.destinationRegister = regField;
+
+				instruction.operandOne.SetAsRegister(regField);
 			}
 			else
 			{
@@ -584,6 +586,8 @@ class InstructionBuilder
 					RegisterType accumulator =
 						instruction.bIsWordOperation ? RegisterType.AX : RegisterType.AL;
 					instruction.destinationRegister = accumulator;
+
+					instruction.operandOne.SetAsRegister(accumulator);
 				}
 			}
 		}
@@ -627,11 +631,17 @@ class InstructionBuilder
 			{
 				instruction.destinationRegister = regField;
 				instruction.sourceRegister = rmField;
+
+				instruction.operandOne.SetAsRegister(regField);
+				instruction.operandTwo.SetAsRegister(rmField);
 			}
 			else
 			{
 				instruction.sourceRegister = regField;
 				instruction.destinationRegister = rmField;
+
+				instruction.operandTwo.SetAsRegister(regField);
+				instruction.operandOne.SetAsRegister(rmField);
 			}
 		}
 		else if (bIsMemoryModeEnabled)
@@ -641,10 +651,14 @@ class InstructionBuilder
 				if (instruction.bUseRegFieldAsDestination)
 				{
 					instruction.destinationRegister = regField;
+
+					instruction.operandOne.SetAsRegister(regField);
 				}
 				else
 				{
 					instruction.sourceRegister = regField;
+
+					instruction.operandTwo.SetAsRegister(regField);
 				}
 			}
 			else
