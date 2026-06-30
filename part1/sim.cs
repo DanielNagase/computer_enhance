@@ -213,10 +213,6 @@ class Instruction
 	public InstructionOperand operandOne = new InstructionOperand();
 	public InstructionOperand operandTwo = new InstructionOperand();
 
-	// depending on the instruction, one or both may not be used
-	public RegisterType destinationRegister = RegisterType.None;
-	public RegisterType sourceRegister = RegisterType.None;
-
 	// calculated from R/M field
 	public EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
 	// 8-bit or 16-bit displacement value. may not be used
@@ -573,8 +569,6 @@ class InstructionBuilder
 				const byte regFieldMask = 0b0000_0111;
 				byte regValue = (byte)(firstByte & regFieldMask);
 				RegisterType regField = ParseRegValue(regValue, ref instruction);
-				instruction.destinationRegister = regField;
-
 				instruction.operandOne.SetAsRegister(regField);
 			}
 			else
@@ -585,8 +579,6 @@ class InstructionBuilder
 				{
 					RegisterType accumulator =
 						instruction.bIsWordOperation ? RegisterType.AX : RegisterType.AL;
-					instruction.destinationRegister = accumulator;
-
 					instruction.operandOne.SetAsRegister(accumulator);
 				}
 			}
@@ -629,17 +621,11 @@ class InstructionBuilder
 
 			if (instruction.bUseRegFieldAsDestination)
 			{
-				instruction.destinationRegister = regField;
-				instruction.sourceRegister = rmField;
-
 				instruction.operandOne.SetAsRegister(regField);
 				instruction.operandTwo.SetAsRegister(rmField);
 			}
 			else
 			{
-				instruction.sourceRegister = regField;
-				instruction.destinationRegister = rmField;
-
 				instruction.operandTwo.SetAsRegister(regField);
 				instruction.operandOne.SetAsRegister(rmField);
 			}
@@ -650,14 +636,10 @@ class InstructionBuilder
 			{
 				if (instruction.bUseRegFieldAsDestination)
 				{
-					instruction.destinationRegister = regField;
-
 					instruction.operandOne.SetAsRegister(regField);
 				}
 				else
 				{
-					instruction.sourceRegister = regField;
-
 					instruction.operandTwo.SetAsRegister(regField);
 				}
 			}
