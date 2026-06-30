@@ -1204,8 +1204,8 @@ class InstructionFormatter
 		{
 			if (instruction.modeType == ModeType.Register)
 			{
-				destination = ConvertRegisterToString(instruction.destinationRegister);
-				source = ConvertRegisterToString(instruction.sourceRegister);
+				destination = ConvertRegisterToString(instruction.operandOne.Register.Index);
+				source = ConvertRegisterToString(instruction.operandTwo.Register.Index);
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
@@ -1213,12 +1213,12 @@ class InstructionFormatter
 
 				if (instruction.bUseRegFieldAsDestination)
 				{
-					destination = ConvertRegisterToString(instruction.destinationRegister);
+					destination = ConvertRegisterToString(instruction.operandOne.Register.Index);
 					source = address;
 				}
 				else
 				{
-					source = ConvertRegisterToString(instruction.sourceRegister);
+					source = ConvertRegisterToString(instruction.operandTwo.Register.Index);
 					destination = address;
 				}
 			}
@@ -1229,7 +1229,7 @@ class InstructionFormatter
 
 			if (instruction.modeType == ModeType.Register)
 			{
-				destination = ConvertRegisterToString(instruction.destinationRegister);
+				destination = ConvertRegisterToString(instruction.operandOne.Register.Index);
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
@@ -1242,7 +1242,7 @@ class InstructionFormatter
 		}
 		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
-			destination = ConvertRegisterToString(instruction.destinationRegister);
+			destination = ConvertRegisterToString(instruction.operandOne.Register.Index);
 			source = $"{instruction.immediateValue}";
 		}
 
