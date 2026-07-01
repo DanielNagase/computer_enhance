@@ -105,10 +105,11 @@ struct EffectiveAddressExpression
 struct RegisterAccess
 {
 	public RegisterType Index;
-	public byte Offset;
-	public byte Count;
+	public ushort Offset;
+	// the count for the number of bytes we will access (always 1 or 2)
+	public ushort Count;
 
-	public RegisterAccess(RegisterType index, byte offset, byte count)
+	public RegisterAccess(RegisterType index, ushort offset, ushort count)
 	{
 		Index = index;
 		Offset = offset;
@@ -136,7 +137,32 @@ class InstructionOperand
 
 	public void SetAsRegister(RegisterType index)
 	{
+		ushort count = 2;
+
+		switch(index)
+		{
+			case RegisterType.AL:
+			case RegisterType.BL:
+			case RegisterType.CL:
+			case RegisterType.DL:
+			case RegisterType.AH:
+			case RegisterType.BH:
+			case RegisterType.CH:
+			case RegisterType.DH:
+				count = 1;
+				break;
+			default:
+				break;
+		}
+
+		SetAsRegister(index, count);
+	}
+
+	public void SetAsRegister(RegisterType index, ushort count)
+	{
 		Type = OperandType.Register;
+		Register.Offset = 0;
+		Register.Count = count;
 		Register.Index = index;
 	}
 
