@@ -92,7 +92,7 @@ struct EffectiveAddressExpression
 	public uint Flags;
 
 	public EffectiveAddressExpression(RegisterType termOne, RegisterType termTwo,
-									  EffectiveAddressType inBase, short inDisplacement)
+									  short inDisplacement)
 	{
 		TermOne = new EffectiveAddressTerm(termOne, 1);
 		TermTwo = new EffectiveAddressTerm(termTwo, 1);
