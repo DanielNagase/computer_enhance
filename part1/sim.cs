@@ -251,6 +251,18 @@ class Instruction
 	public InstructionOperand operandOne = new InstructionOperand();
 	public InstructionOperand operandTwo = new InstructionOperand();
 
+	public InstructionOperand GetLastOperand()
+	{
+		InstructionOperand lastOperand = operandOne;
+
+		if (lastOperand.Type != OperandType.None)
+		{
+			lastOperand = operandTwo;
+		}
+
+		return lastOperand;
+	}
+
 	// calculated from R/M field
 	public EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
 	// 8-bit or 16-bit displacement value. may not be used
@@ -501,6 +513,9 @@ class InstructionBuilder
 		// While we read the value into a short, the increment value
 		// is a signed 8-bit integer, so we must cast it to an SByte
 		instruction.incrementValue = (sbyte)byteValue;
+
+		InstructionOperand lastOperand = instruction.GetLastOperand();
+		lastOperand.SetAsImmediate(byteValue, (ushort)ImmediateFlag.RelativeJumpDisplacement);
 	}
 
 	private void ReadImmediateValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
@@ -509,6 +524,9 @@ class InstructionBuilder
 		ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
 					  out short byteValue);
 		instruction.immediateValue = byteValue;
+
+		InstructionOperand lastOperand = instruction.GetLastOperand();
+		lastOperand.SetAsImmediate(byteValue);
 	}
 
 	private void ReadByteValue(FileStream filestream, int additionalBytesToRead,
