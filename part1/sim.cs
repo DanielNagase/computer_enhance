@@ -712,6 +712,17 @@ class InstructionBuilder
 			}
 
 			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
+
+			// TODO: Here we are setting operandOne to a dummy
+			// effective address just so GetLastOperand will return
+			// the correct operand (the second one) so I can change
+			// immediates so they're handled like the reference
+			// implementation.  I need to to ParseMemValue and build
+			// up the effective address correctly.
+			if (instruction.modeType != ModeType.Register)
+			{
+				instruction.operandOne.SetAsEffectiveAddress(RegisterType.None, RegisterType.None, 0);
+			}
 		}
 	}
 
@@ -981,7 +992,7 @@ class Simulator
 
 		if (instruction.format == FormatType.OneByteWithImmediate)
 		{
-			sourceValue = instruction.immediateValue;
+			sourceValue = instruction.operandTwo.Immediate.Value;
 		}
 
 		if (instruction.type == OperationType.MovImmediateToReg)
@@ -1271,7 +1282,7 @@ class InstructionFormatter
 		}
 		else if (instruction.format == FormatType.TwoBytesWithDisplacementAndImmediate)
 		{
-			source = $"{instruction.immediateValue}";
+			source = $"{instruction.operandTwo.Immediate.Value}";
 
 			if (instruction.modeType == ModeType.Register)
 			{
@@ -1289,7 +1300,7 @@ class InstructionFormatter
 		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
 			destination = ConvertRegisterToString(instruction.operandOne.Register.Index);
-			source = $"{instruction.immediateValue}";
+			source = $"{instruction.operandTwo.Immediate.Value}";
 		}
 
 		output = $"{operation} {destination}, {source}";
