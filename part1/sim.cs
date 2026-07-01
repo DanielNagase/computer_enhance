@@ -183,6 +183,13 @@ class InstructionOperand
 		Immediate.Value = inValue;
 		Immediate.Flags = inFlags;
 	}
+
+	public void SetAsEffectiveAddress(RegisterType termOne, RegisterType termTwo,
+									  short displacement)
+	{
+		Type = OperandType.Memory;
+		Address = new EffectiveAddressExpression(termOne, termTwo, displacement);
+	}
 }
 
 class Instruction
