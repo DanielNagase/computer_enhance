@@ -117,6 +117,17 @@ struct RegisterAccess
 	}
 }
 
+enum ImmediateFlag
+{
+	RelativeJumpDisplacement = 0x1
+}
+
+struct Immediate
+{
+	public short Value;
+	public ushort Flags;
+}
+
 enum OperandType
 {
 	None,
@@ -133,7 +144,7 @@ class InstructionOperand
 	// but this isn't supported in C# yet.
 	public EffectiveAddressExpression Address = new EffectiveAddressExpression();
 	public RegisterAccess Register = new RegisterAccess();
-	public short Immediate = 0;
+	public Immediate Immediate = new Immediate();
 
 	public void SetAsRegister(RegisterType index)
 	{
@@ -166,10 +177,11 @@ class InstructionOperand
 		Register.Index = index;
 	}
 
-	public void SetAsImmediate(short immediate)
+	public void SetAsImmediate(short inValue, ushort inFlags = 0)
 	{
 		Type = OperandType.Immediate;
-		Immediate = immediate;
+		Immediate.Value = inValue;
+		Immediate.Flags = inFlags;
 	}
 }
 
