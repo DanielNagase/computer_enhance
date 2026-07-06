@@ -509,6 +509,11 @@ class InstructionBuilder
 			ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
 						  out short byteValue);
 			instruction.displacement = byteValue;
+
+			InstructionOperand operand =
+				(instruction.operandOne.Type == OperandType.Memory) ?
+				instruction.operandOne : instruction.operandTwo;
+			operand.Address.Displacement = byteValue;
 		}
 	}
 
