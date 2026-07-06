@@ -700,14 +700,7 @@ class InstructionBuilder
 			}
 
 			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
-
-			// TODO: Here we are setting operandOne to a dummy
-			// effective address just so GetLastOperand will return
-			// the correct operand (the second one) so I can change
-			// immediates so they're handled like the reference
-			// implementation.  I need to to ParseMemValue and build
-			// up the effective address correctly.
-			modOperand.SetAsEffectiveAddress(RegisterType.None, RegisterType.None, 0);
+			ParseMemValue(rmValue, instruction.modeType, ref modOperand);
 		}
 	}
 
@@ -893,6 +886,52 @@ class InstructionBuilder
 		}
 
 		return effectiveAddress;
+	}
+
+	// Parse memValue into an effective address calculation. The
+	// memValue parameter is a three-bit sequence that occupies the
+	// three least significant bits.
+	void ParseMemValue(byte memValue, ModeType modeType,
+					   ref InstructionOperand modOperand)
+	{
+		if (modeType == ModeType.Register)
+		{
+			modOperand.SetAsEffectiveAddress(RegisterType.None, RegisterType.None, 0);
+
+			return;
+		}
+
+		RegisterType termOne = RegisterType.None;
+		RegisterType termTwo = RegisterType.None;
+
+		RegisterType[] termOneValues = new RegisterType[] {
+			RegisterType.BX, RegisterType.BX, RegisterType.BP, RegisterType.BP,
+			RegisterType.SI, RegisterType.DI, RegisterType.BP, RegisterType.BX};
+
+		RegisterType[] termTwoValues = new RegisterType[] {
+			RegisterType.SI, RegisterType.DI, RegisterType.SI, RegisterType.DI,
+			RegisterType.None, RegisterType.None, RegisterType.None, RegisterType.None};
+
+		if (memValue < termOneValues.Length)
+		{
+			termOne = termOneValues[memValue];
+		}
+
+		if (memValue < termTwoValues.Length)
+		{
+			termTwo = termTwoValues[memValue];
+		}
+
+		if ((memValue == 0b0000_0110) &&
+			(modeType == ModeType.MemoryNoDisplacement))
+		{
+			// direct address
+			termOne = RegisterType.None;
+			termTwo = RegisterType.None;
+		}
+
+		// displacement will get filled in later, so set to zero here
+		modOperand.SetAsEffectiveAddress(termOne, termTwo, 0);
 	}
 }
 
