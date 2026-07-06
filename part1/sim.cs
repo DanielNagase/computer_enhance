@@ -677,38 +677,26 @@ class InstructionBuilder
 		byte rmValue = (byte)(secondByte & rmMask);
 
 		bool bIsMemoryModeEnabled = instruction.IsMemoryModeEnabled();
+		InstructionOperand regOperand = instruction.operandTwo;
+		InstructionOperand modOperand = instruction.operandOne;
+
+		if (instruction.bUseRegFieldAsDestination)
+		{
+			regOperand = instruction.operandOne;
+			modOperand = instruction.operandTwo;
+		}
 
 		if (instruction.modeType == ModeType.Register)
 		{
 			RegisterType rmField = ParseRegValue(rmValue, ref instruction);
-
-			if (instruction.bUseRegFieldAsDestination)
-			{
-				instruction.operandOne.SetAsRegister(regField);
-				instruction.operandTwo.SetAsRegister(rmField);
-			}
-			else
-			{
-				instruction.operandTwo.SetAsRegister(regField);
-				instruction.operandOne.SetAsRegister(rmField);
-			}
+			regOperand.SetAsRegister(regField);
+			modOperand.SetAsRegister(rmField);
 		}
 		else if (bIsMemoryModeEnabled)
 		{
 			if (instruction.CanUseRegField())
 			{
-				if (instruction.bUseRegFieldAsDestination)
-				{
-					instruction.operandOne.SetAsRegister(regField);
-				}
-				else
-				{
-					instruction.operandTwo.SetAsRegister(regField);
-				}
-			}
-			else
-			{
-				// regField is not used in this case, so don't do anything with it
+				regOperand.SetAsRegister(regField);
 			}
 
 			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
@@ -719,10 +707,7 @@ class InstructionBuilder
 			// immediates so they're handled like the reference
 			// implementation.  I need to to ParseMemValue and build
 			// up the effective address correctly.
-			if (instruction.modeType != ModeType.Register)
-			{
-				instruction.operandOne.SetAsEffectiveAddress(RegisterType.None, RegisterType.None, 0);
-			}
+			modOperand.SetAsEffectiveAddress(RegisterType.None, RegisterType.None, 0);
 		}
 	}
 
