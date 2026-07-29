@@ -66,11 +66,6 @@ enum RegisterType
 	AX, BX, CX, DX, SP, BP, SI, DI, None
 };
 
-enum EffectiveAddressType
-{
-	BX_plus_SI, BX_plus_DI, BP_plus_SI, BP_plus_DI, SI, DI, DirectAddress, BP, BX, None
-};
-
 struct RegisterAccess
 {
 	public RegisterType Index;
@@ -258,8 +253,6 @@ class Instruction
 		return lastOperand;
 	}
 
-	// calculated from R/M field
-	public EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
 	// 8-bit or 16-bit displacement value. may not be used
 	public short displacement = 0;
 
@@ -699,7 +692,6 @@ class InstructionBuilder
 				regOperand.SetAsRegister(regField);
 			}
 
-			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
 			ParseMemValue(rmValue, instruction.modeType, ref modOperand,
 						  out bHasDirectAddress);
 		}
@@ -836,57 +828,6 @@ class InstructionBuilder
 		}
 
 		return register;
-	}
-
-	// Parse memValue into an effective address calculation. The
-	// memValue parameter is a three-bit sequence that occupies the
-	// three least significant bits.
-	EffectiveAddressType ParseMemValue(byte memValue, ModeType modeType)
-	{
-		EffectiveAddressType effectiveAddress = EffectiveAddressType.None;
-
-		if (modeType == ModeType.Register)
-		{
-			return EffectiveAddressType.None;
-		}
-
-		switch(memValue)
-		{
-			case 0b0000_0000:
-				effectiveAddress = EffectiveAddressType.BX_plus_SI;
-				break;
-			case 0b0000_0001:
-				effectiveAddress = EffectiveAddressType.BX_plus_DI;
-				break;
-			case 0b0000_0010:
-				effectiveAddress = EffectiveAddressType.BP_plus_SI;
-				break;
-			case 0b0000_0011:
-				effectiveAddress = EffectiveAddressType.BP_plus_DI;
-				break;
-			case 0b0000_0100:
-				effectiveAddress = EffectiveAddressType.SI;
-				break;
-			case 0b0000_0101:
-				effectiveAddress = EffectiveAddressType.DI;
-				break;
-			case 0b0000_0110:
-				effectiveAddress = EffectiveAddressType.BP;
-				break;
-			case 0b0000_0111:
-				effectiveAddress = EffectiveAddressType.BX;
-				break;
-			default:
-				break;
-		}
-
-		if ((effectiveAddress == EffectiveAddressType.BP) &&
-			(modeType == ModeType.MemoryNoDisplacement))
-		{
-			effectiveAddress = EffectiveAddressType.DirectAddress;
-		}
-
-		return effectiveAddress;
 	}
 
 	// Parse memValue into an effective address calculation. The
