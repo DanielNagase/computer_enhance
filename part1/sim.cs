@@ -1335,7 +1335,7 @@ class InstructionFormatter
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
-				string address = ConvertEffectiveAddressToString(instruction.effectiveAddress, instruction.displacement);
+				string address = ConvertEffectiveAddressToString(instruction);
 
 				if (instruction.bUseRegFieldAsDestination)
 				{
@@ -1361,9 +1361,7 @@ class InstructionFormatter
 			{
 				// TODO: see if we need the prefix for other cases
 				destination = CreateByteOrWordPrefix(instruction.bIsWordOperation);
-				destination +=
-					ConvertEffectiveAddressToString(instruction.effectiveAddress,
-													instruction.displacement);
+				destination += ConvertEffectiveAddressToString(instruction);
 			}
 		}
 		else if (instruction.format == FormatType.OneByteWithImmediate)
