@@ -919,6 +919,20 @@ class Simulator
 	const int registerCount = 8;
 	short[] registers = new short[registerCount];
 
+	struct FlagSet
+	{
+		public bool bSignFlag;
+		public bool bZeroFlag;
+
+		public void Initialize()
+		{
+			bSignFlag = false;
+			bZeroFlag = false;
+		}
+	}
+
+	FlagSet flags;
+
 	class RegisterUpdate
 	{
 		public RegisterType register = RegisterType.None;
@@ -995,6 +1009,7 @@ class Simulator
 	public void Execute(Program program)
 	{
 		InitializeRegisters();
+		flags.Initialize();
 		Console.WriteLine($"--- {program.Filename} execution ---");
 
 		List<Instruction> instructions = program.Instructions;
