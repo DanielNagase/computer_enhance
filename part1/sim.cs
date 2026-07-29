@@ -253,9 +253,6 @@ class Instruction
 		return lastOperand;
 	}
 
-	// 8-bit or 16-bit displacement value. may not be used
-	public short displacement = 0;
-
 	// 8-bit or 16-bit immediate value. may not be used
 	public short immediateValue = 0;
 
@@ -493,7 +490,6 @@ class InstructionBuilder
 		{
 			ReadByteValue(filestream, additionalBytesToRead, ref numBytesRead,
 						  out short byteValue);
-			instruction.displacement = byteValue;
 
 			InstructionOperand operand =
 				(instruction.operandOne.Type == OperandType.Memory) ?
