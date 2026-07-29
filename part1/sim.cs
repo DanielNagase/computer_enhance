@@ -71,37 +71,6 @@ enum EffectiveAddressType
 	BX_plus_SI, BX_plus_DI, BP_plus_SI, BP_plus_DI, SI, DI, DirectAddress, BP, BX, None
 };
 
-struct EffectiveAddressTerm
-{
-	public RegisterType Register;
-	public uint Scale;
-
-	public EffectiveAddressTerm(RegisterType inRegister, uint inScale)
-	{
-		Register = inRegister;
-		Scale = inScale;
-	}
-}
-
-struct EffectiveAddressExpression
-{
-	public EffectiveAddressTerm TermOne;
-	public EffectiveAddressTerm TermTwo;
-	public uint ExplicitSegment;
-	public short Displacement;
-	public uint Flags;
-
-	public EffectiveAddressExpression(RegisterType termOne, RegisterType termTwo,
-									  short inDisplacement)
-	{
-		TermOne = new EffectiveAddressTerm(termOne, 1);
-		TermTwo = new EffectiveAddressTerm(termTwo, 1);
-		ExplicitSegment = 0;
-		Displacement = inDisplacement;
-		Flags = 0;
-	}
-}
-
 struct RegisterAccess
 {
 	public RegisterType Index;
@@ -115,6 +84,21 @@ struct RegisterAccess
 		Offset = offset;
 		Count = count;
 	}
+}
+
+struct EffectiveAddressTerm
+{
+	public RegisterAccess Register;
+	public uint Scale;
+}
+
+struct EffectiveAddressExpression
+{
+	public EffectiveAddressTerm TermOne;
+	public EffectiveAddressTerm TermTwo;
+	public uint ExplicitSegment;
+	public short Displacement;
+	public uint Flags;
 }
 
 enum ImmediateFlag
@@ -184,11 +168,15 @@ class InstructionOperand
 		Immediate.Flags = inFlags;
 	}
 
-	public void SetAsEffectiveAddress(RegisterType termOne, RegisterType termTwo,
+	public void SetAsEffectiveAddress(RegisterAccess termOne, RegisterAccess termTwo,
 									  short displacement)
 	{
 		Type = OperandType.Memory;
-		Address = new EffectiveAddressExpression(termOne, termTwo, displacement);
+		Address.TermOne.Register = termOne;
+		Address.TermOne.Scale = 1;
+		Address.TermTwo.Register = termTwo;
+		Address.TermTwo.Scale = 1;
+		Address.Displacement = displacement;
 	}
 }
 
@@ -901,7 +889,9 @@ class InstructionBuilder
 	{
 		if (modeType == ModeType.Register)
 		{
-			modOperand.SetAsEffectiveAddress(RegisterType.None, RegisterType.None, 0);
+			modOperand.SetAsEffectiveAddress(new RegisterAccess(RegisterType.None, 0, 2),
+											 new RegisterAccess(RegisterType.None, 0, 2),
+											 0);
 
 			return;
 		}
@@ -936,7 +926,9 @@ class InstructionBuilder
 		}
 
 		// displacement will get filled in later, so set to zero here
-		modOperand.SetAsEffectiveAddress(termOne, termTwo, 0);
+		modOperand.SetAsEffectiveAddress(new RegisterAccess(termOne, 0, 2),
+										 new RegisterAccess(termTwo, 0, 2),
+										 0);
 	}
 }
 
