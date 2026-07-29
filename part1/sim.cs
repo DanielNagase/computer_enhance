@@ -1091,6 +1091,54 @@ class InstructionFormatter
 		return bIsWord ? "word " : "byte ";
 	}
 
+	static string ConvertEffectiveAddressToString(Instruction instruction)
+	{
+		InstructionOperand operand =
+				(instruction.operandOne.Type == OperandType.Memory) ?
+				instruction.operandOne : instruction.operandTwo;
+
+		if (operand.Type != OperandType.Memory)
+		{
+			return "";
+		}
+
+		string addressString = "";
+		string displacementString = "";
+		string separator = "";
+		EffectiveAddressTerm[] terms = new EffectiveAddressTerm[2] {
+			operand.Address.TermOne,
+			operand.Address.TermTwo
+		};
+
+		for (int i = 0; i < terms.Length; i++)
+		{
+			EffectiveAddressTerm term = terms[i];
+			RegisterAccess register = term.Register;
+
+			if (register.Index != RegisterType.None)
+			{
+				addressString += separator;
+
+				if (term.Scale != 1)
+				{
+					addressString += $"{term.Scale}*";
+				}
+
+				addressString += ConvertRegisterToString(register.Index);
+				separator = " + ";
+			}
+		}
+
+		if (operand.Address.Displacement != 0)
+		{
+			displacementString = operand.Address.Displacement.ToString(" + ##; - ##");
+		}
+
+		string output = $"[{addressString}{displacementString}]";
+
+		return output;
+	}
+
 	static string ConvertEffectiveAddressToString(EffectiveAddressType effectiveAddress, short displacement)
 	{
 		if (effectiveAddress == EffectiveAddressType.None)
