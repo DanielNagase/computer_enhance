@@ -1139,67 +1139,6 @@ class InstructionFormatter
 		return output;
 	}
 
-	static string ConvertEffectiveAddressToString(EffectiveAddressType effectiveAddress, short displacement)
-	{
-		if (effectiveAddress == EffectiveAddressType.None)
-		{
-			return "";
-		}
-
-		string addressString= "";
-
-		switch(effectiveAddress)
-		{
-			case EffectiveAddressType.BX_plus_SI:
-				addressString = "bx + si";
-				break;
-			case EffectiveAddressType.BX_plus_DI:
-				addressString = "bx + di";
-				break;
-			case EffectiveAddressType.BP_plus_SI:
-				addressString = "bp + si";
-				break;
-			case EffectiveAddressType.BP_plus_DI:
-				addressString = "bp + di";
-				break;
-			case EffectiveAddressType.SI:
-				addressString = "si";
-				break;
-			case EffectiveAddressType.DI:
-				addressString = "di";
-				break;
-			case EffectiveAddressType.DirectAddress:
-				// handled below
-				break;
-			case EffectiveAddressType.BP:
-				addressString = "bp";
-				break;
-			case EffectiveAddressType.BX:
-				addressString = "bx";
-				break;
-			default:
-				break;
-		}
-
-		string displacementString = "";
-
-		if (displacement != 0)
-		{
-			string separator = " + ";
-
-			if (effectiveAddress == EffectiveAddressType.DirectAddress)
-			{
-				separator = "";
-			}
-
-			displacementString = separator + displacement;
-		}
-
-		string output = $"[{addressString}{displacementString}]";
-
-		return output;
-	}
-
 	static string ConvertIPIncrementToString(sbyte increment)
 	{
 		string incrementString = "";
