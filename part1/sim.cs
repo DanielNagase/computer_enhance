@@ -450,8 +450,11 @@ class InstructionBuilder
 					int additionalBytesToRead = 1;
 					int additionalBytesRead = filestream.Read(bytes, numBytesRead, additionalBytesToRead);
 					numBytesRead += additionalBytesRead;
-					DecodeSecondByteOfInstruction(bytes[1], ref instruction);
-					ReadDisplacementValue(filestream, ref numBytesRead, ref instruction);
+					bool bHasDirectAddress = false;
+					DecodeSecondByteOfInstruction(bytes[1], ref instruction,
+												  out bHasDirectAddress);
+					ReadDisplacementValue(filestream, ref numBytesRead, ref instruction,
+										  bHasDirectAddress);
 
 					if (instruction.NumberOfImmediateBytes() > 0)
 					{
@@ -478,7 +481,8 @@ class InstructionBuilder
 		}
 	}
 
-	private void ReadDisplacementValue(FileStream filestream, ref int numBytesRead, ref Instruction instruction)
+	private void ReadDisplacementValue(FileStream filestream, ref int numBytesRead,
+									   ref Instruction instruction, bool bHasDirectAddress)
 	{
 		int additionalBytesToRead = 0;
 
@@ -487,7 +491,7 @@ class InstructionBuilder
 			additionalBytesToRead = 1;
 		}
 		else if (instruction.modeType == ModeType.Memory16BitDisplacement ||
-				 instruction.effectiveAddress == EffectiveAddressType.DirectAddress)
+				 bHasDirectAddress)
 		{
 			additionalBytesToRead = 2;
 		}
@@ -645,8 +649,11 @@ class InstructionBuilder
 		}
 	}
 
-	public void DecodeSecondByteOfInstruction(byte secondByte, ref Instruction instruction)
+	public void DecodeSecondByteOfInstruction(byte secondByte, ref Instruction instruction,
+											  out bool bHasDirectAddress)
 	{
+		bHasDirectAddress = false;
+
 		if (instruction == null)
 		{
 			return;
@@ -693,7 +700,8 @@ class InstructionBuilder
 			}
 
 			instruction.effectiveAddress = ParseMemValue(rmValue, instruction.modeType);
-			ParseMemValue(rmValue, instruction.modeType, ref modOperand);
+			ParseMemValue(rmValue, instruction.modeType, ref modOperand,
+						  out bHasDirectAddress);
 		}
 	}
 
@@ -885,8 +893,10 @@ class InstructionBuilder
 	// memValue parameter is a three-bit sequence that occupies the
 	// three least significant bits.
 	void ParseMemValue(byte memValue, ModeType modeType,
-					   ref InstructionOperand modOperand)
+					   ref InstructionOperand modOperand, out bool bHasDirectAddress)
 	{
+		bHasDirectAddress = false;
+
 		if (modeType == ModeType.Register)
 		{
 			modOperand.SetAsEffectiveAddress(new RegisterAccess(RegisterType.None, 0, 2),
@@ -921,6 +931,7 @@ class InstructionBuilder
 			(modeType == ModeType.MemoryNoDisplacement))
 		{
 			// direct address
+			bHasDirectAddress = true;
 			termOne = RegisterType.None;
 			termTwo = RegisterType.None;
 		}
