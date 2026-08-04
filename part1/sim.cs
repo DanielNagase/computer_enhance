@@ -995,8 +995,14 @@ class Simulator
 		lastUpdate.newValue = newValue;
 	}
 
-	void SetFlags(FlagSet newFlags)
+	void SetFlags(short newValue)
 	{
+		FlagSet newFlags = new FlagSet();
+		newFlags.bZeroFlag = (newValue == 0);
+
+		const byte signBitMask = 0b1000_0000;
+		newFlags.bSignFlag = ((newValue & signBitMask) != 0);
+
 		RecordFlagsUpdate(newFlags);
 		flags = newFlags;
 	}
@@ -1087,7 +1093,7 @@ class Simulator
 			short result = PerformArithmeticInstruction(instruction.type,
 														sourceValue, destinationValue,
 														out bShouldStoreResult);
-			// TODO: set flags
+			SetFlags(result);
 
 			// TODO: handle memory as a destination
 			if (bShouldStoreResult && instruction.operandOne.Type == OperandType.Register)
