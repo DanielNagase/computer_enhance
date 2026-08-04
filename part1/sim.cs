@@ -1007,6 +1007,26 @@ class Simulator
 		lastFlagsUpdate.newValue = newFlags;
 	}
 
+	short GetOperandValue(InstructionOperand operand)
+	{
+		short operandValue = 0;
+
+		if (operand.Type == OperandType.Register)
+		{
+			if (operand.Register.Index != RegisterType.None)
+			{
+				operandValue = GetRegisterValue(operand.Register.Index);
+			}
+		}
+		else if (operand.Type == OperandType.Immediate)
+		{
+			operandValue = operand.Immediate.Value;
+		}
+		// TODO: handle OperandType.Memory
+
+		return operandValue;
+	}
+
 	void PerformInstruction(Instruction instruction)
 	{
 		short sourceValue = 0;
