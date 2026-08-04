@@ -1027,6 +1027,40 @@ class Simulator
 		return operandValue;
 	}
 
+	short PerformArithmeticInstruction(OperationType operation,
+									   short sourceOperand, short destinationOperand,
+									   out bool bShouldStore)
+	{
+		short result = 0;
+		bShouldStore = true;
+
+		switch(operation)
+		{
+			case OperationType.AddRegMemWithRegToEither:
+			case OperationType.AddImmediateToRegMem:
+			case OperationType.AddImmediateToAccumulator:
+				result = (short)(sourceOperand + destinationOperand);
+				break;
+			case OperationType.SubRegMemAndRegToEither:
+			case OperationType.SubImmediateFromRegMem:
+			case OperationType.SubImmediateFromAccumulator:
+			case OperationType.CmpRegMemAndReg:
+			case OperationType.CmpImmediateWithRegMem:
+			case OperationType.CmpImmediateWithAccumulator:
+				result = (short)(destinationOperand - sourceOperand);
+				break;
+		}
+
+		if (operation == OperationType.CmpRegMemAndReg ||
+			operation == OperationType.CmpImmediateWithRegMem ||
+			operation == OperationType.CmpImmediateWithAccumulator)
+		{
+			bShouldStore = false;
+		}
+
+		return result;
+	}
+
 	void PerformInstruction(Instruction instruction)
 	{
 		short sourceValue = 0;
@@ -1043,6 +1077,22 @@ class Simulator
 			{
 				sourceValue = GetOperandValue(instruction.operandTwo);
 				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
+			}
+		}
+		else if (instruction.IsArithmeticInstruction())
+		{
+			short destinationValue = GetOperandValue(instruction.operandOne);
+			sourceValue = GetOperandValue(instruction.operandTwo);
+			bool bShouldStoreResult = true;
+			short result = PerformArithmeticInstruction(instruction.type,
+														sourceValue, destinationValue,
+														out bShouldStoreResult);
+			// TODO: set flags
+
+			// TODO: handle memory as a destination
+			if (bShouldStoreResult && instruction.operandOne.Type == OperandType.Register)
+			{
+				SetRegisterValue(instruction.operandOne.Register.Index, result);
 			}
 		}
 	}
