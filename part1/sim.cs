@@ -962,8 +962,8 @@ class Simulator
 	class RegisterUpdate
 	{
 		public RegisterType register = RegisterType.None;
-		public int previousValue = 0;
-		public int newValue = 0;
+		public short previousValue = 0;
+		public short newValue = 0;
 	}
 
 	RegisterUpdate lastUpdate = new RegisterUpdate();
@@ -1077,7 +1077,8 @@ class Simulator
 		Console.WriteLine("");
 		Console.WriteLine("Final registers:");
 		string registerName = "";
-		int index = 0, registerValue = 0;
+		int index = 0;
+		short registerValue = 0;
 
 		for (int i = 0; i < registerCount; i++)
 		{
