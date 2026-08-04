@@ -1031,13 +1031,9 @@ class Simulator
 	{
 		short sourceValue = 0;
 
-		if (instruction.format == FormatType.OneByteWithImmediate)
-		{
-			sourceValue = instruction.operandTwo.Immediate.Value;
-		}
-
 		if (instruction.type == OperationType.MovImmediateToReg)
 		{
+			sourceValue = GetOperandValue(instruction.operandTwo);
 			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 		}
 		else if (instruction.type == OperationType.MovRegMemToFromRegMask)
@@ -1045,12 +1041,7 @@ class Simulator
 			// note: only reg to reg moves are handled right now
 			if (instruction.modeType == ModeType.Register)
 			{
-				if (instruction.operandTwo.Type == OperandType.Register &&
-					instruction.operandTwo.Register.Index != RegisterType.None)
-				{
-					sourceValue = GetRegisterValue(instruction.operandTwo.Register.Index);
-				}
-
+				sourceValue = GetOperandValue(instruction.operandTwo);
 				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 			}
 		}
