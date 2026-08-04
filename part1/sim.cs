@@ -947,6 +947,28 @@ class Simulator
 			bSignFlag = false;
 			bZeroFlag = false;
 		}
+
+		public bool IsAnyFlagSet()
+		{
+			return bSignFlag || bZeroFlag;
+		}
+
+		public override string ToString()
+		{
+			string output = "";
+
+			if (bSignFlag)
+			{
+				output += "S";
+			}
+
+			if (bZeroFlag)
+			{
+				output += "Z";
+			}
+
+			return output;
+		}
 	}
 
 	FlagSet flags;
@@ -955,6 +977,11 @@ class Simulator
 	{
 		public FlagSet previousValue;
 		public FlagSet newValue;
+
+		public bool DidChange()
+		{
+			return !previousValue.Equals(newValue);
+		}
 	}
 
 	FlagSetUpdate lastFlagsUpdate;
@@ -1150,12 +1177,24 @@ class Simulator
 			string formatString = $"      {registerName}: 0x{registerValue:x4} ({registerValue})";
 			Console.WriteLine(formatString);
 		}
+
+		if (flags.IsAnyFlagSet())
+		{
+			Console.WriteLine($"   flags:{flags.ToString()}");
+		}
 	}
 
 	string GetLastUpdateString()
 	{
 		string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
-		return $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
+		string output = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
+
+		if (lastFlagsUpdate.DidChange())
+		{
+			output += $" flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
+		}
+
+		return output;
 	}
 }
 
