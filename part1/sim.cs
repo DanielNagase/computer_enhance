@@ -1093,7 +1093,7 @@ class Simulator
 			index = (int)RegisterType.AX + i;
 			registerValue = registers[i];
 			registerName = InstructionFormatter.ConvertRegisterToString((RegisterType)index);
-			string formatString = $"  {registerName}: 0x{registerValue:x4} ({registerValue})";
+			string formatString = $"      {registerName}: 0x{registerValue:x4} ({registerValue})";
 			Console.WriteLine(formatString);
 		}
 	}
@@ -1101,7 +1101,7 @@ class Simulator
 	string GetLastUpdateString()
 	{
 		string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
-		return $"{destination}:0x{lastUpdate.previousValue:x4}->0x{lastUpdate.newValue:x4}";
+		return $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
 	}
 }
 
