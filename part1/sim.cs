@@ -183,6 +183,19 @@ class Instruction
 	// MOD field
 	public ModeType modeType = ModeType.MemoryNoDisplacement;
 
+	public bool IsArithmeticInstruction()
+	{
+		return type == OperationType.AddRegMemWithRegToEither ||
+			type == OperationType.AddImmediateToRegMem ||
+			type == OperationType.AddImmediateToAccumulator ||
+			type == OperationType.SubRegMemAndRegToEither ||
+			type == OperationType.SubImmediateFromRegMem ||
+			type == OperationType.SubImmediateFromAccumulator ||
+			type == OperationType.CmpRegMemAndReg ||
+			type == OperationType.CmpImmediateWithRegMem ||
+			type == OperationType.CmpImmediateWithAccumulator;
+	}
+
 	public bool IsMemoryModeEnabled()
 	{
 		return modeType == ModeType.MemoryNoDisplacement ||
