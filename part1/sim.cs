@@ -946,6 +946,14 @@ class Simulator
 
 	FlagSet flags;
 
+	struct FlagSetUpdate
+	{
+		public FlagSet previousValue;
+		public FlagSet newValue;
+	}
+
+	FlagSetUpdate lastFlagsUpdate;
+
 	class RegisterUpdate
 	{
 		public RegisterType register = RegisterType.None;
@@ -980,6 +988,18 @@ class Simulator
 		lastUpdate.register = register;
 		lastUpdate.previousValue = GetRegisterValue(register);
 		lastUpdate.newValue = newValue;
+	}
+
+	void SetFlags(FlagSet newFlags)
+	{
+		RecordFlagsUpdate(newFlags);
+		flags = newFlags;
+	}
+
+	void RecordFlagsUpdate(FlagSet newFlags)
+	{
+		lastFlagsUpdate.previousValue = flags;
+		lastFlagsUpdate.newValue = newFlags;
 	}
 
 	void PerformInstruction(Instruction instruction)
