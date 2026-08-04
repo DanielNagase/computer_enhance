@@ -1134,6 +1134,12 @@ class Simulator
 		{
 			index = (int)RegisterType.AX + i;
 			registerValue = registers[i];
+
+			if (registerValue == 0)
+			{
+				continue;
+			}
+
 			registerName = InstructionFormatter.ConvertRegisterToString((RegisterType)index);
 			string formatString = $"      {registerName}: 0x{registerValue:x4} ({registerValue})";
 			Console.WriteLine(formatString);
