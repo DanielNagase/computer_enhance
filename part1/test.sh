@@ -18,3 +18,9 @@ diff -q output/listing_0039_more_movs listing_0039_more_movs
 mono ./sim.exe listing_0041_add_sub_cmp_jnz > output/listing_0041_add_sub_cmp_jnz.asm
 nasm output/listing_0041_add_sub_cmp_jnz.asm
 diff -q output/listing_0041_add_sub_cmp_jnz listing_0041_add_sub_cmp_jnz
+
+mono ./sim.exe -exec listing_0043_immediate_movs > output/listing_0043_immediate_movs.txt
+diff -q output/listing_0043_immediate_movs.txt listing_0043_immediate_movs.txt
+
+mono ./sim.exe -exec listing_0044_register_movs > output/listing_0044_register_movs.txt
+diff -q output/listing_0044_register_movs.txt listing_0044_register_movs.txt
