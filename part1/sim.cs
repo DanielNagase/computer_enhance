@@ -79,6 +79,29 @@ struct RegisterAccess
 		Offset = offset;
 		Count = count;
 	}
+
+	public static ushort GetCountForRegister(RegisterType index)
+	{
+		ushort count = 2;
+
+		switch(index)
+		{
+			case RegisterType.AL:
+			case RegisterType.BL:
+			case RegisterType.CL:
+			case RegisterType.DL:
+			case RegisterType.AH:
+			case RegisterType.BH:
+			case RegisterType.CH:
+			case RegisterType.DH:
+				count = 1;
+				break;
+			default:
+				break;
+		}
+
+		return count;
+	}
 }
 
 struct EffectiveAddressTerm
@@ -127,25 +150,7 @@ class InstructionOperand
 
 	public void SetAsRegister(RegisterType index)
 	{
-		ushort count = 2;
-
-		switch(index)
-		{
-			case RegisterType.AL:
-			case RegisterType.BL:
-			case RegisterType.CL:
-			case RegisterType.DL:
-			case RegisterType.AH:
-			case RegisterType.BH:
-			case RegisterType.CH:
-			case RegisterType.DH:
-				count = 1;
-				break;
-			default:
-				break;
-		}
-
-		SetAsRegister(index, count);
+		SetAsRegister(index, RegisterAccess.GetCountForRegister(index));
 	}
 
 	public void SetAsRegister(RegisterType index, ushort count)
