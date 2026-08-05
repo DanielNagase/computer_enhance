@@ -1027,8 +1027,8 @@ class Simulator
 		FlagSet newFlags = new FlagSet();
 		newFlags.bZeroFlag = (newValue == 0);
 
-		const byte signBitMask = 0b1000_0000;
-		newFlags.bSignFlag = ((newValue & signBitMask) != 0);
+		const int signBitMask = 0x8000;
+		newFlags.bSignFlag = (newValue & signBitMask) != 0;
 
 		RecordFlagsUpdate(newFlags);
 		flags = newFlags;
