@@ -1151,7 +1151,8 @@ class Simulator
 			PerformInstruction(instruction);
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction);
-			Console.WriteLine(instructionString + " ; " + GetLastUpdateString());
+			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
+			Console.WriteLine(instructionString + " ; " + GetLastUpdateString(bShouldPrintFlags));
 		}
 	}
 
@@ -1184,12 +1185,12 @@ class Simulator
 		}
 	}
 
-	string GetLastUpdateString()
+	string GetLastUpdateString(bool bShouldPrintFlags)
 	{
 		string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
 		string output = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
 
-		if (lastFlagsUpdate.DidChange())
+		if (bShouldPrintFlags && lastFlagsUpdate.DidChange())
 		{
 			output += $" flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
 		}
