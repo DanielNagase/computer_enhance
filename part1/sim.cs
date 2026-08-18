@@ -1140,6 +1140,10 @@ class Simulator
 			{
 				SetRegisterValue(instruction.operandOne.Register.Index, result);
 			}
+			else
+			{
+				lastUpdate.Initialize();
+			}
 		}
 	}
 
@@ -1202,11 +1206,21 @@ class Simulator
 	string GetLastUpdateString(bool bShouldPrintFlags)
 	{
 		string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
-		string output = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
+		string output = "";
+
+		if (lastUpdate.DidChange())
+		{
+			output = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
+		}
 
 		if (bShouldPrintFlags && lastFlagsUpdate.DidChange())
 		{
-			output += $" flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
+			if (output.Length > 0)
+			{
+				output += " ";
+			}
+
+			output += $"flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
 		}
 
 		return output;
