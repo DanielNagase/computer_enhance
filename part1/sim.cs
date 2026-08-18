@@ -432,6 +432,7 @@ class InstructionBuilder
 		}
 
 		program.Filename = inputFilename;
+		bool bDoesFileHaveFormatError = false;
 
 		using (FileStream filestream = File.OpenRead(inputFilename))
 		{
@@ -481,11 +482,22 @@ class InstructionBuilder
 					ReadIncrementValue(filestream, ref numBytesRead, ref instruction);
 					program.AddInstruction(instruction);
 				}
+				else
+				{
+					bDoesFileHaveFormatError = true;
+
+					break;
+				}
 
 				ClearBytes();
 				numBytesToRead = 1;
 				numBytesRead = 0;
 			}
+		}
+
+		if (bDoesFileHaveFormatError)
+		{
+			throw new Exception($"Format error encountered in the file '{inputFilename}'!");
 		}
 	}
 
