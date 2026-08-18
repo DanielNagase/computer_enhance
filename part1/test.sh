@@ -3,27 +3,27 @@ mcs sim.cs
 mkdir -p output
 
 # you need to call the exe with the 'mono' command to avoid System.TypeLoadException errors
-mono ./sim.exe listing_0037_single_register_mov > output/listing_0037_single_register_mov.asm
+mono ./sim.exe input/listing_0037_single_register_mov > output/listing_0037_single_register_mov.asm
 nasm output/listing_0037_single_register_mov.asm
-diff -q output/listing_0037_single_register_mov listing_0037_single_register_mov
+diff -q output/listing_0037_single_register_mov input/listing_0037_single_register_mov
 
-mono ./sim.exe listing_0038_many_register_mov > output/listing_0038_many_register_mov.asm
+mono ./sim.exe input/listing_0038_many_register_mov > output/listing_0038_many_register_mov.asm
 nasm output/listing_0038_many_register_mov.asm
-diff -q output/listing_0038_many_register_mov listing_0038_many_register_mov
+diff -q output/listing_0038_many_register_mov input/listing_0038_many_register_mov
 
-mono ./sim.exe listing_0039_more_movs > output/listing_0039_more_movs.asm
+mono ./sim.exe input/listing_0039_more_movs > output/listing_0039_more_movs.asm
 nasm output/listing_0039_more_movs.asm
-diff -q output/listing_0039_more_movs listing_0039_more_movs
+diff -q output/listing_0039_more_movs input/listing_0039_more_movs
 
-mono ./sim.exe listing_0041_add_sub_cmp_jnz > output/listing_0041_add_sub_cmp_jnz.asm
+mono ./sim.exe input/listing_0041_add_sub_cmp_jnz > output/listing_0041_add_sub_cmp_jnz.asm
 nasm output/listing_0041_add_sub_cmp_jnz.asm
-diff -q output/listing_0041_add_sub_cmp_jnz listing_0041_add_sub_cmp_jnz
+diff -q output/listing_0041_add_sub_cmp_jnz input/listing_0041_add_sub_cmp_jnz
 
-mono ./sim.exe -exec listing_0043_immediate_movs > output/listing_0043_immediate_movs.txt
-diff -q output/listing_0043_immediate_movs.txt listing_0043_immediate_movs.txt
+mono ./sim.exe -exec input/listing_0043_immediate_movs > output/listing_0043_immediate_movs.txt
+diff -q output/listing_0043_immediate_movs.txt input/listing_0043_immediate_movs.txt
 
-mono ./sim.exe -exec listing_0044_register_movs > output/listing_0044_register_movs.txt
-diff -q output/listing_0044_register_movs.txt listing_0044_register_movs.txt
+mono ./sim.exe -exec input/listing_0044_register_movs > output/listing_0044_register_movs.txt
+diff -q output/listing_0044_register_movs.txt input/listing_0044_register_movs.txt
 
-mono sim.exe -exec listing_0046_add_sub_cmp > output/listing_0046_add_sub_cmp.txt
-diff output/listing_0046_add_sub_cmp.txt listing_0046_add_sub_cmp.txt
+mono sim.exe -exec input/listing_0046_add_sub_cmp > output/listing_0046_add_sub_cmp.txt
+diff output/listing_0046_add_sub_cmp.txt input/listing_0046_add_sub_cmp.txt

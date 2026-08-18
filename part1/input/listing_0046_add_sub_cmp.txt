@@ -1,4 +1,4 @@
---- listing_0046_add_sub_cmp execution ---
+--- input/listing_0046_add_sub_cmp execution ---
 mov bx, 61443 ; bx:0x0->0xf003
 mov cx, 3841 ; cx:0x0->0xf01
 sub bx, cx ; bx:0xf003->0xe102 flags:->S
