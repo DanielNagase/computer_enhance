@@ -1,5 +1,5 @@
 #!/bin/bash
-mcs sim.cs
+./build.sh
 mkdir -p output
 
 # you need to call the exe with the 'mono' command to avoid System.TypeLoadException errors
