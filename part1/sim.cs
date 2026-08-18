@@ -935,7 +935,7 @@ class Decoder
 class Simulator
 {
 	const int registerCount = 8;
-	short[] registers = new short[registerCount];
+	ushort[] registers = new ushort[registerCount];
 
 	struct FlagSet
 	{
@@ -989,8 +989,8 @@ class Simulator
 	struct RegisterUpdate
 	{
 		public RegisterType register;
-		public short previousValue;
-		public short newValue;
+		public ushort previousValue;
+		public ushort newValue;
 
 		public void Initialize()
 		{
@@ -1017,25 +1017,25 @@ class Simulator
 		return index;
 	}
 
-	short GetRegisterValue(RegisterType register)
+	ushort GetRegisterValue(RegisterType register)
 	{
 		return registers[GetIndex(register)];
 	}
 
-	void SetRegisterValue(RegisterType register, short newValue)
+	void SetRegisterValue(RegisterType register, ushort newValue)
 	{
 		RecordUpdate(register, newValue);
 		registers[GetIndex(register)] = newValue;
 	}
 
-	void RecordUpdate(RegisterType register, short newValue)
+	void RecordUpdate(RegisterType register, ushort newValue)
 	{
 		lastUpdate.register = register;
 		lastUpdate.previousValue = GetRegisterValue(register);
 		lastUpdate.newValue = newValue;
 	}
 
-	void SetFlags(short newValue)
+	void SetFlags(ushort newValue)
 	{
 		FlagSet newFlags = new FlagSet();
 		newFlags.bZeroFlag = (newValue == 0);
@@ -1053,9 +1053,9 @@ class Simulator
 		lastFlagsUpdate.newValue = newFlags;
 	}
 
-	short GetOperandValue(InstructionOperand operand)
+	ushort GetOperandValue(InstructionOperand operand)
 	{
-		short operandValue = 0;
+		ushort operandValue = 0;
 
 		if (operand.Type == OperandType.Register)
 		{
@@ -1066,18 +1066,18 @@ class Simulator
 		}
 		else if (operand.Type == OperandType.Immediate)
 		{
-			operandValue = operand.Immediate.Value;
+			operandValue = (ushort)operand.Immediate.Value;
 		}
 		// TODO: handle OperandType.Memory
 
 		return operandValue;
 	}
 
-	short PerformArithmeticInstruction(OperationType operation,
-									   short sourceOperand, short destinationOperand,
+	ushort PerformArithmeticInstruction(OperationType operation,
+									   ushort sourceOperand, ushort destinationOperand,
 									   out bool bShouldStore)
 	{
-		short result = 0;
+		ushort result = 0;
 		bShouldStore = true;
 
 		switch(operation)
@@ -1085,7 +1085,7 @@ class Simulator
 			case OperationType.AddRegMemWithRegToEither:
 			case OperationType.AddImmediateToRegMem:
 			case OperationType.AddImmediateToAccumulator:
-				result = (short)(sourceOperand + destinationOperand);
+				result = (ushort)(sourceOperand + destinationOperand);
 				break;
 			case OperationType.SubRegMemAndRegToEither:
 			case OperationType.SubImmediateFromRegMem:
@@ -1093,7 +1093,7 @@ class Simulator
 			case OperationType.CmpRegMemAndReg:
 			case OperationType.CmpImmediateWithRegMem:
 			case OperationType.CmpImmediateWithAccumulator:
-				result = (short)(destinationOperand - sourceOperand);
+				result = (ushort)(destinationOperand - sourceOperand);
 				break;
 		}
 
@@ -1109,7 +1109,7 @@ class Simulator
 
 	void PerformInstruction(Instruction instruction)
 	{
-		short sourceValue = 0;
+		ushort sourceValue = 0;
 
 		if (instruction.type == OperationType.MovImmediateToReg)
 		{
@@ -1127,10 +1127,10 @@ class Simulator
 		}
 		else if (instruction.IsArithmeticInstruction())
 		{
-			short destinationValue = GetOperandValue(instruction.operandOne);
+			ushort destinationValue = GetOperandValue(instruction.operandOne);
 			sourceValue = GetOperandValue(instruction.operandTwo);
 			bool bShouldStoreResult = true;
-			short result = PerformArithmeticInstruction(instruction.type,
+			ushort result = PerformArithmeticInstruction(instruction.type,
 														sourceValue, destinationValue,
 														out bShouldStoreResult);
 			SetFlags(result);
@@ -1180,7 +1180,7 @@ class Simulator
 		Console.WriteLine("Final registers:");
 		string registerName = "";
 		int index = 0;
-		short registerValue = 0;
+		ushort registerValue = 0;
 
 		for (int i = 0; i < registerCount; i++)
 		{
@@ -1433,7 +1433,7 @@ class InstructionFormatter
 		}
 		else if (instruction.format == FormatType.TwoBytesWithDisplacementAndImmediate)
 		{
-			source = $"{instruction.operandTwo.Immediate.Value}";
+			source = $"{(ushort)instruction.operandTwo.Immediate.Value}";
 
 			if (instruction.modeType == ModeType.Register)
 			{
@@ -1449,7 +1449,7 @@ class InstructionFormatter
 		else if (instruction.format == FormatType.OneByteWithImmediate)
 		{
 			destination = ConvertRegisterToString(instruction.operandOne.Register.Index);
-			source = $"{instruction.operandTwo.Immediate.Value}";
+			source = $"{(ushort)instruction.operandTwo.Immediate.Value}";
 		}
 
 		output = $"{operation} {destination}, {source}";
