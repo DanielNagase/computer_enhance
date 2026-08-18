@@ -24,3 +24,6 @@ diff -q output/listing_0043_immediate_movs.txt listing_0043_immediate_movs.txt
 
 mono ./sim.exe -exec listing_0044_register_movs > output/listing_0044_register_movs.txt
 diff -q output/listing_0044_register_movs.txt listing_0044_register_movs.txt
+
+mono sim.exe -exec listing_0046_add_sub_cmp > output/listing_0046_add_sub_cmp.txt
+diff output/listing_0046_add_sub_cmp.txt listing_0046_add_sub_cmp.txt
