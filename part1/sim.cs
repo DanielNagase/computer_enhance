@@ -469,18 +469,14 @@ class InstructionBuilder
 					{
 						ReadImmediateValue(filestream, ref numBytesRead, ref instruction);
 					}
-
-					program.AddInstruction(instruction);
 				}
 				else if (instruction.format == FormatType.OneByteWithImmediate)
 				{
 					ReadImmediateValue(filestream, ref numBytesRead, ref instruction);
-					program.AddInstruction(instruction);
 				}
 				else if (instruction.format == FormatType.OneByteWithIncrementToIP)
 				{
 					ReadIncrementValue(filestream, ref numBytesRead, ref instruction);
-					program.AddInstruction(instruction);
 				}
 				else
 				{
@@ -488,6 +484,8 @@ class InstructionBuilder
 
 					break;
 				}
+
+				program.AddInstruction(instruction);
 
 				ClearBytes();
 				numBytesToRead = 1;
