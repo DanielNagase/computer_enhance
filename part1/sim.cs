@@ -1181,7 +1181,7 @@ class Simulator
 
 		if (flags.IsAnyFlagSet())
 		{
-			Console.WriteLine($"   flags:{flags.ToString()}");
+			Console.WriteLine($"   flags: {flags.ToString()}");
 		}
 	}
 
