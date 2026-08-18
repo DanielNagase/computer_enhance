@@ -986,11 +986,24 @@ class Simulator
 
 	FlagSetUpdate lastFlagsUpdate;
 
-	class RegisterUpdate
+	struct RegisterUpdate
 	{
-		public RegisterType register = RegisterType.None;
-		public short previousValue = 0;
-		public short newValue = 0;
+		public RegisterType register;
+		public short previousValue;
+		public short newValue;
+
+		public void Initialize()
+		{
+			register = RegisterType.None;
+			previousValue = 0;
+			newValue = 0;
+		}
+
+		public bool DidChange()
+		{
+			return (register != RegisterType.None) &&
+				(previousValue != newValue);
+		}
 	}
 
 	RegisterUpdate lastUpdate = new RegisterUpdate();
@@ -1141,6 +1154,7 @@ class Simulator
 	public void Execute(Program program)
 	{
 		InitializeRegisters();
+		lastUpdate.Initialize();
 		flags.Initialize();
 		Console.WriteLine($"--- {program.Filename} execution ---");
 
