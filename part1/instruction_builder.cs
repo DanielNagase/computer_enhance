@@ -1,5 +1,25 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
+
+class Program
+{
+	List<Instruction> instructions;
+
+	public Program()
+	{
+		instructions = new List<Instruction>(10);
+	}
+
+	public void AddInstruction(Instruction instruction)
+	{
+		instructions?.Add(instruction);
+	}
+
+	public List<Instruction> Instructions { get => instructions; }
+
+	public string Filename { get; set; }
+}
 
 class InstructionBuilder
 {
