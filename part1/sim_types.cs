@@ -268,6 +268,9 @@ class Instruction
 		return lastOperand;
 	}
 
+	// size in bytes
+	public ushort size = 0;
+
 	// 8-bit or 16-bit immediate value. may not be used
 	public short immediateValue = 0;
 

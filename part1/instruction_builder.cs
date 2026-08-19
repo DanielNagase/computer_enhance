@@ -6,6 +6,9 @@ class Program
 {
 	List<Instruction> instructions;
 
+	// size in bytes of all instructions
+	ushort size = 0;
+
 	public Program()
 	{
 		instructions = new List<Instruction>(10);
@@ -13,12 +16,20 @@ class Program
 
 	public void AddInstruction(Instruction instruction)
 	{
-		instructions?.Add(instruction);
+		if (instruction.size == 0 || instructions == null)
+		{
+			return;
+		}
+
+		instructions.Add(instruction);
+		size += instruction.size;
 	}
 
 	public List<Instruction> Instructions { get => instructions; }
 
 	public string Filename { get; set; }
+
+	public ushort Size { get => size; }
 }
 
 class InstructionBuilder
@@ -87,6 +98,7 @@ class InstructionBuilder
 					break;
 				}
 
+				instruction.size = (ushort)numBytesRead;
 				program.AddInstruction(instruction);
 
 				ClearBytes();
