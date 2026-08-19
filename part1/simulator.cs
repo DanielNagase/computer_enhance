@@ -6,6 +6,10 @@ class Simulator
 	const int registerCount = 8;
 	ushort[] registers = new ushort[registerCount];
 
+	ushort instructionPointer = 0;
+
+	ushort instructionPointerLimit = 0;
+
 	struct FlagSet
 	{
 		public bool bSignFlag;
@@ -224,9 +228,26 @@ class Simulator
 		}
 	}
 
+	void InitializeInstructionPointer(ushort limit)
+	{
+		instructionPointer = 0;
+		instructionPointerLimit = limit;
+	}
+
+	void IncrementInstructionPointer(ushort instructionSize)
+	{
+		instructionPointer += instructionSize;
+	}
+
+	bool CanTerminateExecution()
+	{
+		return instructionPointer >= instructionPointerLimit;
+	}
+
 	public void Execute(Program program)
 	{
 		InitializeRegisters();
+		InitializeInstructionPointer(program.Size);
 		lastUpdate.Initialize();
 		flags.Initialize();
 		Console.WriteLine($"--- {program.Filename} execution ---");
@@ -235,6 +256,7 @@ class Simulator
 
 		foreach (Instruction instruction in instructions)
 		{
+			IncrementInstructionPointer(instruction.size);
 			PerformInstruction(instruction);
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction);
