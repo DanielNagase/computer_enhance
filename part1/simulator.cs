@@ -279,6 +279,22 @@ class Simulator
 
 		return bCanJump;
 	}
+
+	void UpdateInstructionIndex(ref int instructionIndex,
+								Instruction currentInstruction, Program program)
+	{
+		bool bShouldJump = CanJump(currentInstruction.type);
+
+		if (bShouldJump)
+		{
+			// TODO: implement jump
+		}
+		else
+		{
+			instructionIndex++;
+		}
+	}
+
 	public void Execute(Program program, SimulatorOptions inOptions)
 	{
 		options = inOptions;
@@ -290,15 +306,25 @@ class Simulator
 		Console.WriteLine($"--- {program.Filename} execution ---");
 
 		List<Instruction> instructions = program.Instructions;
+		int instructionIndex = 0;
 
-		foreach (Instruction instruction in instructions)
+		while (!CanTerminateExecution())
 		{
+			if (instructionIndex >= instructions.Count)
+			{
+				break;
+			}
+
+			Instruction instruction = instructions[instructionIndex];
+
 			IncrementInstructionPointer(instruction.size);
 			PerformInstruction(instruction);
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction);
 			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
 			Console.WriteLine(instructionString + " ; " + GetLastUpdateString(bShouldPrintFlags));
+
+			UpdateInstructionIndex(ref instructionIndex, instruction, program);
 		}
 	}
 
