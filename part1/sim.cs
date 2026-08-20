@@ -33,7 +33,8 @@ class Application
 	}
 
 	static void CheckArguments(string[] args, out string inputFilename,
-							   out OperationMode operationMode)
+							   out OperationMode operationMode,
+							   out bool shouldPrintIP)
 	{
 		const int argumentsErrorExitCode = 1;
 
@@ -47,8 +48,10 @@ class Application
 
 		inputFilename = "";
 		operationMode = OperationMode.Decode;
+		shouldPrintIP = false;
 
 		const string executeModeString = "-exec";
+		const string IPOptionString = "-ip";
 		string currentArg = "";
 
 		while (argList.Count > 0)
@@ -59,6 +62,10 @@ class Application
 			if (currentArg == executeModeString)
 			{
 				operationMode = OperationMode.Execute;
+			}
+			else if (currentArg == IPOptionString)
+			{
+				shouldPrintIP = true;
 			}
 			else
 			{
@@ -82,7 +89,9 @@ class Application
     {
 		string inputFilename;
 		OperationMode operationMode = OperationMode.Decode;
-		CheckArguments(args, out inputFilename, out operationMode);
+		bool shouldPrintIP = false;
+		CheckArguments(args, out inputFilename, out operationMode,
+					   out shouldPrintIP);
 
 		InstructionBuilder builder = new InstructionBuilder();
 		Program program = new Program();
