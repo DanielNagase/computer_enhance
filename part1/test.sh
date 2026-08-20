@@ -27,3 +27,6 @@ diff -q output/listing_0044_register_movs.txt input/listing_0044_register_movs.t
 
 mono sim.exe -exec input/listing_0046_add_sub_cmp > output/listing_0046_add_sub_cmp.txt
 diff output/listing_0046_add_sub_cmp.txt input/listing_0046_add_sub_cmp.txt
+
+mono sim.exe -ip -exec input/listing_0048_ip_register > output/listing_0048_ip_register.txt
+diff output/listing_0048_ip_register.txt input/listing_0048_ip_register.txt
