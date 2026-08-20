@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
 
+struct SimulatorOptions
+{
+	public bool shouldPrintIP;
+}
+
 class Simulator
 {
 	const int registerCount = 8;
@@ -9,6 +14,8 @@ class Simulator
 	ushort instructionPointer = 0;
 
 	ushort instructionPointerLimit = 0;
+
+	SimulatorOptions options = new SimulatorOptions();
 
 	struct FlagSet
 	{
@@ -249,8 +256,10 @@ class Simulator
 		return instructionPointer >= instructionPointerLimit;
 	}
 
-	public void Execute(Program program)
+	public void Execute(Program program, SimulatorOptions inOptions)
 	{
+		options = inOptions;
+
 		InitializeRegisters();
 		InitializeInstructionPointer(program.Size);
 		lastUpdate.Initialize();
@@ -270,7 +279,7 @@ class Simulator
 		}
 	}
 
-	public void PrintState(bool bShouldPrintIP)
+	public void PrintState()
 	{
 		Console.WriteLine("");
 		Console.WriteLine("Final registers:");
@@ -293,7 +302,7 @@ class Simulator
 			Console.WriteLine(formatString);
 		}
 
-		if (bShouldPrintIP)
+		if (options.shouldPrintIP)
 		{
 			string formatString = $"      ip: 0x{instructionPointer:x4} ({instructionPointer})";
 			Console.WriteLine(formatString);
@@ -305,7 +314,7 @@ class Simulator
 		}
 	}
 
-	string GetLastUpdateString(bool bShouldPrintFlags, bool bShouldPrintIP)
+	string GetLastUpdateString(bool bShouldPrintFlags)
 	{
 		string registerOutput = "";
 		string flagsOutput = "";
@@ -319,7 +328,7 @@ class Simulator
 			parts.Add(registerOutput);
 		}
 
-		if (bShouldPrintIP && lastIPUpdate.DidChange())
+		if (options.shouldPrintIP && lastIPUpdate.DidChange())
 		{
 			IPOutput = GetLastInstructionPointerUpdateString();
 			parts.Add(IPOutput);

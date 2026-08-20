@@ -104,8 +104,11 @@ class Application
 		}
 		else if (operationMode == OperationMode.Execute)
 		{
+			SimulatorOptions options = new SimulatorOptions();
+			options.shouldPrintIP = shouldPrintIP;
+
 			Simulator simulator = new Simulator();
-			simulator.Execute(program);
+			simulator.Execute(program, options);
 			simulator.PrintState();
 		}
     }
