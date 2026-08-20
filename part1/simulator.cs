@@ -80,6 +80,8 @@ class Simulator
 
 	RegisterUpdate lastUpdate = new RegisterUpdate();
 
+	RegisterUpdate lastIPUpdate = new RegisterUpdate();
+
 	int GetIndex(RegisterType register)
 	{
 		// TODO: handle values below AX (low / high)
@@ -235,7 +237,11 @@ class Simulator
 
 	void IncrementInstructionPointer(ushort instructionSize)
 	{
+		lastIPUpdate.previousValue = instructionPointer;
+
 		instructionPointer += instructionSize;
+		lastIPUpdate.newValue = instructionPointer;
+		lastIPUpdate.register = RegisterType.None;
 	}
 
 	bool CanTerminateExecution()
