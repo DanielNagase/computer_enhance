@@ -256,6 +256,23 @@ class Instruction
 	public InstructionOperand operandOne = new InstructionOperand();
 	public InstructionOperand operandTwo = new InstructionOperand();
 
+	// Get the relative jump displacement, also known as the
+	// instruction pointer increment
+	static public sbyte GetRelativeJumpDisplacement(InstructionOperand operand)
+	{
+		sbyte increment = 0;
+		bool bIsImmediate = operand.Type == OperandType.Immediate;
+		bool bHasJumpDisplacement =
+			(operand.Immediate.Flags & (ushort)ImmediateFlag.RelativeJumpDisplacement) != 0;
+
+		if (bIsImmediate && bHasJumpDisplacement)
+		{
+			increment = (sbyte)operand.Immediate.Value;
+		}
+
+		return increment;
+	}
+
 	public InstructionOperand GetLastOperand()
 	{
 		InstructionOperand lastOperand = operandOne;
