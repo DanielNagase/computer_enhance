@@ -43,26 +43,35 @@ class Application
 								 "Missing filename argument!");
 		}
 
-		inputFilename = args[0];
+		List<string> argList = new List<string>(args);
+
+		inputFilename = "";
 		operationMode = OperationMode.Decode;
 
 		const string executeModeString = "-exec";
+		string currentArg = "";
 
-		if (args[0] == executeModeString)
+		while (argList.Count > 0)
 		{
-			if (args.Length == 2)
+			currentArg = argList[0];
+			argList.RemoveAt(0);
+
+			if (currentArg == executeModeString)
 			{
-				inputFilename = args[1];
 				operationMode = OperationMode.Execute;
 			}
-			else if (args.Length == 1)
+			else
 			{
-				ExitProgramWithError(argumentsErrorExitCode,
-									 "Missing filename argument!");
+				inputFilename = currentArg;
 			}
 		}
 
-		if (!File.Exists(inputFilename))
+		if (String.IsNullOrEmpty(inputFilename))
+		{
+			ExitProgramWithError(argumentsErrorExitCode,
+								 "Missing filename argument!");
+		}
+		else if (!File.Exists(inputFilename))
 		{
 			ExitProgramWithError(argumentsErrorExitCode,
 								 $"Filename '{inputFilename}' does not exist!");
