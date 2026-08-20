@@ -270,7 +270,7 @@ class Simulator
 		}
 	}
 
-	public void PrintState()
+	public void PrintState(bool bShouldPrintIP)
 	{
 		Console.WriteLine("");
 		Console.WriteLine("Final registers:");
@@ -293,16 +293,23 @@ class Simulator
 			Console.WriteLine(formatString);
 		}
 
+		if (bShouldPrintIP)
+		{
+			string formatString = $"      ip: 0x{instructionPointer:x4} ({instructionPointer})";
+			Console.WriteLine(formatString);
+		}
+
 		if (flags.IsAnyFlagSet())
 		{
 			Console.WriteLine($"   flags: {flags.ToString()}");
 		}
 	}
 
-	string GetLastUpdateString(bool bShouldPrintFlags)
+	string GetLastUpdateString(bool bShouldPrintFlags, bool bShouldPrintIP)
 	{
 		string registerOutput = "";
 		string flagsOutput = "";
+		string IPOutput = "";
 		List<string> parts = new List<string>(3);
 
 		if (lastUpdate.DidChange())
@@ -310,6 +317,12 @@ class Simulator
 			string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
 			registerOutput = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
 			parts.Add(registerOutput);
+		}
+
+		if (bShouldPrintIP && lastIPUpdate.DidChange())
+		{
+			IPOutput = GetLastInstructionPointerUpdateString();
+			parts.Add(IPOutput);
 		}
 
 		if (bShouldPrintFlags && lastFlagsUpdate.DidChange())
@@ -321,5 +334,15 @@ class Simulator
 		string output = String.Join(" ", parts);
 
 		return output;
+	}
+
+	string GetLastInstructionPointerUpdateString()
+	{
+		if (!lastIPUpdate.DidChange())
+		{
+			return "";
+		}
+
+		return $"ip:0x{lastIPUpdate.previousValue:x}->0x{lastIPUpdate.newValue:x}";
 	}
 }
