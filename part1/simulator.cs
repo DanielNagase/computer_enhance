@@ -301,23 +301,24 @@ class Simulator
 
 	string GetLastUpdateString(bool bShouldPrintFlags)
 	{
-		string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
-		string output = "";
+		string registerOutput = "";
+		string flagsOutput = "";
+		List<string> parts = new List<string>(3);
 
 		if (lastUpdate.DidChange())
 		{
-			output = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
+			string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
+			registerOutput = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
+			parts.Add(registerOutput);
 		}
 
 		if (bShouldPrintFlags && lastFlagsUpdate.DidChange())
 		{
-			if (output.Length > 0)
-			{
-				output += " ";
-			}
-
-			output += $"flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
+			flagsOutput = $"flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
+			parts.Add(flagsOutput);
 		}
+
+		string output = String.Join(" ", parts);
 
 		return output;
 	}
