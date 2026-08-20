@@ -74,8 +74,7 @@ class Simulator
 
 		public bool DidChange()
 		{
-			return (register != RegisterType.None) &&
-				(previousValue != newValue);
+			return (previousValue != newValue);
 		}
 	}
 
