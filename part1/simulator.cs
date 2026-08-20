@@ -256,6 +256,29 @@ class Simulator
 		return instructionPointer >= instructionPointerLimit;
 	}
 
+	bool CanJump(OperationType type)
+	{
+		bool bCanJump = false;
+
+		switch(type)
+		{
+			case OperationType.JumpOnEqual_Zero:
+				bCanJump = flags.bZeroFlag;
+				break;
+			case OperationType.JumpOnNotEqual_NotZero:
+				bCanJump = !flags.bZeroFlag;
+				break;
+			case OperationType.JumpOnSign:
+				bCanJump = flags.bSignFlag;
+				break;
+			case OperationType.JumpOnNotSign:
+				bCanJump = !flags.bSignFlag;
+				break;
+				// TODO: implement the rest of the jumps needed
+		}
+
+		return bCanJump;
+	}
 	public void Execute(Program program, SimulatorOptions inOptions)
 	{
 		options = inOptions;
