@@ -5,15 +5,20 @@ using System.Collections.Generic;
 
 class Decoder
 {
+	InstructionFormatterOptions formatterOptions = new InstructionFormatterOptions();
+
 	public void Print(Program program)
 	{
+		formatterOptions.shouldPrintJumpIncrementAsComment = true;
+		formatterOptions.useNasmJumpOutputFormat = true;
+
 		Console.WriteLine($"; {program.Filename} disassembly:");
 		Console.WriteLine("bits 16");
 		List<Instruction> instructions = program.Instructions;
 
 		foreach (Instruction instruction in instructions)
 		{
-			Console.WriteLine(InstructionFormatter.ConvertInstructionToString(instruction));
+			Console.WriteLine(InstructionFormatter.ConvertInstructionToString(instruction, formatterOptions));
 		}
 	}
 }

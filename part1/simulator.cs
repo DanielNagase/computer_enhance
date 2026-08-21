@@ -17,6 +17,8 @@ class Simulator
 
 	SimulatorOptions options = new SimulatorOptions();
 
+	InstructionFormatterOptions formatterOptions = new InstructionFormatterOptions();
+
 	struct FlagSet
 	{
 		public bool bSignFlag;
@@ -318,7 +320,7 @@ class Simulator
 			PerformInstruction(instruction);
 			CheckFlowControl(instruction, program);
 			string instructionString =
-				InstructionFormatter.ConvertInstructionToString(instruction);
+				InstructionFormatter.ConvertInstructionToString(instruction, formatterOptions);
 			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
 			Console.WriteLine(instructionString + " ; " + GetLastUpdateString(bShouldPrintFlags));
 		}

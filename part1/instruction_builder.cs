@@ -542,6 +542,12 @@ class InstructionBuilder
 	}
 }
 
+class InstructionFormatterOptions
+{
+	public bool shouldPrintJumpIncrementAsComment = false;
+	public bool useNasmJumpOutputFormat = false;
+}
+
 class InstructionFormatter
 {
 	static string CreateByteOrWordPrefix(bool bIsWord)
@@ -716,7 +722,8 @@ class InstructionFormatter
 		return output;
 	}
 
-	public static string ConvertInstructionToString(Instruction instruction)
+	public static string ConvertInstructionToString(Instruction instruction,
+													InstructionFormatterOptions options)
 	{
 		string output = "";
 		string operation = ConvertOperationTypeToString(instruction.type);
