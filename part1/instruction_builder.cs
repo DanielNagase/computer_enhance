@@ -6,12 +6,16 @@ class Program
 {
 	List<Instruction> instructions;
 
+	// maps instruction pointer values to indices into the instructions List
+	Dictionary<ushort, int> IPMapping;
+
 	// size in bytes of all instructions
 	ushort size = 0;
 
 	public Program()
 	{
 		instructions = new List<Instruction>(10);
+		IPMapping = new Dictionary<ushort, int>(10);
 	}
 
 	public void AddInstruction(Instruction instruction)
@@ -21,8 +25,24 @@ class Program
 			return;
 		}
 
+		// We assume that we will never remove entries from the
+		// instructions list, so it's enough to build it here.
+		IPMapping.Add(size, instructions.Count);
 		instructions.Add(instruction);
 		size += instruction.size;
+	}
+
+	public bool GetInstructionForIPValue(ushort IPValue, ref Instruction instruction)
+	{
+		int index = 0;
+		bool bDidFind = IPMapping.TryGetValue(IPValue, out index);
+
+		if (bDidFind)
+		{
+			instruction = instructions[index];
+		}
+
+		return bDidFind;
 	}
 
 	public List<Instruction> Instructions { get => instructions; }
