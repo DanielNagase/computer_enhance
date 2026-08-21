@@ -603,14 +603,22 @@ class InstructionFormatter
 		return output;
 	}
 
-	static string ConvertIPIncrementToString(sbyte increment)
+	static string ConvertIPIncrementToString(sbyte increment,
+											 InstructionFormatterOptions options)
 	{
 		string incrementString = "";
 		int effectiveValue = increment + 2; // instruction size is 2
 
+		string nasmSuffix = "";
+
+		if (options.useNasmJumpOutputFormat)
+		{
+			nasmSuffix = "+0";
+		}
+
 		if (effectiveValue > 0)
 		{
-			incrementString = $"+{effectiveValue}+0";
+			incrementString = $"+{effectiveValue}{nasmSuffix}";
 		}
 		else if (effectiveValue == 0)
 		{
@@ -618,7 +626,7 @@ class InstructionFormatter
 		}
 		else
 		{
-			incrementString = $"{effectiveValue}+0";
+			incrementString = $"{effectiveValue}{nasmSuffix}";
 		}
 
 		return incrementString;
@@ -778,8 +786,14 @@ class InstructionFormatter
 
 		if (instruction.format == FormatType.OneByteWithIncrementToIP)
 		{
-			destination = ConvertIPIncrementToString(instruction.incrementValue);
-			output = $"{operation} ${destination} ; {instruction.incrementValue}";
+			destination = ConvertIPIncrementToString(instruction.incrementValue,
+													 options);
+			output = $"{operation} ${destination}";
+
+			if (options.shouldPrintJumpIncrementAsComment)
+			{
+				output+= $" ; {instruction.incrementValue}";
+			}
 		}
 
 		return output;
