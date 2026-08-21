@@ -286,6 +286,8 @@ class Simulator
 
 		if (bShouldJump)
 		{
+			sbyte increment = Instruction.GetRelativeJumpDisplacement(currentInstruction.operandOne);
+			instructionPointer = (ushort)(instructionPointer + increment);
 		}
 	}
 
