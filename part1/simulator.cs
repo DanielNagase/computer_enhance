@@ -280,18 +280,12 @@ class Simulator
 		return bCanJump;
 	}
 
-	void UpdateInstructionIndex(ref int instructionIndex,
-								Instruction currentInstruction, Program program)
+	void CheckFlowControl(Instruction currentInstruction, Program program)
 	{
 		bool bShouldJump = CanJump(currentInstruction.type);
 
 		if (bShouldJump)
 		{
-			// TODO: implement jump
-		}
-		else
-		{
-			instructionIndex++;
 		}
 	}
 
@@ -305,26 +299,26 @@ class Simulator
 		flags.Initialize();
 		Console.WriteLine($"--- {program.Filename} execution ---");
 
-		List<Instruction> instructions = program.Instructions;
-		int instructionIndex = 0;
+		Instruction instruction = new Instruction();
+		bool bDidFetchInstruction = false;
 
 		while (!CanTerminateExecution())
 		{
-			if (instructionIndex >= instructions.Count)
+			bDidFetchInstruction =
+				program.GetInstructionForIPValue(instructionPointer, ref instruction);
+
+			if (!bDidFetchInstruction)
 			{
 				break;
 			}
 
-			Instruction instruction = instructions[instructionIndex];
-
 			IncrementInstructionPointer(instruction.size);
 			PerformInstruction(instruction);
+			CheckFlowControl(instruction, program);
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction);
 			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
 			Console.WriteLine(instructionString + " ; " + GetLastUpdateString(bShouldPrintFlags));
-
-			UpdateInstructionIndex(ref instructionIndex, instruction, program);
 		}
 	}
 
