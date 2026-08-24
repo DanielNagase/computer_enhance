@@ -193,6 +193,50 @@ class Simulator
 		registers[GetIndex(register)] = newValue;
 	}
 
+	ushort GetValueFromRegisterAccess(RegisterAccess register)
+	{
+		ushort registerValue = 0;
+
+		if (register.Index != RegisterType.None)
+		{
+			if (register.Count == 2)
+			{
+				registerValue = GetRegisterValue(register.Index);
+			}
+			else if (register.Count == 1)
+			{
+				// TODO: handle this
+			}
+		}
+
+		return registerValue;
+	}
+
+	ushort GetMemoryValue(EffectiveAddressExpression expression,
+						  bool bUseWord)
+	{
+		ushort termOneValue = GetValueFromRegisterAccess(expression.TermOne.Register);
+		ushort termTwoValue = GetValueFromRegisterAccess(expression.TermTwo.Register);
+		ushort address = (ushort)(termOneValue + termTwoValue);
+		// for now, we're dropping the sign of the displacement
+		address += (ushort)expression.Displacement;
+
+		if (bUseWord)
+		{
+			return mainMemory.LoadWord(address);
+		}
+		else
+		{
+			return mainMemory.Load(address);
+		}
+	}
+
+	void SetMemoryValue(EffectiveAddressExpression expression, ushort newValue)
+	{
+		// mainMemory.Store(address, newValue);
+		// mainMemory.StoreWord(address, newValue);
+	}
+
 	void RecordUpdate(RegisterType register, ushort newValue)
 	{
 		lastUpdate.register = register;
