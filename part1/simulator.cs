@@ -71,6 +71,8 @@ class Simulator
 
 	InstructionFormatterOptions formatterOptions = new InstructionFormatterOptions();
 
+	Memory mainMemory = new Memory();
+
 	struct FlagSet
 	{
 		public bool bSignFlag;
@@ -290,6 +292,17 @@ class Simulator
 		}
 	}
 
+	void InitializeMainMemory()
+	{
+		// one megabyte (1024 * 1024)
+		bool bDidInitialize = mainMemory.Initialize(1048576);
+
+		if (!bDidInitialize)
+		{
+			throw new Exception("Failed to initialize main memory!");
+		}
+	}
+
 	void InitializeInstructionPointer(ushort limit)
 	{
 		instructionPointer = 0;
@@ -349,6 +362,7 @@ class Simulator
 	{
 		options = inOptions;
 
+		InitializeMainMemory();
 		InitializeRegisters();
 		InitializeInstructionPointer(program.Size);
 		lastUpdate.Initialize();
