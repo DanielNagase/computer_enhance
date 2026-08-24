@@ -6,6 +6,58 @@ struct SimulatorOptions
 	public bool shouldPrintIP;
 }
 
+class Memory
+{
+	uint Size = 0;
+
+	byte[] Bytes;
+
+	bool bIsInitialized = false;
+
+	public bool IsInitialized { get => bIsInitialized; }
+
+	public bool Initialize(uint inSize)
+	{
+		if (inSize == 0)
+		{
+			return false;
+		}
+
+		Size = inSize;
+		Bytes = new byte[inSize];
+		bIsInitialized = true;
+
+		return true;
+	}
+
+	ushort Load(ushort address)
+	{
+		ValidateAddress(address);
+		// TODO: implement me
+
+		return Bytes[0];
+	}
+
+	void Store(ushort address)
+	{
+		ValidateAddress(address);
+		// TODO: implement me
+	}
+
+	void ValidateAddress(ushort address)
+	{
+		if (!bIsInitialized)
+		{
+			throw new Exception($"Error: Uninitialized Memory object!");
+		}
+		
+		if (address >= Size)
+		{
+			throw new Exception($"Address {address} is greater than or equal to the memory size of {Size}");
+		}
+	}
+}
+
 class Simulator
 {
 	const int registerCount = 8;
