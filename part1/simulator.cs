@@ -238,10 +238,21 @@ class Simulator
 		}
 	}
 
-	void SetMemoryValue(EffectiveAddressExpression expression, ushort newValue)
+	void SetMemoryValue(EffectiveAddressExpression expression, ushort newValue,
+						bool bUseWord)
 	{
-		// mainMemory.Store(address, newValue);
-		// mainMemory.StoreWord(address, newValue);
+		ushort address = ResolveEffectiveAddress(expression);
+
+		if (bUseWord)
+		{
+			mainMemory.StoreWord(address, newValue);
+		}
+		else
+		{
+			// TODO: revisit this as needed
+			byte lowByte = (byte)(0xff & newValue);
+			mainMemory.Store(address, lowByte);
+		}
 	}
 
 	void RecordUpdate(RegisterType register, ushort newValue)
