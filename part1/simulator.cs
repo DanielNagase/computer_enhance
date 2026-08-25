@@ -212,14 +212,21 @@ class Simulator
 		return registerValue;
 	}
 
-	ushort GetMemoryValue(EffectiveAddressExpression expression,
-						  bool bUseWord)
+	ushort ResolveEffectiveAddress(EffectiveAddressExpression expression)
 	{
 		ushort termOneValue = GetValueFromRegisterAccess(expression.TermOne.Register);
 		ushort termTwoValue = GetValueFromRegisterAccess(expression.TermTwo.Register);
 		ushort address = (ushort)(termOneValue + termTwoValue);
 		// for now, we're dropping the sign of the displacement
 		address += (ushort)expression.Displacement;
+
+		return address;
+	}
+
+	ushort GetMemoryValue(EffectiveAddressExpression expression,
+						  bool bUseWord)
+	{
+		ushort address = ResolveEffectiveAddress(expression);
 
 		if (bUseWord)
 		{
