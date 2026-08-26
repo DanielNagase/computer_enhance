@@ -351,25 +351,12 @@ class Simulator
 		ushort sourceValue = 0;
 		bool bUseWord = instruction.bIsWordOperation;
 
-		if (instruction.type == OperationType.MovImmediateToReg)
-		{
-			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
-			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue, bUseWord);
-		}
-		else if (instruction.type == OperationType.MovImmediateToRegMem)
-		{
-			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
+		bool bIsMovInstruction =
+			instruction.type == OperationType.MovImmediateToReg ||
+			instruction.type == OperationType.MovImmediateToRegMem ||
+			instruction.type == OperationType.MovRegMemToFromReg;
 
-			if (instruction.operandOne.Type == OperandType.Register)
-			{
-				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue, bUseWord);
-			}
-			else if (instruction.operandOne.Type == OperandType.Memory)
-			{
-				SetMemoryValue(instruction.operandOne.Address, sourceValue, bUseWord);
-			}
-		}
-		else if (instruction.type == OperationType.MovRegMemToFromReg)
+		if (bIsMovInstruction)
 		{
 			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
 
