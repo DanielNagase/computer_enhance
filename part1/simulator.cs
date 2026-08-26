@@ -193,10 +193,11 @@ class Simulator
 		return registers[GetIndex(register)];
 	}
 
-	void SetRegisterValue(RegisterType register, ushort newValue)
+	void SetRegisterValue(RegisterType register, ushort newValue, bool bUseWord)
 	{
-		RecordUpdate(register, newValue);
-		registers[GetIndex(register)] = newValue;
+		ushort maskedValue = bUseWord ? newValue : (ushort)(newValue & 0xff);
+		RecordUpdate(register, maskedValue);
+		registers[GetIndex(register)] = maskedValue;
 	}
 
 	ushort GetValueFromRegisterAccess(RegisterAccess register)
@@ -353,7 +354,7 @@ class Simulator
 		if (instruction.type == OperationType.MovImmediateToReg)
 		{
 			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
-			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
+			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue, bUseWord);
 		}
 		else if (instruction.type == OperationType.MovImmediateToRegMem)
 		{
@@ -361,7 +362,7 @@ class Simulator
 
 			if (instruction.operandOne.Type == OperandType.Register)
 			{
-				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
+				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue, bUseWord);
 			}
 			else if (instruction.operandOne.Type == OperandType.Memory)
 			{
@@ -374,8 +375,7 @@ class Simulator
 			if (instruction.modeType == ModeType.Register)
 			{
 				sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
-				// TODO: modify SetRegisterValue to use bUseWord
-				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
+				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue, bUseWord);
 			}
 		}
 		else if (instruction.IsArithmeticInstruction())
@@ -391,7 +391,7 @@ class Simulator
 			// TODO: handle memory as a destination
 			if (bShouldStoreResult && instruction.operandOne.Type == OperandType.Register)
 			{
-				SetRegisterValue(instruction.operandOne.Register.Index, result);
+				SetRegisterValue(instruction.operandOne.Register.Index, result, bUseWord);
 			}
 			else
 			{
