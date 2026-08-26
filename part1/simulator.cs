@@ -38,10 +38,10 @@ class Memory
 		// The 8086 is little endian, so the first byte goes in the
 		// lowest-order byte of the destination, and the second goes
 		// in the highest-order byte of the destination.
-		ushort highByte = (ushort)(Bytes[address] >> 8);
-		ushort lowByte = (ushort)(Bytes[address + 1]);
+		ushort highByte = (ushort)(Bytes[address + 1] << 8);
+		ushort lowByte = (ushort)(Bytes[address]);
 
-		return (ushort)(highByte & lowByte);
+		return (ushort)(highByte | lowByte);
 	}
 
 	public void StoreWord(ushort address, ushort value)
