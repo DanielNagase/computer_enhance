@@ -388,10 +388,13 @@ class Simulator
 														out bShouldStoreResult);
 			SetFlags(result);
 
-			// TODO: handle memory as a destination
 			if (bShouldStoreResult && instruction.operandOne.Type == OperandType.Register)
 			{
 				SetRegisterValue(instruction.operandOne.Register.Index, result, bUseWord);
+			}
+			else if (bShouldStoreResult && instruction.operandOne.Type == OperandType.Memory)
+			{
+				SetMemoryValue(instruction.operandOne.Address, result, bUseWord);
 			}
 			else
 			{
