@@ -286,7 +286,7 @@ class Simulator
 		lastFlagsUpdate.newValue = newFlags;
 	}
 
-	ushort GetOperandValue(InstructionOperand operand)
+	ushort GetOperandValue(InstructionOperand operand, bool bUseWord)
 	{
 		ushort operandValue = 0;
 
@@ -294,14 +294,19 @@ class Simulator
 		{
 			if (operand.Register.Index != RegisterType.None)
 			{
+				// TODO: incorporate bUseWord
 				operandValue = GetRegisterValue(operand.Register.Index);
 			}
 		}
 		else if (operand.Type == OperandType.Immediate)
 		{
+			// TODO: incorporate bUseWord
 			operandValue = (ushort)operand.Immediate.Value;
 		}
-		// TODO: handle OperandType.Memory
+		else if (operand.Type == OperandType.Memory)
+		{
+			operandValue = GetMemoryValue(operand.Address, bUseWord);
+		}
 
 		return operandValue;
 	}
@@ -343,10 +348,11 @@ class Simulator
 	void PerformInstruction(Instruction instruction)
 	{
 		ushort sourceValue = 0;
+		bool bUseWord = instruction.bIsWordOperation;
 
 		if (instruction.type == OperationType.MovImmediateToReg)
 		{
-			sourceValue = GetOperandValue(instruction.operandTwo);
+			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
 			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 		}
 		else if (instruction.type == OperationType.MovRegMemToFromRegMask)
@@ -354,14 +360,15 @@ class Simulator
 			// note: only reg to reg moves are handled right now
 			if (instruction.modeType == ModeType.Register)
 			{
-				sourceValue = GetOperandValue(instruction.operandTwo);
+				sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
+				// TODO: modify SetRegisterValue to use bUseWord
 				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 			}
 		}
 		else if (instruction.IsArithmeticInstruction())
 		{
-			ushort destinationValue = GetOperandValue(instruction.operandOne);
-			sourceValue = GetOperandValue(instruction.operandTwo);
+			ushort destinationValue = GetOperandValue(instruction.operandOne, bUseWord);
+			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
 			bool bShouldStoreResult = true;
 			ushort result = PerformArithmeticInstruction(instruction.type,
 														sourceValue, destinationValue,
