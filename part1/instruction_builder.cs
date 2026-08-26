@@ -643,7 +643,7 @@ class InstructionFormatter
 
 		switch(operation)
 		{
-			case OperationType.MovRegMemToFromRegMask:
+			case OperationType.MovRegMemToFromReg:
 			case OperationType.MovImmediateToReg:
 			case OperationType.MovImmediateToRegMem:
 				output = "mov";

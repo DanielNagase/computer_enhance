@@ -369,7 +369,7 @@ class Simulator
 				SetMemoryValue(instruction.operandOne.Address, sourceValue, bUseWord);
 			}
 		}
-		else if (instruction.type == OperationType.MovRegMemToFromRegMask)
+		else if (instruction.type == OperationType.MovRegMemToFromReg)
 		{
 			// note: only reg to reg moves are handled right now
 			if (instruction.modeType == ModeType.Register)

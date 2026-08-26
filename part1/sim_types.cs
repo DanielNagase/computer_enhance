@@ -11,7 +11,7 @@ enum FormatType
 
 enum OperationType
 {
-	MovRegMemToFromRegMask = 0,
+	MovRegMemToFromReg = 0,
 	MovImmediateToRegMem,
 	MovImmediateToReg,
 	AddRegMemWithRegToEither,
@@ -336,7 +336,7 @@ class OpcodeLibrary
 	const byte allEightBitsMask = 0b1111_1111;
 
 	OpcodeDefinition[] definitionList = new OpcodeDefinition[] {
-		new OpcodeDefinition(firstSixBitsMask, 0b1000_1000, OperationType.MovRegMemToFromRegMask,
+		new OpcodeDefinition(firstSixBitsMask, 0b1000_1000, OperationType.MovRegMemToFromReg,
 							 FormatType.TwoBytesWithDisplacement),
 		new OpcodeDefinition(firstSevenBitsMask, 0b1100_0110, OperationType.MovImmediateToRegMem,
 							 FormatType.TwoBytesWithDisplacementAndImmediate),
