@@ -30,3 +30,6 @@ diff output/listing_0046_add_sub_cmp.txt input/listing_0046_add_sub_cmp.txt
 
 mono sim.exe -ip -exec input/listing_0048_ip_register > output/listing_0048_ip_register.txt
 diff output/listing_0048_ip_register.txt input/listing_0048_ip_register.txt
+
+mono ./sim.exe -ip -exec input/listing_0051_memory_mov > output/listing_0051_memory_mov.txt
+diff output/listing_0051_memory_mov.txt input/listing_0051_memory_mov.txt
