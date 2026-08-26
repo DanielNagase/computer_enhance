@@ -142,6 +142,12 @@ class Simulator
 		public FlagSet previousValue;
 		public FlagSet newValue;
 
+		public void Initialize()
+		{
+			previousValue.Initialize();
+			newValue.Initialize();
+		}
+
 		public bool DidChange()
 		{
 			return !previousValue.Equals(newValue);
@@ -478,7 +484,7 @@ class Simulator
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction, formatterOptions);
 			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
-			Console.WriteLine(instructionString + " ; " + GetLastUpdateString(bShouldPrintFlags));
+			Console.WriteLine(instructionString + " ; " + GetUpdateStringAndFlushUpdates(bShouldPrintFlags));
 		}
 	}
 
@@ -517,7 +523,11 @@ class Simulator
 		}
 	}
 
-	string GetLastUpdateString(bool bShouldPrintFlags)
+	// For registers, the instruction pointer, and flags, check for
+	// updates. If any update is found, convert it into a string and
+	// reset the update struct. We must reset the update structs to
+	// prevent printing updates multiple times.
+	string GetUpdateStringAndFlushUpdates(bool bShouldPrintFlags)
 	{
 		string registerOutput = "";
 		string flagsOutput = "";
@@ -529,18 +539,24 @@ class Simulator
 			string destination = InstructionFormatter.ConvertRegisterToString(lastUpdate.register);
 			registerOutput = $"{destination}:0x{lastUpdate.previousValue:x}->0x{lastUpdate.newValue:x}";
 			parts.Add(registerOutput);
+
+			lastUpdate.Initialize();
 		}
 
 		if (options.shouldPrintIP && lastIPUpdate.DidChange())
 		{
 			IPOutput = GetLastInstructionPointerUpdateString();
 			parts.Add(IPOutput);
+
+			lastIPUpdate.Initialize();
 		}
 
 		if (bShouldPrintFlags && lastFlagsUpdate.DidChange())
 		{
 			flagsOutput = $"flags:{lastFlagsUpdate.previousValue.ToString()}->{lastFlagsUpdate.newValue.ToString()}";
 			parts.Add(flagsOutput);
+
+			lastFlagsUpdate.Initialize();
 		}
 
 		string output = String.Join(" ", parts);
