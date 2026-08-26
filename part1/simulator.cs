@@ -391,6 +391,11 @@ class Simulator
 				lastUpdate.Initialize();
 			}
 		}
+		else if (CanJump(instruction.type))
+		{
+			sbyte increment = Instruction.GetRelativeJumpDisplacement(instruction.operandOne);
+			SetInstructionPointer((ushort)(instructionPointer + increment));
+		}
 	}
 
 	void InitializeRegisters()
@@ -427,6 +432,16 @@ class Simulator
 		lastIPUpdate.register = RegisterType.None;
 	}
 
+	// This is for when we need to set the instruction pointer
+	// directly for a jump. Unlike IncrementInstructionPointer, we
+	// update the new value *without* recording the previous value.
+	void SetInstructionPointer(ushort newInstructionPointer)
+	{
+		instructionPointer = newInstructionPointer;
+		lastIPUpdate.newValue = newInstructionPointer;
+		lastIPUpdate.register = RegisterType.None;
+	}
+
 	bool CanTerminateExecution()
 	{
 		return instructionPointer >= instructionPointerLimit;
@@ -456,17 +471,6 @@ class Simulator
 		return bCanJump;
 	}
 
-	void CheckFlowControl(Instruction currentInstruction, Program program)
-	{
-		bool bShouldJump = CanJump(currentInstruction.type);
-
-		if (bShouldJump)
-		{
-			sbyte increment = Instruction.GetRelativeJumpDisplacement(currentInstruction.operandOne);
-			instructionPointer = (ushort)(instructionPointer + increment);
-		}
-	}
-
 	public void Execute(Program program, SimulatorOptions inOptions)
 	{
 		options = inOptions;
@@ -493,7 +497,6 @@ class Simulator
 
 			IncrementInstructionPointer(instruction.size);
 			PerformInstruction(instruction);
-			CheckFlowControl(instruction, program);
 			string instructionString =
 				InstructionFormatter.ConvertInstructionToString(instruction, formatterOptions);
 			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
