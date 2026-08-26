@@ -32,13 +32,14 @@ class Memory
 
 	public ushort LoadWord(ushort address)
 	{
+		ushort highByteAddress = (ushort)(address + 1);
 		ValidateAddress(address);
-		ValidateAddress((ushort)(address + 1));
+		ValidateAddress(highByteAddress);
 
 		// The 8086 is little endian, so the first byte goes in the
 		// lowest-order byte of the destination, and the second goes
 		// in the highest-order byte of the destination.
-		ushort highByte = (ushort)(Bytes[address + 1] << 8);
+		ushort highByte = (ushort)(Bytes[highByteAddress] << 8);
 		ushort lowByte = (ushort)(Bytes[address]);
 
 		return (ushort)(highByte | lowByte);
@@ -46,17 +47,15 @@ class Memory
 
 	public void StoreWord(ushort address, ushort value)
 	{
+		ushort highByteAddress = (ushort)(address + 1);
 		ValidateAddress(address);
-		ValidateAddress((ushort)(address + 1));
+		ValidateAddress(highByteAddress);
 
 		// The 8086 is little endian, so the lowest-order byte of the
 		// value goes in the first address and the highest-order byte
 		// goes in the second address.
-		byte highByte = (byte)(value >> 8);
-		byte lowByte = (byte)(0xff & value);
-
-		Bytes[address] = lowByte;
-		Bytes[address + 1] = highByte;
+		Bytes[address] = (byte)(0xff & value);
+		Bytes[highByteAddress] = (byte)(value >> 8);
 	}
 
 	public byte Load(ushort address)
