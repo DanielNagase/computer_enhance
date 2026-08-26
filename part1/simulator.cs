@@ -355,6 +355,19 @@ class Simulator
 			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
 			SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
 		}
+		else if (instruction.type == OperationType.MovImmediateToRegMem)
+		{
+			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
+
+			if (instruction.operandOne.Type == OperandType.Register)
+			{
+				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue);
+			}
+			else if (instruction.operandOne.Type == OperandType.Memory)
+			{
+				SetMemoryValue(instruction.operandOne.Address, sourceValue, bUseWord);
+			}
+		}
 		else if (instruction.type == OperationType.MovRegMemToFromRegMask)
 		{
 			// note: only reg to reg moves are handled right now
