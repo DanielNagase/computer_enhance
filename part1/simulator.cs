@@ -371,11 +371,15 @@ class Simulator
 		}
 		else if (instruction.type == OperationType.MovRegMemToFromReg)
 		{
-			// note: only reg to reg moves are handled right now
-			if (instruction.modeType == ModeType.Register)
+			sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
+
+			if (instruction.operandOne.Type == OperandType.Register)
 			{
-				sourceValue = GetOperandValue(instruction.operandTwo, bUseWord);
 				SetRegisterValue(instruction.operandOne.Register.Index, sourceValue, bUseWord);
+			}
+			else if (instruction.operandOne.Type == OperandType.Memory)
+			{
+				SetMemoryValue(instruction.operandOne.Address, sourceValue, bUseWord);
 			}
 		}
 		else if (instruction.IsArithmeticInstruction())
