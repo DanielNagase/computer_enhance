@@ -546,6 +546,7 @@ class InstructionFormatterOptions
 {
 	public bool shouldPrintJumpIncrementAsComment = false;
 	public bool useNasmJumpOutputFormat = false;
+	public bool useSpaceInEffectiveAddresses = false;
 }
 
 class InstructionFormatter
@@ -555,7 +556,8 @@ class InstructionFormatter
 		return bIsWord ? "word " : "byte ";
 	}
 
-	static string ConvertEffectiveAddressToString(Instruction instruction)
+	static string ConvertEffectiveAddressToString(Instruction instruction,
+												  InstructionFormatterOptions options)
 	{
 		InstructionOperand operand =
 				(instruction.operandOne.Type == OperandType.Memory) ?
@@ -589,13 +591,20 @@ class InstructionFormatter
 				}
 
 				addressString += ConvertRegisterToString(register.Index);
-				separator = " + ";
+				separator = options.useSpaceInEffectiveAddresses ? " + " : "+";
 			}
 		}
 
 		if (operand.Address.Displacement != 0)
 		{
-			displacementString = operand.Address.Displacement.ToString(" + ##; - ##");
+			if (options.useSpaceInEffectiveAddresses)
+			{
+				displacementString = operand.Address.Displacement.ToString(" + ##; - ##");
+			}
+			else
+			{
+				displacementString = operand.Address.Displacement.ToString("+##;-##");
+			}
 		}
 
 		string output = $"[{addressString}{displacementString}]";
@@ -747,7 +756,7 @@ class InstructionFormatter
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
-				string address = ConvertEffectiveAddressToString(instruction);
+				string address = ConvertEffectiveAddressToString(instruction, options);
 
 				if (instruction.bUseRegFieldAsDestination)
 				{
@@ -773,7 +782,7 @@ class InstructionFormatter
 			{
 				// TODO: see if we need the prefix for other cases
 				destination = CreateByteOrWordPrefix(instruction.bIsWordOperation);
-				destination += ConvertEffectiveAddressToString(instruction);
+				destination += ConvertEffectiveAddressToString(instruction, options);
 			}
 		}
 		else if (instruction.format == FormatType.OneByteWithImmediate)

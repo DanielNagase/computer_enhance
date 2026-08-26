@@ -11,6 +11,7 @@ class Decoder
 	{
 		formatterOptions.shouldPrintJumpIncrementAsComment = true;
 		formatterOptions.useNasmJumpOutputFormat = true;
+		formatterOptions.useSpaceInEffectiveAddresses = true;
 
 		Console.WriteLine($"; {program.Filename} disassembly:");
 		Console.WriteLine("bits 16");
