@@ -57,6 +57,7 @@ class Application
 
 		const string executeModeString = "-exec";
 		const string IPOptionString = "-ip";
+		const string dumpOptionString = "-dump";
 		string currentArg = "";
 
 		while (argList.Count > 0)
@@ -71,6 +72,10 @@ class Application
 			else if (currentArg == IPOptionString)
 			{
 				options.bShouldPrintIP = true;
+			}
+			else if (currentArg == dumpOptionString)
+			{
+				options.bShouldDumpMemoryToFile = true;
 			}
 			else
 			{

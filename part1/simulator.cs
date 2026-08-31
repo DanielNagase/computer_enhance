@@ -4,10 +4,12 @@ using System.Collections.Generic;
 struct SimulatorOptions
 {
 	public bool bShouldPrintIP;
+	public bool bShouldDumpMemoryToFile;
 
 	public void Initialize()
 	{
 		bShouldPrintIP = false;
+		bShouldDumpMemoryToFile = false;
 	}
 }
 
