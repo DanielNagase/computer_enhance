@@ -559,9 +559,10 @@ class InstructionFormatter
 	static string ConvertEffectiveAddressToString(Instruction instruction,
 												  InstructionFormatterOptions options)
 	{
-		InstructionOperand operand =
-				(instruction.operandOne.Type == OperandType.Memory) ?
-				instruction.operandOne : instruction.operandTwo;
+		bool bIsDestinationEffectiveAddress =
+			instruction.operandOne.Type == OperandType.Memory;
+		InstructionOperand operand = bIsDestinationEffectiveAddress ?
+			instruction.operandOne : instruction.operandTwo;
 
 		if (operand.Type != OperandType.Memory)
 		{
@@ -569,12 +570,26 @@ class InstructionFormatter
 		}
 
 		string addressString = "";
+		string prefixString = "";
 		string displacementString = "";
 		string separator = "";
 		EffectiveAddressTerm[] terms = new EffectiveAddressTerm[2] {
 			operand.Address.TermOne,
 			operand.Address.TermTwo
 		};
+
+		bool bHasTwoRegisterTerms =
+			terms[0].Register.Index != RegisterType.None &&
+			terms[1].Register.Index != RegisterType.None;
+		bool bHasImmediateOperand =
+			instruction.operandOne.Type == OperandType.Immediate ||
+			instruction.operandTwo.Type == OperandType.Immediate;
+		bool bShouldAddPrefix = bHasTwoRegisterTerms || bHasImmediateOperand;
+
+		if (bShouldAddPrefix)
+		{
+			prefixString = CreateByteOrWordPrefix(instruction.bIsWordOperation);
+		}
 
 		for (int i = 0; i < terms.Length; i++)
 		{
@@ -607,7 +622,7 @@ class InstructionFormatter
 			}
 		}
 
-		string output = $"[{addressString}{displacementString}]";
+		string output = $"{prefixString}[{addressString}{displacementString}]";
 
 		return output;
 	}
@@ -780,9 +795,7 @@ class InstructionFormatter
 			}
 			else if (instruction.IsMemoryModeEnabled())
 			{
-				// TODO: see if we need the prefix for other cases
-				destination = CreateByteOrWordPrefix(instruction.bIsWordOperation);
-				destination += ConvertEffectiveAddressToString(instruction, options);
+				destination = ConvertEffectiveAddressToString(instruction, options);
 			}
 		}
 		else if (instruction.format == FormatType.OneByteWithImmediate)
