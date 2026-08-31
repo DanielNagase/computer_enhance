@@ -4,6 +4,11 @@ using System.Collections.Generic;
 struct SimulatorOptions
 {
 	public bool bShouldPrintIP;
+
+	public void Initialize()
+	{
+		bShouldPrintIP = false;
+	}
 }
 
 class Memory
