@@ -40,7 +40,7 @@ class Application
 
 	static void CheckArguments(string[] args, out string inputFilename,
 							   out OperationMode operationMode,
-							   out bool shouldPrintIP)
+							   out bool bShouldPrintIP)
 	{
 		const int argumentsErrorExitCode = 1;
 
@@ -54,7 +54,7 @@ class Application
 
 		inputFilename = "";
 		operationMode = OperationMode.Decode;
-		shouldPrintIP = false;
+		bShouldPrintIP = false;
 
 		const string executeModeString = "-exec";
 		const string IPOptionString = "-ip";
@@ -71,7 +71,7 @@ class Application
 			}
 			else if (currentArg == IPOptionString)
 			{
-				shouldPrintIP = true;
+				bShouldPrintIP = true;
 			}
 			else
 			{
@@ -95,9 +95,9 @@ class Application
     {
 		string inputFilename;
 		OperationMode operationMode = OperationMode.Decode;
-		bool shouldPrintIP = false;
+		bool bShouldPrintIP = false;
 		CheckArguments(args, out inputFilename, out operationMode,
-					   out shouldPrintIP);
+					   out bShouldPrintIP);
 
 		InstructionBuilder builder = new InstructionBuilder();
 		Program program = new Program();
@@ -111,7 +111,7 @@ class Application
 		else if (operationMode == OperationMode.Execute)
 		{
 			SimulatorOptions options = new SimulatorOptions();
-			options.shouldPrintIP = shouldPrintIP;
+			options.bShouldPrintIP = bShouldPrintIP;
 
 			Simulator simulator = new Simulator();
 			simulator.Execute(program, options);

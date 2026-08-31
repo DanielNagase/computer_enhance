@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 struct SimulatorOptions
 {
-	public bool shouldPrintIP;
+	public bool bShouldPrintIP;
 }
 
 class Memory
@@ -527,7 +527,7 @@ class Simulator
 			Console.WriteLine(formatString);
 		}
 
-		if (options.shouldPrintIP)
+		if (options.bShouldPrintIP)
 		{
 			string formatString = $"      ip: 0x{instructionPointer:x4} ({instructionPointer})";
 			Console.WriteLine(formatString);
@@ -559,7 +559,7 @@ class Simulator
 			lastUpdate.Initialize();
 		}
 
-		if (options.shouldPrintIP && lastIPUpdate.DidChange())
+		if (options.bShouldPrintIP && lastIPUpdate.DidChange())
 		{
 			IPOutput = GetLastInstructionPointerUpdateString();
 			parts.Add(IPOutput);
