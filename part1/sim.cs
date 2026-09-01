@@ -118,6 +118,11 @@ class Application
 			Simulator simulator = new Simulator();
 			simulator.Execute(program, options);
 			simulator.PrintState();
+
+			if (options.bShouldDumpMemoryToFile)
+			{
+				simulator.DumpMemory("sim_memory_0.data");
+			}
 		}
     }
 }

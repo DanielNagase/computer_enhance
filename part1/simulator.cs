@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 struct SimulatorOptions
 {
@@ -20,6 +21,8 @@ class Memory
 	byte[] Bytes;
 
 	bool bIsInitialized = false;
+
+	public byte[] GetBytes { get => Bytes; }
 
 	public bool IsInitialized { get => bIsInitialized; }
 
@@ -88,6 +91,18 @@ class Memory
 		if (address >= Size)
 		{
 			throw new Exception($"Address {address} is greater than or equal to the memory size of {Size}");
+		}
+	}
+}
+
+class MemoryWriter
+{
+	public void WriteToFile(string outputFilename, byte[] memory)
+	{
+		using (FileStream filestream = new FileStream(outputFilename, FileMode.Create,
+													  FileAccess.Write, FileShare.None))
+		{
+			filestream.Write(memory, 0, memory.Length);
 		}
 	}
 }
@@ -509,6 +524,12 @@ class Simulator
 			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
 			Console.WriteLine(instructionString + " ; " + GetUpdateStringAndFlushUpdates(bShouldPrintFlags));
 		}
+	}
+
+	public void DumpMemory(string outputFilename)
+	{
+		MemoryWriter writer = new MemoryWriter();
+		writer.WriteToFile(outputFilename, mainMemory.GetBytes);
 	}
 
 	public void PrintState()
