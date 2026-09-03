@@ -2,15 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+public enum ClocksStatisticsType
+{
+	None = 0,
+	Basic,
+	Detailed
+}
+
 struct SimulatorOptions
 {
 	public bool bShouldPrintIP;
 	public bool bShouldDumpMemoryToFile;
+	public ClocksStatisticsType clocksStatistics;
 
 	public void Initialize()
 	{
 		bShouldPrintIP = false;
 		bShouldDumpMemoryToFile = false;
+		clocksStatistics = ClocksStatisticsType.None;
 	}
 }
 

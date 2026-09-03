@@ -58,6 +58,8 @@ class Application
 		const string executeModeString = "-exec";
 		const string IPOptionString = "-ip";
 		const string dumpOptionString = "-dump";
+		const string showClocksOptionString = "-showclocks";
+		const string explainClocksOptionString = "-explainclocks";
 		string currentArg = "";
 
 		while (argList.Count > 0)
@@ -76,6 +78,14 @@ class Application
 			else if (currentArg == dumpOptionString)
 			{
 				options.bShouldDumpMemoryToFile = true;
+			}
+			else if (currentArg == showClocksOptionString)
+			{
+				options.clocksStatistics = ClocksStatisticsType.Basic;
+			}
+			else if (currentArg == explainClocksOptionString)
+			{
+				options.clocksStatistics = ClocksStatisticsType.Detailed;
 			}
 			else
 			{
