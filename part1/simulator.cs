@@ -218,24 +218,29 @@ class ClocksLookupTable
 
 		if (bHasEffectiveAddress)
 		{
-			EffectiveAddressExpression address;
-
-			if (instruction.operandOne.Type == OperandType.Memory)
-			{
-				address = instruction.operandOne.Address;
-			}
-			else if (instruction.operandTwo.Type == OperandType.Memory)
-			{
-				address = instruction.operandTwo.Address;
-			}
-			else
-			{
-				return;
-			}
-
-			ProcessEffectiveAddress(address, ref estimate);
-			estimate.TotalClocks = estimate.BaseClocks + estimate.EAClocks;
+			GetEffectiveAddressAndSumClocks(instruction, ref estimate);
 		}
+	}
+
+	void GetEffectiveAddressAndSumClocks(Instruction instruction, ref ClocksEstimate estimate)
+	{
+		EffectiveAddressExpression address;
+
+		if (instruction.operandOne.Type == OperandType.Memory)
+		{
+			address = instruction.operandOne.Address;
+		}
+		else if (instruction.operandTwo.Type == OperandType.Memory)
+		{
+			address = instruction.operandTwo.Address;
+		}
+		else
+		{
+			return;
+		}
+
+		ProcessEffectiveAddress(address, ref estimate);
+		estimate.TotalClocks = estimate.BaseClocks + estimate.EAClocks;
 	}
 
 	bool IsBase(EffectiveAddressTerm term)
