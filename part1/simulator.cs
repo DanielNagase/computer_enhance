@@ -588,11 +588,23 @@ class Simulator
 
 			IncrementInstructionPointer(instruction.size);
 			PerformInstruction(instruction);
-			string instructionString =
-				InstructionFormatter.ConvertInstructionToString(instruction, formatterOptions);
-			bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
-			Console.WriteLine(instructionString + " ; " + GetUpdateStringAndFlushUpdates(bShouldPrintFlags));
+			OutputUpdateString(instruction);
 		}
+	}
+
+	void OutputUpdateString(Instruction instruction)
+	{
+		string outputString =
+			InstructionFormatter.ConvertInstructionToString(instruction, formatterOptions) + " ; ";
+
+		if (options.clocksStatistics != ClocksStatisticsType.None)
+		{
+			outputString += (GetClocksStatistics(instruction) + " | ");
+		}
+
+		bool bShouldPrintFlags = instruction.IsArithmeticInstruction();
+		outputString += GetUpdateStringAndFlushUpdates(bShouldPrintFlags);
+		Console.WriteLine(outputString);
 	}
 
 	public void DumpMemory(string outputFilename)
