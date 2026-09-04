@@ -122,7 +122,7 @@ struct ClocksEstimate
 	public uint BaseClocks;
 	public uint EAClocks;
 
-	public ClocksEstimate(uint inTotalClocks, uint inBaseClocks, uint inEAClocks)
+	public void Initialize()
 	{
 		TotalClocks = 0;
 		BaseClocks = 0;
@@ -573,7 +573,7 @@ class Simulator
 		}
 
 		// TODO: add logic for populating the estimate fields
-		ClocksEstimate estimate = new ClocksEstimate(0, 0, 0);
+		ClocksEstimate estimate = new ClocksEstimate();
 
 		return tabulator.AddClocks(estimate);
 	}
