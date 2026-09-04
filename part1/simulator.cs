@@ -196,12 +196,12 @@ class ClocksLookupTable
 		}
 		if (IsRegisterMemory(instruction))
 		{
-			estimate.TotalClocks = 9;
+			estimate.BaseClocks = 9;
 			bHasEffectiveAddress = true;
 		}
 		if (IsMemoryRegister(instruction))
 		{
-			estimate.TotalClocks = 16;
+			estimate.BaseClocks = 16;
 			bHasEffectiveAddress = true;
 		}
 		// IsAccumulatorImmediate includes IsRegisterImmediate, but is more
@@ -212,7 +212,7 @@ class ClocksLookupTable
 		}
 		if (IsMemoryImmediate(instruction))
 		{
-			estimate.TotalClocks = 17;
+			estimate.BaseClocks = 17;
 			bHasEffectiveAddress = true;
 		}
 
@@ -234,6 +234,7 @@ class ClocksLookupTable
 			}
 
 			ProcessEffectiveAddress(address, ref estimate);
+			estimate.TotalClocks = estimate.BaseClocks + estimate.EAClocks;
 		}
 	}
 
