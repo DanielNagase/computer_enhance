@@ -178,12 +178,16 @@ class ClocksLookupTable
 			instruction.operandTwo.Type == OperandType.Immediate;
 	}
 
+	bool IsAccumulator(InstructionOperand operand)
+	{
+		return operand.Register.Index == RegisterType.AL ||
+			operand.Register.Index == RegisterType.AX;
+	}
+
 	bool IsAccumulatorImmediate(Instruction instruction)
 	{
-		bool bIsAccumulator =
-			instruction.operandOne.Register.Index == RegisterType.AL ||
-			instruction.operandOne.Register.Index == RegisterType.AX;
-		return IsRegisterImmediate(instruction) && bIsAccumulator;
+		return IsRegisterImmediate(instruction) &&
+			IsAccumulator(instruction.operandOne);
 	}
 
 	void ProcessAdd(Instruction instruction, ref ClocksEstimate estimate)
