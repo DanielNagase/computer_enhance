@@ -116,6 +116,45 @@ class MemoryWriter
 	}
 }
 
+struct ClocksEstimate
+{
+	public uint TotalClocks;
+	public uint BaseClocks;
+	public uint EAClocks;
+
+	public ClocksEstimate(uint inTotalClocks, uint inBaseClocks, uint inEAClocks)
+	{
+		TotalClocks = 0;
+		BaseClocks = 0;
+		EAClocks = 0;
+	}
+}
+
+class ClocksStatisticsTabulator
+{
+	uint totalClocks = 0;
+	ClocksStatisticsType statistics = ClocksStatisticsType.Basic;
+
+	public ClocksStatisticsTabulator(ClocksStatisticsType inStatistics)
+	{
+		totalClocks = 0;
+		statistics = inStatistics;
+	}
+
+	public string AddClocks(ClocksEstimate estimate)
+	{
+		totalClocks += estimate.TotalClocks;
+		string output = $"Clocks: +{estimate.TotalClocks} = {totalClocks}";
+
+		if (statistics == ClocksStatisticsType.Detailed)
+		{
+			output += $" ({estimate.BaseClocks} + {estimate.EAClocks}ea)";
+		}
+
+		return output;
+	}
+}
+
 class Simulator
 {
 	const int registerCount = 8;
@@ -130,6 +169,8 @@ class Simulator
 	InstructionFormatterOptions formatterOptions = new InstructionFormatterOptions();
 
 	Memory mainMemory = new Memory();
+
+	ClocksStatisticsTabulator tabulator = null;
 
 	struct FlagSet
 	{
@@ -429,6 +470,19 @@ class Simulator
 		}
 	}
 
+	string GetClocksStatistics(Instruction instruction)
+	{
+		if (tabulator == null)
+		{
+			return "";
+		}
+
+		// TODO: add logic for populating the estimate fields
+		ClocksEstimate estimate = new ClocksEstimate(0, 0, 0);
+
+		return tabulator.AddClocks(estimate);
+	}
+
 	void InitializeRegisters()
 	{
 		for (int i = 0; i < registerCount; i++)
@@ -511,6 +565,12 @@ class Simulator
 		InitializeInstructionPointer(program.Size);
 		lastUpdate.Initialize();
 		flags.Initialize();
+
+		if (options.clocksStatistics != ClocksStatisticsType.None)
+		{
+			tabulator = new ClocksStatisticsTabulator(inOptions.clocksStatistics);
+		}
+
 		Console.WriteLine($"--- {program.Filename} execution ---");
 
 		Instruction instruction = new Instruction();
