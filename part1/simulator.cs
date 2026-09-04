@@ -218,12 +218,107 @@ class ClocksLookupTable
 
 		if (bHasEffectiveAddress)
 		{
-			ProcessEffectiveAddress(instruction, ref estimate);
+			EffectiveAddressExpression address;
+
+			if (instruction.operandOne.Type == OperandType.Memory)
+			{
+				address = instruction.operandOne.Address;
+			}
+			else if (instruction.operandTwo.Type == OperandType.Memory)
+			{
+				address = instruction.operandTwo.Address;
+			}
+			else
+			{
+				return;
+			}
+
+			ProcessEffectiveAddress(address, ref estimate);
 		}
 	}
 
-	void ProcessEffectiveAddress(Instruction instruction, ref ClocksEstimate estimate)
+	bool IsBase(EffectiveAddressTerm term)
 	{
+		return term.Register.Index == RegisterType.BX ||
+			term.Register.Index == RegisterType.BP;
+	}
+
+	bool IsIndex(EffectiveAddressTerm term)
+	{
+		return term.Register.Index == RegisterType.SI ||
+			term.Register.Index == RegisterType.DI;
+	}
+
+	bool IsBasePlusIndexVariantOne(EffectiveAddressExpression address)
+	{
+		return (address.TermOne.Register.Index == RegisterType.BP &&
+				address.TermTwo.Register.Index == RegisterType.DI) ||
+			(address.TermOne.Register.Index == RegisterType.BX &&
+			 address.TermTwo.Register.Index == RegisterType.SI);
+	}
+
+	bool IsBasePlusIndexVariantTwo(EffectiveAddressExpression address)
+	{
+		return (address.TermOne.Register.Index == RegisterType.BP &&
+				address.TermTwo.Register.Index == RegisterType.SI) ||
+			(address.TermOne.Register.Index == RegisterType.BX &&
+			 address.TermTwo.Register.Index == RegisterType.DI);
+	}
+
+	void ProcessEffectiveAddress(EffectiveAddressExpression address, ref ClocksEstimate estimate)
+	{
+		bool bHasDisplacement = address.Displacement > 0;
+		bool bIsTermOneBase = IsBase(address.TermOne);
+		bool bIsTermOneIndex = IsIndex(address.TermOne);
+		bool bIsTermTwoBase = IsBase(address.TermTwo);
+		bool bIsTermTwoIndex = IsIndex(address.TermTwo);
+
+		bool bIsTermOneBaseOrIndex = bIsTermOneBase || bIsTermOneIndex;
+		bool bIsTermTwoBaseOrIndex = bIsTermTwoBase || bIsTermTwoIndex;
+
+		bool bIsTermOneNone = address.TermOne.Register.Index == RegisterType.None;
+		bool bIsTermTwoNone = address.TermTwo.Register.Index == RegisterType.None;
+
+		bool bIsDisplacementOnly =
+			bHasDisplacement && bIsTermOneNone && bIsTermTwoNone;
+		bool bIsBaseOrIndexOnly = !bHasDisplacement &&
+			((bIsTermOneBaseOrIndex && bIsTermTwoNone) ||
+			 (bIsTermTwoBaseOrIndex && bIsTermOneNone));
+		bool bIsDisplacementPlusBaseOrIndex = bHasDisplacement &&
+			((bIsTermOneBaseOrIndex && bIsTermTwoNone) ||
+			 (bIsTermTwoBaseOrIndex && bIsTermOneNone));
+
+		bool bIsBasePlusIndexVariantOne = IsBasePlusIndexVariantOne(address);
+		bool bIsBasePlusIndexVariantTwo = IsBasePlusIndexVariantTwo(address);
+
+		if (bIsDisplacementOnly)
+		{
+			estimate.EAClocks = 6;
+		}
+		else if (bIsBaseOrIndexOnly)
+		{
+			estimate.EAClocks = 5;
+		}
+		else if (bIsDisplacementPlusBaseOrIndex)
+		{
+			estimate.EAClocks = 9;
+		}
+		else if (!bHasDisplacement && bIsBasePlusIndexVariantOne)
+		{
+			estimate.EAClocks = 7;
+		}
+		else if (!bHasDisplacement && bIsBasePlusIndexVariantTwo)
+		{
+			estimate.EAClocks = 8;
+		}
+		else if (bHasDisplacement && bIsBasePlusIndexVariantOne)
+		{
+			estimate.EAClocks = 11;
+		}
+		else if (bHasDisplacement && bIsBasePlusIndexVariantTwo)
+		{
+			estimate.EAClocks = 12;
+		}
 	}
 }
 
