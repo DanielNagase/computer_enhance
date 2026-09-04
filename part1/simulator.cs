@@ -138,6 +138,11 @@ class ClocksLookupTable
 
 		switch(instruction.type)
 		{
+			case OperationType.MovRegMemToFromReg:
+			case OperationType.MovImmediateToReg:
+			case OperationType.MovImmediateToRegMem:
+				ProcessMov(instruction, ref estimate);
+				break;
 			case OperationType.AddRegMemWithRegToEither:
 			case OperationType.AddImmediateToRegMem:
 			case OperationType.AddImmediateToAccumulator:
@@ -188,6 +193,18 @@ class ClocksLookupTable
 	{
 		return IsRegisterImmediate(instruction) &&
 			IsAccumulator(instruction.operandOne);
+	}
+
+	bool IsAccumulatorMemory(Instruction instruction)
+	{
+		return IsAccumulator(instruction.operandOne) &&
+			instruction.operandTwo.Type == OperandType.Memory;
+	}
+
+	bool IsMemoryAccumulator(Instruction instruction)
+	{
+		return instruction.operandOne.Type == OperandType.Memory &&
+			IsAccumulator(instruction.operandTwo);
 	}
 
 	void ProcessAdd(Instruction instruction, ref ClocksEstimate estimate)
@@ -328,6 +345,47 @@ class ClocksLookupTable
 		else if (bHasDisplacement && bIsBasePlusIndexVariantTwo)
 		{
 			estimate.EAClocks = 12;
+		}
+	}
+
+	void ProcessMov(Instruction instruction, ref ClocksEstimate estimate)
+	{
+		bool bHasEffectiveAddress = false;
+
+		if (IsMemoryAccumulator(instruction) || IsAccumulatorMemory(instruction))
+		{
+			estimate.TotalClocks = 10;
+		}
+		else if (IsRegisterRegister(instruction))
+		{
+			estimate.TotalClocks = 2;
+		}
+		else if (IsRegisterMemory(instruction))
+		{
+			estimate.BaseClocks = 8;
+			bHasEffectiveAddress = true;
+		}
+		else if (IsMemoryRegister(instruction))
+		{
+			estimate.BaseClocks = 9;
+			bHasEffectiveAddress = true;
+		}
+		else if (IsRegisterImmediate(instruction))
+		{
+			estimate.TotalClocks = 4;
+		}
+		else if (IsMemoryImmediate(instruction))
+		{
+			estimate.BaseClocks = 10;
+			bHasEffectiveAddress = true;
+		}
+		// Note, we don't handle any of the entries that deal with
+		// seg-reg operands because I haven't implemented segment
+		// registers.
+
+		if (bHasEffectiveAddress)
+		{
+			GetEffectiveAddressAndSumClocks(instruction, ref estimate);
 		}
 	}
 }
