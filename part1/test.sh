@@ -36,3 +36,6 @@ diff output/listing_0051_memory_mov.txt input/listing_0051_memory_mov.txt
 
 mono ./sim.exe -ip -exec input/listing_0052_memory_add_loop > output/listing_0052_memory_add_loop.txt
 diff output/listing_0052_memory_add_loop.txt input/listing_0052_memory_add_loop.txt
+
+mono ./sim.exe -exec -ip -explainclocks input/listing_0056_estimating_cycles > output/listing_0056_estimating_cycles.txt
+diff output/listing_0056_estimating_cycles.txt input/listing_0056_estimating_cycles.txt
