@@ -134,6 +134,8 @@ class ClocksLookupTable
 {
 	public void Lookup(Instruction instruction, ref ClocksEstimate estimate)
 	{
+		estimate.Initialize();
+
 		switch(instruction.type)
 		{
 			case OperationType.AddRegMemWithRegToEither:
@@ -229,6 +231,8 @@ class ClocksStatisticsTabulator
 {
 	uint totalClocks = 0;
 	ClocksStatisticsType statistics = ClocksStatisticsType.Basic;
+	ClocksLookupTable lookupTable = new ClocksLookupTable();
+	ClocksEstimate estimate = new ClocksEstimate();
 
 	public ClocksStatisticsTabulator(ClocksStatisticsType inStatistics)
 	{
@@ -236,8 +240,9 @@ class ClocksStatisticsTabulator
 		statistics = inStatistics;
 	}
 
-	public string AddClocks(ClocksEstimate estimate)
+	public string AddClocks(Instruction instruction)
 	{
+		lookupTable.Lookup(instruction, ref estimate);
 		totalClocks += estimate.TotalClocks;
 		string output = $"Clocks: +{estimate.TotalClocks} = {totalClocks}";
 
@@ -572,10 +577,7 @@ class Simulator
 			return "";
 		}
 
-		// TODO: add logic for populating the estimate fields
-		ClocksEstimate estimate = new ClocksEstimate();
-
-		return tabulator.AddClocks(estimate);
+		return tabulator.AddClocks(instruction);
 	}
 
 	void InitializeRegisters()
