@@ -186,9 +186,21 @@ class ClocksLookupTable
 
 	void ProcessAdd(Instruction instruction, ref ClocksEstimate estimate)
 	{
+		bool bHasEffectiveAddress = false;
+
 		if (IsRegisterRegister(instruction))
 		{
 			estimate.TotalClocks = 3;
+		}
+		if (IsRegisterMemory(instruction))
+		{
+			estimate.TotalClocks = 9;
+			bHasEffectiveAddress = true;
+		}
+		if (IsMemoryRegister(instruction))
+		{
+			estimate.TotalClocks = 16;
+			bHasEffectiveAddress = true;
 		}
 		// IsAccumulatorImmediate includes IsRegisterImmediate, but is more
 		// specific, so must be tested first
@@ -196,6 +208,20 @@ class ClocksLookupTable
 		{
 			estimate.TotalClocks = 4;
 		}
+		if (IsMemoryImmediate(instruction))
+		{
+			estimate.TotalClocks = 17;
+			bHasEffectiveAddress = true;
+		}
+
+		if (bHasEffectiveAddress)
+		{
+			ProcessEffectiveAddress(instruction, ref estimate);
+		}
+	}
+
+	void ProcessEffectiveAddress(Instruction instruction, ref ClocksEstimate estimate)
+	{
 	}
 }
 
