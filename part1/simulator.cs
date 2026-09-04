@@ -409,7 +409,8 @@ class ClocksStatisticsTabulator
 		totalClocks += estimate.TotalClocks;
 		string output = $"Clocks: +{estimate.TotalClocks} = {totalClocks}";
 
-		if (statistics == ClocksStatisticsType.Detailed)
+		if (statistics == ClocksStatisticsType.Detailed &&
+			estimate.EAClocks > 0)
 		{
 			output += $" ({estimate.BaseClocks} + {estimate.EAClocks}ea)";
 		}
