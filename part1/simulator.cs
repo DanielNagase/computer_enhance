@@ -130,6 +130,75 @@ struct ClocksEstimate
 	}
 }
 
+class ClocksLookupTable
+{
+	public void Lookup(Instruction instruction, ref ClocksEstimate estimate)
+	{
+		switch(instruction.type)
+		{
+			case OperationType.AddRegMemWithRegToEither:
+			case OperationType.AddImmediateToRegMem:
+			case OperationType.AddImmediateToAccumulator:
+				ProcessAdd(instruction, ref estimate);
+				break;
+			default:
+				break;
+		}
+	}
+
+	bool IsRegisterRegister(Instruction instruction)
+	{
+		return instruction.operandOne.Type == OperandType.Register &&
+			instruction.operandTwo.Type == OperandType.Register;
+	}
+
+	bool IsRegisterMemory(Instruction instruction)
+	{
+		return instruction.operandOne.Type == OperandType.Register &&
+			instruction.operandTwo.Type == OperandType.Memory;
+	}
+
+	bool IsMemoryRegister(Instruction instruction)
+	{
+		return instruction.operandOne.Type == OperandType.Memory &&
+			instruction.operandTwo.Type == OperandType.Register;
+	}
+
+	bool IsRegisterImmediate(Instruction instruction)
+	{
+		return instruction.operandOne.Type == OperandType.Register &&
+			instruction.operandTwo.Type == OperandType.Immediate;
+	}
+
+	bool IsMemoryImmediate(Instruction instruction)
+	{
+		return instruction.operandOne.Type == OperandType.Memory &&
+			instruction.operandTwo.Type == OperandType.Immediate;
+	}
+
+	bool IsAccumulatorImmediate(Instruction instruction)
+	{
+		bool bIsAccumulator =
+			instruction.operandOne.Register.Index == RegisterType.AL ||
+			instruction.operandOne.Register.Index == RegisterType.AX;
+		return IsRegisterImmediate(instruction) && bIsAccumulator;
+	}
+
+	void ProcessAdd(Instruction instruction, ref ClocksEstimate estimate)
+	{
+		if (IsRegisterRegister(instruction))
+		{
+			estimate.TotalClocks = 3;
+		}
+		// IsAccumulatorImmediate includes IsRegisterImmediate, but is more
+		// specific, so must be tested first
+		else if (IsAccumulatorImmediate(instruction) || IsRegisterImmediate(instruction))
+		{
+			estimate.TotalClocks = 4;
+		}
+	}
+}
+
 class ClocksStatisticsTabulator
 {
 	uint totalClocks = 0;
