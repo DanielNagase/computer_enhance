@@ -11,7 +11,7 @@ namespace HaversineGenerator
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static int Main(string[] args)
 		{
 			Argument<int> seedArgument = new("seed")
 			{
@@ -33,7 +33,23 @@ namespace HaversineGenerator
 			rootCommand.Arguments.Add(seedArgument);
 			rootCommand.Arguments.Add(numPairsArgument);
 			rootCommand.Options.Add(methodOption);
-			rootCommand.Parse(args).Invoke();
+
+			rootCommand.SetAction(parseResult =>
+			{
+				Method method = parseResult.GetValue(methodOption);
+				Generate(method, 0, 0);
+
+				return 0;
+			});
+
+			ParseResult parseResult = rootCommand.Parse(args);
+
+			return parseResult.Invoke();
+		}
+
+		static void Generate(Method method, int seed, int numPairs)
+		{
+			Console.WriteLine($"m:{method} s:{seed} p:{numPairs}");
 		}
 	}
 }
