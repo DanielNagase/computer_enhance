@@ -94,3 +94,4 @@ ProjectSettings/Packages/com.unity.learn.iet-framework/Settings.json
 # other
 **/*.exe
 part1/output/**
+part2/haversine_gen/bin/**
