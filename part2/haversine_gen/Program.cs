@@ -1,6 +1,12 @@
 ﻿using System;
 using System.CommandLine;
 
+enum Method
+{
+	Clustered,
+	Uniform
+}
+
 namespace HaversineGenerator
 {
 	class Program
@@ -17,9 +23,16 @@ namespace HaversineGenerator
 				Description = "Number of pairs to generate",
 			};
 
+			Option<Method> methodOption = new ("--method")
+			{
+				Description = "Method for generation",
+				DefaultValueFactory = parseResult => Method.Clustered
+			};
+
 			RootCommand rootCommand = new();
 			rootCommand.Arguments.Add(seedArgument);
 			rootCommand.Arguments.Add(numPairsArgument);
+			rootCommand.Options.Add(methodOption);
 			rootCommand.Parse(args).Invoke();
 		}
 	}
