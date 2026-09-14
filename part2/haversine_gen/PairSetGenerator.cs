@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using f64 = double;
 
@@ -50,6 +51,7 @@ namespace HaversineGenerator
 	{
 		Random random;
 		Method method = Method.Clustered;
+		List<Pair> pairs = new List<Pair>();
 
 		public PairSetGenerator(Int32 Seed)
 		{
@@ -58,7 +60,44 @@ namespace HaversineGenerator
 
 		public void Generate(Method inMethod, int numPairs)
 		{
+			if (numPairs <= 0)
+			{
+				throw new Exception("The number of pairs must be greater than zero!");
+			}
+
 			method = inMethod;
+			pairs.EnsureCapacity(numPairs);
+
+			if (method == Method.Clustered)
+			{
+				GenerateClustered(numPairs);
+			}
+			else if (method == Method.Uniform)
+			{
+				GenerateUniform(numPairs);
+			}
+		}
+
+		void GenerateClustered(int numPairs)
+		{
+		}
+
+		void GenerateUniform(int numPairs)
+		{
+			Pair pair;
+
+			for (int i = 0; i < numPairs; i++)
+			{
+				pair = pairs[i];
+				SetToUniformRandomPoint(pair.a);
+				SetToUniformRandomPoint(pair.b);
+			}
+		}
+
+		void SetToUniformRandomPoint(Point point)
+		{
+			point.x = random.NextDouble() * (180 + 180) - 180;
+			point.y = random.NextDouble() * (90 + 90) - 90;
 		}
 	}
 }
