@@ -1,12 +1,6 @@
 ﻿using System;
 using System.CommandLine;
 
-enum Method
-{
-	Clustered,
-	Uniform
-}
-
 namespace HaversineGenerator
 {
 	class Program
