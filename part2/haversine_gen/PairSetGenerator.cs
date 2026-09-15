@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 using f64 = double;
 
@@ -53,6 +54,8 @@ namespace HaversineGenerator
 		Random random;
 		Method method = Method.Clustered;
 		List<Pair> pairs = new List<Pair>();
+		static readonly CompositeFormat pairFormat =
+					CompositeFormat.Parse("""{{"x0":{0:f16}, "y0":{1:f16}, "x1":{2:f16}, "y1":{3:f16}}}{4}""");
 
 		public PairSetGenerator(Int32 Seed)
 		{
@@ -81,12 +84,26 @@ namespace HaversineGenerator
 
 		public void WriteJSONFile(string outputFilename)
 		{
+			Console.WriteLine($"p:{pairs.Count}");
 			using (StreamWriter writer = new StreamWriter(outputFilename, false))
 			{
 				writer.WriteLine("""{"pairs":[""");
-				writer.WriteLine();
+				bool bIncludeComma = false;
+
+				for (int i = 0; i < pairs.Count; i++)
+				{
+					bIncludeComma = i < (pairs.Count - 1);
+					writer.WriteLine(FormatPair(pairs[i], bIncludeComma));
+				}
+
 				writer.WriteLine("]}");
 			}
+		}
+
+		string FormatPair(Pair pair, bool bIncludeComma)
+		{
+			return String.Format(null, pairFormat, pair.a.x, pair.a.y,
+								 pair.b.x, pair.b.y, bIncludeComma ? "," : "");
 		}
 
 		void GenerateClustered(int numPairs)
