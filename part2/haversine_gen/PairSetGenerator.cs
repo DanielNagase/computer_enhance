@@ -53,7 +53,7 @@ namespace HaversineGenerator
 	{
 		Random random;
 		Method method = Method.Clustered;
-		List<Pair> pairs = new List<Pair>();
+		Pair[] pairs = new Pair[10];
 		static readonly CompositeFormat pairFormat =
 					CompositeFormat.Parse("""{{"x0":{0:f16}, "y0":{1:f16}, "x1":{2:f16}, "y1":{3:f16}}}{4}""");
 
@@ -70,7 +70,9 @@ namespace HaversineGenerator
 			}
 
 			method = inMethod;
-			pairs.EnsureCapacity(numPairs);
+			Array.Resize(ref pairs, numPairs);
+			Pair p = new Pair();
+			Array.Fill(pairs, p);
 
 			if (method == Method.Clustered)
 			{
@@ -84,15 +86,14 @@ namespace HaversineGenerator
 
 		public void WriteJSONFile(string outputFilename)
 		{
-			Console.WriteLine($"p:{pairs.Count}");
 			using (StreamWriter writer = new StreamWriter(outputFilename, false))
 			{
 				writer.WriteLine("""{"pairs":[""");
 				bool bIncludeComma = false;
 
-				for (int i = 0; i < pairs.Count; i++)
+				for (int i = 0; i < pairs.Length; i++)
 				{
-					bIncludeComma = i < (pairs.Count - 1);
+					bIncludeComma = i < (pairs.Length - 1);
 					writer.WriteLine(FormatPair(pairs[i], bIncludeComma));
 				}
 
