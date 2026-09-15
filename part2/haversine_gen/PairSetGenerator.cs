@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 using f64 = double;
 
@@ -75,6 +76,16 @@ namespace HaversineGenerator
 			else if (method == Method.Uniform)
 			{
 				GenerateUniform(numPairs);
+			}
+		}
+
+		public void WriteJSONFile(string outputFilename)
+		{
+			using (StreamWriter writer = new StreamWriter(outputFilename, false))
+			{
+				writer.WriteLine("""{"pairs":[""");
+				writer.WriteLine();
+				writer.WriteLine("]}");
 			}
 		}
 

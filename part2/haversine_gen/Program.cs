@@ -31,7 +31,9 @@ namespace HaversineGenerator
 			rootCommand.SetAction(parseResult =>
 			{
 				Method method = parseResult.GetValue(methodOption);
-				Generate(method, 0, 0);
+				int seed = parseResult.GetValue(seedArgument);
+				int numPairs = parseResult.GetValue(numPairsArgument);
+				Generate(method, seed, numPairs);
 
 				return 0;
 			});
@@ -43,7 +45,11 @@ namespace HaversineGenerator
 
 		static void Generate(Method method, int seed, int numPairs)
 		{
-			Console.WriteLine($"m:{method} s:{seed} p:{numPairs}");
+			PairSetGenerator generator = new PairSetGenerator(seed);
+			generator.Generate(method, numPairs);
+
+			string outputFilename = $"data_{numPairs}.json";
+			generator.WriteJSONFile(outputFilename);
 		}
 	}
 }
