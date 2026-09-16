@@ -50,6 +50,10 @@ namespace HaversineGenerator
 
 			string outputFilename = $"data_{numPairs}.json";
 			generator.WriteJSONFile(outputFilename);
+
+			string answerFilename = $"data_{numPairs}_haveranswer.f64";
+			generator.WriteAnswerFile(answerFilename);
+
 			generator.PrintSummary();
 		}
 	}

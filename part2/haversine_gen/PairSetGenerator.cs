@@ -118,6 +118,22 @@ namespace HaversineGenerator
 			}
 		}
 
+		public void WriteAnswerFile(string outputFilename)
+		{
+			using (var stream = File.Open(outputFilename, FileMode.Create))
+			{
+				using (var writer = new BinaryWriter(stream, Encoding.UTF8, false))
+				{
+					foreach (f64 distance in distances)
+					{
+						writer.Write(distance);
+					}
+
+					writer.Write(sumOfDistances);
+				}
+			}
+		}
+
 		public void PrintSummary()
 		{
 			Console.WriteLine($"Method: {method}");
