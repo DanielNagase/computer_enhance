@@ -70,9 +70,7 @@ namespace HaversineGenerator
 			}
 
 			method = inMethod;
-			Array.Resize(ref pairs, numPairs);
-			Pair p = new Pair();
-			Array.Fill(pairs, p);
+			ResizePairsArray(numPairs);
 
 			if (method == Method.Clustered)
 			{
@@ -81,6 +79,16 @@ namespace HaversineGenerator
 			else if (method == Method.Uniform)
 			{
 				GenerateUniform(numPairs);
+			}
+		}
+
+		void ResizePairsArray(int numPairs)
+		{
+			Array.Resize(ref pairs, numPairs);
+
+			for (int i = 0; i < pairs.Length; i++)
+			{
+				pairs[i] = new Pair();
 			}
 		}
 
