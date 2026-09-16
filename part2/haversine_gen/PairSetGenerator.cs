@@ -118,12 +118,12 @@ namespace HaversineGenerator
 			for (int i = 0; i < numPairs; i++)
 			{
 				pair = pairs[i];
-				SetToUniformRandomPoint(pair.a);
-				SetToUniformRandomPoint(pair.b);
+				SetToUniformRandomPoint(ref pair.a);
+				SetToUniformRandomPoint(ref pair.b);
 			}
 		}
 
-		void SetToUniformRandomPoint(Point point)
+		void SetToUniformRandomPoint(ref Point point)
 		{
 			point.x = random.NextDouble() * (180 + 180) - 180;
 			point.y = random.NextDouble() * (90 + 90) - 90;
