@@ -112,6 +112,14 @@ namespace HaversineGenerator
 			}
 		}
 
+		public void PrintSummary()
+		{
+			Console.WriteLine($"Method: {method}");
+			Console.WriteLine($"Random seed: {seed}");
+			Console.WriteLine($"Pair count: {pairs.Length}");
+			Console.WriteLine("Expected sum: 0");
+		}
+
 		string FormatPair(Pair pair, bool bIncludeComma)
 		{
 			return String.Format(null, pairFormat, pair.a.x, pair.a.y,
