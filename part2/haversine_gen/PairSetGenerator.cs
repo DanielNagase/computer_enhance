@@ -150,6 +150,39 @@ namespace HaversineGenerator
 
 		void GenerateClustered(int numPairs)
 		{
+			if (pairs.Length != numPairs)
+			{
+				throw new Exception($"The pairs array size ({pairs.Length}) is not equal to the number of pairs ({numPairs})!");
+			}
+
+			const int numClusters = 64;
+			Point[] clusterCenters = new Point[numClusters];
+
+			for (int i = 0; i < clusterCenters.Length; i++)
+			{
+				clusterCenters[i] = new Point();
+				SetToUniformRandomPoint(ref clusterCenters[i]);
+			}
+
+			int clusterIndex = 0;
+			const f64 maxDistance = 20.0f;
+			Pair pair;
+
+			for (int i = 0; i < pairs.Length; i++)
+			{
+				clusterIndex = i % numClusters;
+				pair = pairs[i];
+				SetToRandomPointInCluster(ref pair.a, clusterCenters[clusterIndex], maxDistance);
+				SetToRandomPointInCluster(ref pair.b, clusterCenters[clusterIndex], maxDistance);
+			}
+		}
+
+		void SetToRandomPointInCluster(ref Point point, Point clusterCenter, f64 maximumDistance)
+		{
+			f64 XOffset = random.NextDouble() * (2.0f * maximumDistance) - maximumDistance;
+			f64 YOffset = random.NextDouble() * (2.0f * maximumDistance) - maximumDistance;
+			point.x = clusterCenter.x + XOffset;
+			point.y = clusterCenter.y + YOffset;
 		}
 
 		void GenerateUniform(int numPairs)
