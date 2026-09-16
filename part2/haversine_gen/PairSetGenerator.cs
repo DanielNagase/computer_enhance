@@ -130,6 +130,11 @@ namespace HaversineGenerator
 
 		void GenerateUniform(int numPairs)
 		{
+			if (pairs.Length != numPairs)
+			{
+				throw new Exception($"The pairs array size ({pairs.Length}) is not equal to the number of pairs ({numPairs})!");
+			}
+
 			Pair pair;
 
 			for (int i = 0; i < numPairs; i++)
