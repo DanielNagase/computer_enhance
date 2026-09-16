@@ -54,6 +54,10 @@ namespace HaversineGenerator
 
 		Method method = Method.Clustered;
 		Pair[] pairs = new Pair[10];
+
+		f64[] distances = new f64[10];
+		f64 sumOfDistances;
+
 		static readonly CompositeFormat pairFormat =
 					CompositeFormat.Parse("""{{"x0":{0:f16}, "y0":{1:f16}, "x1":{2:f16}, "y1":{3:f16}}}{4}""");
 
@@ -81,6 +85,8 @@ namespace HaversineGenerator
 			{
 				GenerateUniform(numPairs);
 			}
+
+			CalculateDistances();
 		}
 
 		void ResizePairsArray(int numPairs)
@@ -91,6 +97,8 @@ namespace HaversineGenerator
 			{
 				pairs[i] = new Pair();
 			}
+
+			distances = new f64[numPairs];
 		}
 
 		public void WriteJSONFile(string outputFilename)
@@ -115,7 +123,7 @@ namespace HaversineGenerator
 			Console.WriteLine($"Method: {method}");
 			Console.WriteLine($"Random seed: {seed}");
 			Console.WriteLine($"Pair count: {pairs.Length}");
-			Console.WriteLine("Expected sum: 0");
+			Console.WriteLine($"Expected sum: {sumOfDistances}");
 		}
 
 		string FormatPair(Pair pair, bool bIncludeComma)
@@ -149,6 +157,27 @@ namespace HaversineGenerator
 		{
 			point.x = random.NextDouble() * (180.0f + 180.0f) - 180.0f;
 			point.y = random.NextDouble() * (90.0f + 90.0f) - 90.0f;
+		}
+
+		void CalculateDistances()
+		{
+			if (distances.Length != pairs.Length)
+			{
+				throw new Exception($"The pairs array and distances array must have the same size!");
+			}
+
+			Pair pair;
+			sumOfDistances = 0.0f;
+			const f64 EarthRadius = 6372.8f;
+
+			for (int i = 0; i < distances.Length; i++)
+			{
+				pair = pairs[i];
+				distances[i] =
+					HaversineFormula.ReferenceHaversine(pair.a.x, pair.a.y,
+														pair.b.x, pair.b.y, EarthRadius);
+				sumOfDistances += distances[i];
+			}
 		}
 	}
 }
