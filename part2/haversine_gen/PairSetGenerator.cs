@@ -52,6 +52,8 @@ namespace HaversineGenerator
 	class PairSetGenerator
 	{
 		Random random;
+		Int32 seed = 0;
+
 		Method method = Method.Clustered;
 		Pair[] pairs = new Pair[10];
 		static readonly CompositeFormat pairFormat =
@@ -60,6 +62,7 @@ namespace HaversineGenerator
 		public PairSetGenerator(Int32 Seed)
 		{
 			random = new Random(Seed);
+			seed = Seed;
 		}
 
 		public void Generate(Method inMethod, int numPairs)
