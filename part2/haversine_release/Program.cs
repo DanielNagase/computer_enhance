@@ -24,12 +24,34 @@ namespace HaversineRelease
 
 			rootCommand.SetAction(parseResult =>
 			{
+				string inputFilePath = "";
+
+				if (parseResult.GetValue(inputFile) is string parsedInputFile)
+				{
+					inputFilePath = parsedInputFile;
+				}
+
+				string answerFilePath = "";
+
+				if (parseResult.GetValue(answerFile) is string parsedAnswerFile)
+				{
+					answerFilePath = parsedAnswerFile;
+				}
+
+				ReadInput(inputFilePath, answerFilePath);
+
 				return 0;
 			});
 
 			ParseResult parseResult = rootCommand.Parse(args);
 
 			return parseResult.Invoke();
+		}
+
+		static void ReadInput(string inputFilePath, string answerFilePath)
+		{
+			Lexer lexer = new Lexer();
+			lexer.ReadFile(inputFilePath);
 		}
 	}
 }
