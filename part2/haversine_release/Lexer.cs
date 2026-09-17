@@ -17,9 +17,18 @@ namespace HaversineRelease
 		public int LineNumber = 0;
 		public int CharacterNumber = 0;
 
+		public string StringValue = "";
+
 		public override string ToString()
 		{
-			return $"{Type} ({LineNumber},{CharacterNumber})";
+			string output = $"{Type} ({LineNumber},{CharacterNumber}): ";
+
+			if (Type == Symbol.String)
+			{
+				output += StringValue;
+			}
+
+			return output;
 		}
 
 		public Token() {}
@@ -95,6 +104,9 @@ namespace HaversineRelease
 					token.Type = Symbol.Comma;
 					Advance(reader);
 					break;
+				case '"':
+					ReadString(reader, token);
+					break;
 				default:
 					break;
 			}
@@ -107,6 +119,39 @@ namespace HaversineRelease
 			characterNumber++;
 
 			return reader.Read();
+		}
+
+		void ReadString(StreamReader reader, Token token)
+		{
+			token.Type = Symbol.String;
+
+			char c;
+			int peekValue;
+			int quoteCount = 0;
+			StringBuilder builder = new StringBuilder("");
+
+			while((peekValue = reader.Peek()) >= 0)
+			{
+				c = (char)peekValue;
+
+				if (c == '"')
+				{
+					Advance(reader);
+					quoteCount++;
+
+					if (quoteCount == 2)
+					{
+						break;
+					}
+				}
+				else
+				{
+					c = (char)Advance(reader);
+					builder.Append(c);
+				}
+			}
+
+			token.StringValue = builder.ToString();
 		}
 
 		void ReadWhitespace(StreamReader reader)
