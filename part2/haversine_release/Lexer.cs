@@ -17,6 +17,11 @@ namespace HaversineRelease
 		public int LineNumber = 0;
 		public int CharacterNumber = 0;
 
+		public override string ToString()
+		{
+			return $"{Type} ({LineNumber},{CharacterNumber})";
+		}
+
 		public Token() {}
 
 		public Token(Symbol inType, int inLineNumber, int inCharacterNumber)
