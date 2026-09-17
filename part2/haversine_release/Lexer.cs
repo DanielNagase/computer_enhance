@@ -17,6 +17,8 @@ namespace HaversineRelease
 		public int LineNumber = 0;
 		public int CharacterNumber = 0;
 
+		public Token() {}
+
 		public Token(Symbol inType, int inLineNumber, int inCharacterNumber)
 		{
 			Type = inType;
@@ -29,9 +31,90 @@ namespace HaversineRelease
 	{
 		int lineNumber;
 		int characterNumber;
+		List<Symbol> stack = new List<Symbol>();
 
 		public void ReadFile(string path)
 		{
+			using (StreamReader reader = File.OpenText(path))
+			{
+				while (true)
+				{
+					Token token = GetNextToken(reader);
+
+					if (token.Type == Symbol.EOF)
+					{
+						break;
+					}
+				}
+			}
+		}
+
+		Token GetNextToken(StreamReader reader)
+		{
+			Token token = new Token(Symbol.Null, lineNumber, characterNumber);
+			int peekValue = reader.Peek();
+
+			if (peekValue == -1)
+			{
+				token.Type = Symbol.EOF;
+
+				return token;
+			}
+
+			char character = (char)peekValue;
+
+			switch(character)
+			{
+				case '{':
+					token.Type = Symbol.LeftBrace;
+					Advance(reader);
+					break;
+				case '}':
+					token.Type = Symbol.RightBrace;
+					Advance(reader);
+					break;
+				case '[':
+					token.Type = Symbol.LeftBracket;
+					Advance(reader);
+					break;
+				case ']':
+					token.Type = Symbol.RightBracket;
+					Advance(reader);
+					break;
+				case ':':
+					token.Type = Symbol.Colon;
+					Advance(reader);
+					break;
+				case ',':
+					token.Type = Symbol.Comma;
+					Advance(reader);
+					break;
+				default:
+					break;
+			}
+
+			return token;
+		}
+
+		int Advance(StreamReader reader)
+		{
+			characterNumber++;
+
+			return reader.Read();
+		}
+
+		public void DisplayError(string errorMessage)
+		{
+			throw new Exception(errorMessage);
+		}
+
+		public void Advance()
+		{
+		}
+
+		public Symbol Peek()
+		{
+			return Symbol.EOF;
 		}
 	}
 }
