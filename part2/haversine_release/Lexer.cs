@@ -34,7 +34,7 @@ namespace HaversineRelease
 
 	class Lexer
 	{
-		int lineNumber;
+		int lineNumber = 1;
 		int characterNumber;
 		List<Symbol> stack = new List<Symbol>();
 
@@ -56,8 +56,8 @@ namespace HaversineRelease
 
 		Token GetNextToken(StreamReader reader)
 		{
-			Token token = new Token(Symbol.Null, lineNumber, characterNumber);
 			ReadWhitespace(reader);
+			Token token = new Token(Symbol.Null, lineNumber, characterNumber);
 			int peekValue = reader.Peek();
 
 			if (peekValue == -1)
@@ -121,6 +121,7 @@ namespace HaversineRelease
 				if (c == '\n')
 				{
 					lineNumber++;
+					characterNumber = 0;
 					Advance(reader);
 				}
 				else if ((c == ' ') || (c == '\r') || (c == '\t'))
