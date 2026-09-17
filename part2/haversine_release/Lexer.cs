@@ -52,6 +52,7 @@ namespace HaversineRelease
 		Token GetNextToken(StreamReader reader)
 		{
 			Token token = new Token(Symbol.Null, lineNumber, characterNumber);
+			ReadWhitespace(reader);
 			int peekValue = reader.Peek();
 
 			if (peekValue == -1)
@@ -101,6 +102,31 @@ namespace HaversineRelease
 			characterNumber++;
 
 			return reader.Read();
+		}
+
+		void ReadWhitespace(StreamReader reader)
+		{
+			char c;
+			int peekValue;
+
+			while((peekValue = reader.Peek()) >= 0)
+			{
+				c = (char)peekValue;
+
+				if (c == '\n')
+				{
+					lineNumber++;
+					Advance(reader);
+				}
+				else if ((c == ' ') || (c == '\r') || (c == '\t'))
+				{
+					Advance(reader);
+				}
+				else
+				{
+					break;
+				}
+			}
 		}
 
 		public void DisplayError(string errorMessage)
