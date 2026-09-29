@@ -10,6 +10,11 @@ namespace HaversineRelease
 		Comma, String, Number, True, False, Null, EOF
 	}
 
+	enum Number
+	{
+		Float, Int, None
+	}
+
 	class Token
 	{
 		public Symbol Type = Symbol.Null;
@@ -18,6 +23,10 @@ namespace HaversineRelease
 		public int CharacterNumber = 0;
 
 		public string StringValue = "";
+
+		public Number NumberType = Number.None;
+		public f64 FloatValue = 0.0f;
+		public Int32 IntValue = 0;
 
 		public override string ToString()
 		{
@@ -78,6 +87,13 @@ namespace HaversineRelease
 
 			char character = (char)peekValue;
 
+			if (character == '-' || Char.IsDigit(character))
+			{
+				ReadNumber(reader, token);
+
+				return token;
+			}
+
 			switch(character)
 			{
 				case '{':
@@ -119,6 +135,113 @@ namespace HaversineRelease
 			characterNumber++;
 
 			return reader.Read();
+		}
+
+		void ReadNumber(StreamReader reader, Token token)
+		{
+			token.Type = Symbol.Number;
+
+			char c;
+			int peekValue = reader.Peek();
+			StringBuilder builder = new StringBuilder("");
+
+			c = (char)peekValue;
+
+			if (c == '-')
+			{
+				c = (char)Advance(reader);
+				builder.Append(c);
+			}
+
+			while((peekValue = reader.Peek()) >= 0)
+			{
+				c = (char)peekValue;
+
+				if (!Char.IsDigit(c))
+				{
+					break;
+				}
+
+				c = (char)Advance(reader);
+				builder.Append(c);
+			}
+
+			bool bIsFloat = false;
+
+			if ((peekValue = reader.Peek()) >= 0)
+			{
+				c = (char)peekValue;
+
+				if (c == '.')
+				{
+					bIsFloat = true;
+					c = (char)Advance(reader);
+					builder.Append(c);
+				}
+
+				while((peekValue = reader.Peek()) >= 0)
+				{
+					c = (char)peekValue;
+
+					if (!Char.IsDigit(c))
+					{
+						break;
+					}
+
+					c = (char)Advance(reader);
+					builder.Append(c);
+				}
+			}
+
+			if ((peekValue = reader.Peek()) >= 0)
+			{
+				c = (char)peekValue;
+
+				if (c == 'e' || c == 'E')
+				{
+					bIsFloat = true;
+					c = (char)Advance(reader);
+					builder.Append(c);
+				}
+
+				c = (char)reader.Peek();
+
+				if (c == '+' || c == '-')
+				{
+					c = (char)Advance(reader);
+					builder.Append(c);
+				}
+
+				while((peekValue = reader.Peek()) >= 0)
+				{
+					c = (char)peekValue;
+
+					if (!Char.IsDigit(c))
+					{
+						break;
+					}
+
+					c = (char)Advance(reader);
+					builder.Append(c);
+				}
+			}
+
+			bool bDidParseString = false;
+			f64 floatValue = 0.0f;
+			int intValue = 0;
+
+			if (bIsFloat)
+			{
+				bDidParseString = f64.TryParse(builder.ToString(), out floatValue);
+				token.NumberType = Number.Float;
+				token.FloatValue = floatValue;
+			}
+			else
+			{
+				bDidParseString = Int32.TryParse(builder.ToString(), out intValue);
+				token.NumberType = Number.Int;
+				token.IntValue = intValue;
+			}
 		}
 
 		void ReadString(StreamReader reader, Token token)
