@@ -60,7 +60,7 @@ namespace HaversineRelease
 		{
 			using (StreamReader reader = File.OpenText(path))
 			{
-				while (true)
+				while (!reader.EndOfStream)
 				{
 					Token token = GetNextToken(reader);
 
@@ -124,6 +124,7 @@ namespace HaversineRelease
 					ReadString(reader, token);
 					break;
 				default:
+					DisplayError($"Unexpected '{character}' at line {lineNumber}, position {characterNumber}");
 					break;
 			}
 
