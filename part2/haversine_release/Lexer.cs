@@ -243,6 +243,95 @@ namespace HaversineRelease
 				token.NumberType = Number.Int;
 				token.IntValue = intValue;
 			}
+
+		void ReadNumberAlt(StreamReader reader, Token token)
+		{
+			token.Type = Symbol.Number;
+			StringBuilder builder = new StringBuilder("");
+
+			bool bDidReadInteger = ReadInteger(reader, builder);
+			bool bDidReadFloat = ReadFraction(reader, builder) && ReadExponent(reader, builder);
+
+			bool bDidParseString = false;
+			f64 floatValue = 0.0f;
+			int intValue = 0;
+
+			if (bDidReadFloat)
+			{
+				bDidParseString = f64.TryParse(builder.ToString(), out floatValue);
+				token.NumberType = Number.Float;
+				token.FloatValue = floatValue;
+			}
+			else
+			{
+				bDidParseString = Int32.TryParse(builder.ToString(), out intValue);
+				token.NumberType = Number.Int;
+				token.IntValue = intValue;
+			}
+		}
+
+		bool ReadInteger(StreamReader reader, StringBuilder builder)
+		{
+			return (ReadChar(reader, builder, '-') && ReadOneNine(reader, builder) && ReadDigits(reader, builder)) ||
+				(ReadChar(reader, builder, '-') && ReadDigit(reader, builder)) ||
+				(ReadOneNine(reader, builder) && ReadDigits(reader, builder)) ||
+				(ReadDigit(reader, builder));
+		}
+
+		bool ReadFraction(StreamReader reader, StringBuilder builder)
+		{
+			return (ReadChar(reader, builder, '.') && ReadDigits(reader, builder)) || true;
+		}
+
+		bool ReadExponent(StreamReader reader, StringBuilder builder)
+		{
+			return (ReadChar(reader, builder, 'e') && ReadSign(reader, builder) && ReadDigits(reader, builder)) ||
+			(ReadChar(reader, builder, 'E') && ReadSign(reader, builder) && ReadDigits(reader, builder)) ||
+				true;
+		}
+
+		bool ReadSign(StreamReader reader, StringBuilder builder)
+		{
+			return ReadChar(reader, builder, '-') || ReadChar(reader, builder, '+') || true;
+		}
+
+		bool ReadDigits(StreamReader reader, StringBuilder builder)
+		{
+			return (ReadDigit(reader, builder) && ReadDigits(reader, builder)) ||
+				ReadDigit(reader, builder);
+		}
+
+		bool ReadDigit(StreamReader reader, StringBuilder builder)
+		{
+			return ReadChar(reader, builder, '0') || ReadOneNine(reader, builder);
+		}
+
+		bool ReadOneNine(StreamReader reader, StringBuilder builder)
+		{
+			char c = (char)reader.Peek();
+
+			if (c != '0' && Char.IsDigit(c))
+			{
+				builder.Append((char)Advance(reader));
+
+				return true;
+			}
+
+			return false;
+		}
+
+		bool ReadChar(StreamReader reader, StringBuilder builder, char expectedCharacter)
+		{
+			char c = (char)reader.Peek();
+
+			if (c == expectedCharacter)
+			{
+				builder.Append((char)Advance(reader));
+
+				return true;
+			}
+
+			return false;
 		}
 
 		void ReadString(StreamReader reader, Token token)
