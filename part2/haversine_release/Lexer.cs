@@ -120,6 +120,12 @@ namespace HaversineRelease
 					token.Type = Symbol.Comma;
 					Advance(reader);
 					break;
+				case 't':
+					ReadBool(reader, token);
+					break;
+				case 'f':
+					ReadBool(reader, token);
+					break;
 				case '"':
 					ReadString(reader, token);
 					break;
@@ -136,6 +142,35 @@ namespace HaversineRelease
 			characterNumber++;
 
 			return reader.Read();
+		}
+
+		void ReadBool(StreamReader reader, Token token)
+		{
+			char character = (char)reader.Peek();
+			int count = 0;
+
+			if (character == 't')
+			{
+				count = 4;
+			}
+			else if (character == 'f')
+			{
+				count = 5;
+			}
+
+			char[] buffer = new char[5];
+			int charactersRead = reader.ReadBlock(buffer, 0, count);
+			characterNumber += charactersRead;
+			string inputString = new String(buffer, 0, charactersRead);
+
+			if (inputString.Equals("true"))
+			{
+				token.Type = Symbol.True;
+			}
+			else if (inputString.Equals("false"))
+			{
+				token.Type = Symbol.False;
+			}
 		}
 
 		void ReadNumber(StreamReader reader, Token token)
