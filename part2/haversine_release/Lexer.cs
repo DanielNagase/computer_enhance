@@ -22,20 +22,12 @@ namespace HaversineRelease
 		public int LineNumber = 0;
 		public int CharacterNumber = 0;
 
-		public string StringValue = "";
-
+		public Object Value = 0;
 		public Number NumberType = Number.None;
-		public f64 FloatValue = 0.0f;
-		public Int32 IntValue = 0;
 
 		public override string ToString()
 		{
 			string output = $"{Type} ({LineNumber},{CharacterNumber}): ";
-
-			if (Type == Symbol.String)
-			{
-				output += StringValue;
-			}
 
 			return output;
 		}
@@ -201,13 +193,13 @@ namespace HaversineRelease
 			{
 				bDidParseString = f64.TryParse(builder.ToString(), out floatValue);
 				token.NumberType = Number.Float;
-				token.FloatValue = floatValue;
+				token.Value = floatValue;
 			}
 			else
 			{
 				bDidParseString = Int32.TryParse(builder.ToString(), out intValue);
 				token.NumberType = Number.Int;
-				token.IntValue = intValue;
+				token.Value = intValue;
 			}
 		}
 
@@ -305,7 +297,7 @@ namespace HaversineRelease
 				}
 			}
 
-			token.StringValue = builder.ToString();
+			token.Value = builder.ToString();
 		}
 
 		void ReadWhitespace(StreamReader reader)
