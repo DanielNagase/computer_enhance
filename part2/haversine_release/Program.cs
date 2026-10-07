@@ -51,6 +51,7 @@ namespace HaversineRelease
 		static void ReadInput(string inputFilePath, string answerFilePath)
 		{
 			Lexer lexer = new Lexer(inputFilePath);
+			Parser parser = new Parser(lexer);
 		}
 	}
 }
