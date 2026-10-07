@@ -50,8 +50,7 @@ namespace HaversineRelease
 
 		static void ReadInput(string inputFilePath, string answerFilePath)
 		{
-			Lexer lexer = new Lexer();
-			lexer.ReadFile(inputFilePath);
+			Lexer lexer = new Lexer(inputFilePath);
 		}
 	}
 }

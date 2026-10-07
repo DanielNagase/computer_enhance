@@ -50,11 +50,18 @@ namespace HaversineRelease
 		}
 	}
 
-	class Lexer
+	class Lexer : IDisposable
 	{
 		int lineNumber = 1;
 		int characterNumber;
-		List<Symbol> stack = new List<Symbol>();
+		StreamReader reader;
+
+		public Lexer(string path)
+		{
+			reader = File.OpenText(path);
+		}
+
+		public void Dispose() => reader.Dispose();
 
 		public void ReadFile(string path)
 		{
@@ -70,6 +77,11 @@ namespace HaversineRelease
 					}
 				}
 			}
+		}
+
+		public Token GetNextToken()
+		{
+			return GetNextToken(reader);
 		}
 
 		Token GetNextToken(StreamReader reader)
@@ -322,18 +334,9 @@ namespace HaversineRelease
 			}
 		}
 
-		public void DisplayError(string errorMessage)
+		void DisplayError(string errorMessage)
 		{
 			throw new Exception(errorMessage);
-		}
-
-		public void Advance()
-		{
-		}
-
-		public Symbol Peek()
-		{
-			return Symbol.EOF;
 		}
 	}
 }
