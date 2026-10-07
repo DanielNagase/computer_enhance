@@ -54,5 +54,26 @@ namespace HaversineRelease
 
 			return false;
 		}
+
+		Object Value()
+		{
+			Symbol type = currentToken.Type;
+
+			if (type == Symbol.String || type == Symbol.Number ||
+				type == Symbol.True || type == Symbol.False || type == Symbol.Null)
+			{
+				return Consume().Value;
+			}
+
+			throw new Exception($"unexpected {type} : {currentToken.ToString()}");
+		}
+
+		public Object Parse()
+		{
+			Object o = Value();
+			Expect(Symbol.EOF);
+
+			return o;
+		}
 	}
 }
