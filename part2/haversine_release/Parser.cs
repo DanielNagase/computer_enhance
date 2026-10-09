@@ -62,6 +62,11 @@ namespace HaversineRelease
 		{
 			Symbol type = currentToken.Type;
 
+			if (type == Symbol.LeftBrace)
+			{
+				return Object();
+			}
+
 			if (type == Symbol.String || type == Symbol.Number ||
 				type == Symbol.True || type == Symbol.False || type == Symbol.Null)
 			{
@@ -69,6 +74,21 @@ namespace HaversineRelease
 			}
 
 			throw new Exception($"unexpected {type} : {currentToken.ToString()}");
+		}
+
+		JSONObject Object()
+		{
+			Expect(Symbol.LeftBrace);
+
+			if (Accept(Symbol.RightBrace))
+			{
+				return new JSONObject();
+			}
+
+			JSONObject members = Members();
+			Expect(Symbol.RightBrace);
+
+			return members;
 		}
 
 		JSONObject Members()
