@@ -52,6 +52,7 @@ namespace HaversineRelease
 		{
 			Lexer lexer = new Lexer(inputFilePath);
 			Parser parser = new Parser(lexer);
+			Object data = parser.Parse();
 		}
 	}
 }
