@@ -67,6 +67,11 @@ namespace HaversineRelease
 				return Object();
 			}
 
+			if (type == Symbol.LeftBracket)
+			{
+				return Array();
+			}
+
 			if (type == Symbol.String || type == Symbol.Number ||
 				type == Symbol.True || type == Symbol.False || type == Symbol.Null)
 			{
@@ -74,6 +79,35 @@ namespace HaversineRelease
 			}
 
 			throw new Exception($"unexpected {type} : {currentToken.ToString()}");
+		}
+
+		List<Object> Array()
+		{
+			Expect(Symbol.LeftBracket);
+
+			if (Accept(Symbol.RightBracket))
+			{
+				return new List<Object>();
+			}
+
+			List<Object> elements = Elements();
+
+			Expect(Symbol.RightBracket);
+
+			return elements;
+		}
+
+		List<Object> Elements()
+		{
+			List<Object> elements = new List<Object>();
+			elements.Add(Value());
+
+			if (Accept(Symbol.Comma))
+			{
+				elements.AddRange(Elements());
+			}
+
+			return elements;
 		}
 
 		JSONObject Object()
