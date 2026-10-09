@@ -1,5 +1,7 @@
 ﻿using System;
 using System.CommandLine;
+using System.IO;
+using System.Text;
 
 namespace HaversineRelease
 {
@@ -54,15 +56,26 @@ namespace HaversineRelease
 			Parser parser = new Parser(lexer);
 			Object data = parser.Parse();
 
-			CalculateDistances(ref data, out f64 distance, out int pairCount);
+			CalculateDistances(ref data, answerFilePath,
+							   out f64 distance, out int pairCount);
 		}
 
-		static void CalculateDistances(ref Object data,
+		static void CalculateDistances(ref Object data, string answerFilePath,
 									   out f64 averageDistance, out int pairCount)
 		{
 			JSONObject jsonObject = (JSONObject)data;
 			List<Object> pairs = (List<Object>)jsonObject["pairs"];
 			f64[] distances = new f64[pairs.Count];
+
+			f64[] answerDistances = new f64[pairs.Count];
+			f64 answerAverageDistance = 0.0f;
+			bool bHasAnswer = false;
+
+			if (!String.IsNullOrEmpty(answerFilePath))
+			{
+				bHasAnswer = ReadAnswerFile(answerFilePath, ref answerDistances,
+											ref answerAverageDistance);
+			}
 
 			f64 sumOfDistances = 0.0f;
 			const f64 EarthRadius = 6372.8f;
@@ -89,6 +102,37 @@ namespace HaversineRelease
 			averageDistance = sumOfDistances / pairCount;
 			Console.WriteLine($"Pair count: {pairs.Count}");
 			Console.WriteLine($"Haversine sum: {averageDistance}");
+
+			if (bHasAnswer)
+			{
+				Console.WriteLine("Validation");
+				Console.WriteLine($"Reference sum: {answerAverageDistance}");
+
+				f64 difference = averageDistance - answerAverageDistance;
+				Console.WriteLine($"Difference: {difference}");
+			}
+		}
+
+		static bool ReadAnswerFile(string answerFilePath, ref f64[] answerDistances,
+								   ref f64 answerAverageDistance)
+		{
+			bool bDidRead = false;
+
+			using (var stream = File.Open(answerFilePath, FileMode.Open))
+			{
+				using (var reader = new BinaryReader(stream, Encoding.UTF8))
+				{
+					for (int i = 0; i < answerDistances.Length; i++)
+					{
+						answerDistances[i] = reader.ReadDouble();
+					}
+
+					answerAverageDistance = reader.ReadDouble();
+					bDidRead = true;
+				}
+			}
+
+			return bDidRead;
 		}
 	}
 }
