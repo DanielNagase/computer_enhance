@@ -170,10 +170,12 @@ namespace HaversineRelease
 			if (inputString.Equals("true"))
 			{
 				token.Type = Symbol.True;
+				token.Value = true;
 			}
 			else if (inputString.Equals("false"))
 			{
 				token.Type = Symbol.False;
+				token.Value = false;
 			}
 		}
 
