@@ -56,7 +56,7 @@ namespace HaversineGenerator
 		Pair[] pairs = new Pair[10];
 
 		f64[] distances = new f64[10];
-		f64 sumOfDistances;
+		f64 averageDistance;
 
 		static readonly CompositeFormat pairFormat =
 					CompositeFormat.Parse("""{{"x0":{0:f16}, "y0":{1:f16}, "x1":{2:f16}, "y1":{3:f16}}}{4}""");
@@ -129,7 +129,7 @@ namespace HaversineGenerator
 						writer.Write(distance);
 					}
 
-					writer.Write(sumOfDistances);
+					writer.Write(averageDistance);
 				}
 			}
 		}
@@ -139,7 +139,7 @@ namespace HaversineGenerator
 			Console.WriteLine($"Method: {method}");
 			Console.WriteLine($"Random seed: {seed}");
 			Console.WriteLine($"Pair count: {pairs.Length}");
-			Console.WriteLine($"Expected sum: {sumOfDistances}");
+			Console.WriteLine($"Expected sum: {averageDistance}");
 		}
 
 		string FormatPair(Pair pair, bool bIncludeComma)
@@ -216,7 +216,7 @@ namespace HaversineGenerator
 			}
 
 			Pair pair;
-			sumOfDistances = 0.0f;
+			f64 sumOfDistances = 0.0f;
 			const f64 EarthRadius = 6372.8f;
 
 			for (int i = 0; i < distances.Length; i++)
@@ -227,6 +227,8 @@ namespace HaversineGenerator
 														pair.b.x, pair.b.y, EarthRadius);
 				sumOfDistances += distances[i];
 			}
+
+			averageDistance = sumOfDistances / distances.Length;
 		}
 	}
 }
