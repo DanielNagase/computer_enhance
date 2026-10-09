@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-using JSONObject = System.Collections.Generic.Dictionary<string, System.Object>;
-
 namespace HaversineRelease
 {
 	class Parser
