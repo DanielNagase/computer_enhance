@@ -21,7 +21,7 @@ namespace HaversineRelease
 			}
 			else if (obj is JSONObject jsonObject)
 			{
-				Console.WriteLine($"{indent}{{");
+				Console.WriteLine("{");
 				int jsonObjectIndent = 2 + indentLevel;
 				string jsonIndent = new string(' ', jsonObjectIndent);
 
@@ -35,7 +35,7 @@ namespace HaversineRelease
 			}
 			else if (obj is string stringObject)
 			{
-				Console.WriteLine($"{indent}\"{stringObject}\"");
+				Console.WriteLine($"\"{stringObject}\"");
 			}
 			else
 			{
