@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+
+using JSONObject = System.Collections.Generic.Dictionary<string, System.Object>;
 
 namespace HaversineRelease
 {
@@ -66,6 +69,34 @@ namespace HaversineRelease
 			}
 
 			throw new Exception($"unexpected {type} : {currentToken.ToString()}");
+		}
+
+		JSONObject Members()
+		{
+			JSONObject member = Member();
+
+			if (Accept(Symbol.Comma))
+			{
+				JSONObject members = Members();
+
+				foreach (var pair in members)
+				{
+					member.Add(pair.Key, pair.Value);
+				}
+			}
+
+			return member;
+		}
+
+		JSONObject Member()
+		{
+			string k = (string)currentToken.Value;
+			Expect(Symbol.String);
+			Expect(Symbol.Colon);
+			JSONObject member = new JSONObject();
+			member[k] = Value();
+
+			return member;
 		}
 
 		public Object Parse()
